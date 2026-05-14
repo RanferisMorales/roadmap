@@ -1730,39 +1730,100 @@ abbr.glossary-term:hover::after {
 .fc-add-row textarea { min-height: 50px; }
 .fc-add-row label { font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px; color: var(--text); }
 
-/* ---- #10 SKILL GRAPH ---- */
+/* ---- #10 SKILL GRAPH — layered DAG (rebuilt) ---- */
+.graph-toolbar {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  padding: 8px 10px; margin-bottom: 8px;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 8px;
+}
+.graph-toolbar input[type="search"] {
+  padding: 5px 10px; min-width: 180px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text);
+}
+.graph-toolbar .pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+  cursor: pointer; user-select: none;
+}
+.graph-toolbar .pill.active { background: var(--node-stage); }
+.graph-toolbar .pill input { display: none; }
+.graph-toolbar .pill-group { display: inline-flex; gap: 4px; }
+.graph-toolbar .toolbar-label {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+  color: var(--text-dim); margin-right: 2px;
+}
 .graph-container {
-  width: 100%; height: 70vh; min-height: 500px;
+  width: 100%; height: 70vh; min-height: 540px;
   border: 2.5px solid var(--border); border-radius: 10px;
-  background: var(--bg); overflow: hidden; position: relative;
+  background: var(--bg); overflow: auto; position: relative;
 }
-.graph-svg { width: 100%; height: 100%; cursor: grab; }
-.graph-svg:active { cursor: grabbing; }
-.graph-node circle { stroke: var(--border); stroke-width: 2; cursor: pointer; transition: opacity 0.15s; }
-.graph-node.dim circle { opacity: 0.2; }
-.graph-node.highlighted circle { stroke-width: 4; }
-.graph-node text {
-  font-family: 'Patrick Hand', cursive; font-size: 11px;
-  pointer-events: none; user-select: none; fill: var(--text);
+.graph-container.compact .gnode-label { display: none; }
+.graph-svg { display: block; width: 100%; min-height: 100%; }
+
+/* Stage bands */
+.gband { transition: opacity 0.15s; }
+.gband.dim { opacity: 0.15; }
+.gband-bg { stroke: var(--border); stroke-width: 1.5; }
+.gband-label {
+  font-family: 'Architects Daughter', cursive; font-size: 17px;
+  fill: var(--text); cursor: pointer; font-weight: 700;
 }
-.graph-node.dim text { opacity: 0.2; }
-.graph-link { stroke: var(--text-mute); stroke-width: 1.5; opacity: 0.55; transition: opacity 0.15s; }
-.graph-link.dim { opacity: 0.1; }
-.graph-link.highlighted { opacity: 1; stroke: var(--accent); stroke-width: 2.5; }
-.graph-info {
-  position: absolute; top: 10px; left: 12px;
+.gband-label:hover { fill: var(--accent); }
+.gband-meta {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; fill: var(--text-dim);
+}
+.gband-progress-bar { fill: var(--node-done); opacity: 0.5; }
+
+/* Branch columns */
+.gbranch-label {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 11.5px;
+  fill: var(--text-dim); text-anchor: middle;
+}
+
+/* Nodes — shape varies by tier, color by stage */
+.gnode { cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+.gnode:hover { transform: scale(1.15); transform-origin: center; transform-box: fill-box; }
+.gnode-shape { stroke: var(--border); stroke-width: 2; }
+.gnode.tier-req .gnode-shape { stroke-width: 2.5; }
+.gnode.tier-opt .gnode-shape { fill: var(--bg-card); }   /* ring (outline only) */
+.gnode.complete .gnode-shape { fill: var(--node-done) !important; }
+.gnode-check {
+  font-family: 'Architects Daughter'; font-size: 11px; font-weight: 700;
+  fill: #1a1a1a; pointer-events: none; text-anchor: middle;
+}
+.gnode-label {
+  font-family: 'Patrick Hand', cursive; font-size: 11px; fill: var(--text);
+  pointer-events: none; user-select: none;
+}
+.gnode.filtered-out { display: none; }
+
+/* Cross-stage anchor arrows */
+.ganchor-link { stroke: var(--text-mute); stroke-width: 1.5; fill: none; opacity: 0.5; stroke-dasharray: 3 3; }
+.ganchor-arrow { fill: var(--text-mute); opacity: 0.5; }
+
+/* Tooltip */
+.gtooltip {
+  position: absolute; pointer-events: none;
   background: var(--bg-elev); border: 2px solid var(--border); border-radius: 6px;
-  padding: 8px 12px; font-family: 'Patrick Hand', cursive; font-size: 13px;
-  max-width: 280px; line-height: 1.4; color: var(--text);
+  padding: 6px 10px; font-family: 'Patrick Hand', cursive; font-size: 13px;
+  color: var(--text); max-width: 240px; line-height: 1.4;
+  opacity: 0; transition: opacity 0.1s; z-index: 5;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
 }
-.graph-info strong { font-family: 'Kalam', cursive; }
-.graph-legend {
-  position: absolute; bottom: 10px; right: 12px;
-  background: var(--bg-elev); border: 2px solid var(--border); border-radius: 6px;
-  padding: 6px 10px; font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-dim);
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+.gtooltip.show { opacity: 1; }
+.gtooltip strong { font-family: 'Kalam', cursive; display: block; margin-bottom: 2px; }
+.gtooltip em { font-style: normal; color: var(--text-mute); font-size: 11px; }
+
+.graph-empty {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: 'Patrick Hand', cursive; font-size: 16px; color: var(--text-dim);
+  pointer-events: none; opacity: 0;
 }
-.graph-legend .dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--border); display: inline-block; vertical-align: middle; }
+.graph-empty.show { opacity: 1; }
+
 .graph-fallback {
   padding: 20px; text-align: center;
   font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text-dim);
@@ -1903,7 +1964,7 @@ abbr.glossary-term:hover::after {
       <div class="intro-card meta">
         <h3>What this is</h3>
         <ul>
-          <li data-personal="stats"><strong>9 stages</strong>, 47 branches, 211 topics, 483 curated links</li>
+          <li data-personal="stats"><strong>9 stages</strong>, 47 branches, 219 topics, 510 curated links</li>
           <li><strong>Built for self-teaching</strong> — no instructor, no cohort, no fixed schedule</li>
           <li><strong>Production-focused</strong> — System Design, DevOps, Security included</li>
           <li><strong>2026-current</strong> — covers MCP, agents, RAG that older roadmaps miss</li>
@@ -6828,7 +6889,7 @@ abbr.glossary-term:hover::after {
 
   <footer>
     your progress saves automatically · last updated <span id="lastUpdated">—</span><br />
-    <span data-personal="footer">483 curated links · 9 stages · ~16–25 months at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
+    <span data-personal="footer">510 curated links · 9 stages · ~16–25 months at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
   </footer>
 </div>
 
@@ -6897,8 +6958,8 @@ abbr.glossary-term:hover::after {
 <!-- qrcode-generator for #17 backup — small standalone lib, exposes window.qrcode. Hidden if CDN fails. -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer onerror="window.__qrcodeFailed=true"></script>
 
-<!-- d3 for #10 skill graph — loaded async, falls back to flat list if CDN fails -->
-<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer onerror="window.__d3Failed=true"></script>
+<!-- d3 was used for the old force-directed skill graph. The new layered DAG uses plain SVG, no CDN needed. -->
+
 
 <!-- MODAL -->
 <div class="modal-overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-hidden="true" onclick="if(event.target===this)closeModal()">
@@ -7585,6 +7646,24 @@ const DATA = [
               L('docs', 'React Hook Form', 'https://react-hook-form.com/'),
               L('docs', 'Zod', 'https://zod.dev/'),
               L('tutorial', 'RHF + Zod', 'https://react-hook-form.com/get-started#SchemaValidation')
+            ]},
+          { id: 'tanstack-query', name: 'TanStack Query (Server State)', t: 'req',
+            desc: 'The standard for fetching, caching, and synchronizing server state in React. Replaces 90% of useEffect+useState data-fetching code with cleaner declarative queries, automatic re-fetching, and caching.',
+            why: '~85% of React production apps in 2026 use TanStack Query (formerly React Query). Skipping it means writing fragile manual loading/error state for every API call.',
+            links: [
+              L('docs', 'TanStack Query', 'https://tanstack.com/query/latest'),
+              L('docs', 'TanStack Query Quick Start', 'https://tanstack.com/query/latest/docs/framework/react/quick-start'),
+              L('video', 'TanStack Query in 100 seconds (Fireship)', 'https://www.youtube.com/watch?v=novnyCaa7To'),
+              L('tutorial', 'Practical React Query (TkDodo)', 'https://tkdodo.eu/blog/practical-react-query')
+            ]},
+          { id: 'react-state-libs', name: 'State Libraries (Zustand / Jotai)', t: 'rec',
+            desc: 'Lightweight global state for things Context isn\'t great at (theme, auth user, app shell state). Zustand = single store; Jotai = atomic primitives. Both replace Redux for 90% of new apps.',
+            why: 'Redux is overkill for most apps; Context re-renders too aggressively. Zustand is the 2026 default for shared client state.',
+            links: [
+              L('docs', 'Zustand', 'https://zustand-demo.pmnd.rs/'),
+              L('docs', 'Jotai', 'https://jotai.org/'),
+              L('tutorial', 'Zustand Tutorial (TkDodo)', 'https://tkdodo.eu/blog/working-with-zustand'),
+              L('video', 'Zustand in 11 minutes', 'https://www.youtube.com/watch?v=_ngCLZ5Iz-0')
             ]}
         ]
       },
@@ -7885,6 +7964,15 @@ const DATA = [
             links: [
               L('docs', 'Fastify Docs', 'https://fastify.dev/')
             ]},
+          { id: 'trpc', name: 'tRPC (end-to-end type safety)', t: 'rec',
+            desc: 'TypeScript-first API framework. Calls between your Next.js frontend and Node backend become as type-safe as local function calls — no manual API contracts, no Zod-validated request/response objects, autocomplete across the wire.',
+            why: 'Eliminates an entire class of "I forgot to update the response shape" bugs in monorepos. Used by Vercel, Cal.com, and most modern T3-stack startups.',
+            links: [
+              L('docs', 'tRPC', 'https://trpc.io/'),
+              L('docs', 'tRPC Quick Start', 'https://trpc.io/docs/quickstart'),
+              L('video', 'tRPC in 100 seconds', 'https://www.youtube.com/watch?v=2LYM8gf184U'),
+              L('tutorial', 'create-t3-app (full template)', 'https://create.t3.gg/')
+            ]},
           { id: 'prisma', name: 'Prisma ORM', t: 'req',
             desc: 'Type-safe DB client, schema, migrations.',
             why: 'Best TS-first ORM.',
@@ -8146,6 +8234,23 @@ const DATA = [
               L('docs', 'OpenAI API', 'https://platform.openai.com/docs/api-reference'),
               L('docs', 'OpenAI Cookbook', 'https://cookbook.openai.com/')
             ]},
+          { id: 'other-providers', name: 'Other LLM Providers (Gemini / Groq / Mistral)', t: 'rec',
+            desc: 'Google Gemini for long-context (2M tokens) + cheaper Flash. Groq for blazing-fast inference (open Llama at <500ms). Mistral for European-hosted open models. Each fills a niche Anthropic+OpenAI miss.',
+            why: 'Real production apps often route to different providers per task (cheap classification → Gemini Flash, fast UI → Groq, EU compliance → Mistral). Vendor diversity also de-risks outages.',
+            links: [
+              L('docs', 'Google Gemini API', 'https://ai.google.dev/gemini-api/docs'),
+              L('docs', 'Groq Cloud (fast Llama)', 'https://console.groq.com/docs/quickstart'),
+              L('docs', 'Mistral API', 'https://docs.mistral.ai/'),
+              L('tutorial', 'Gemini Cookbook (Google)', 'https://github.com/google-gemini/cookbook')
+            ]},
+          { id: 'openrouter', name: 'OpenRouter (Unified Gateway)', t: 'rec',
+            desc: 'One API key, 100+ models from every provider. Use $5 of credits and try Claude, GPT, Gemini, Llama, Grok, etc. with the same OpenAI-compatible client.',
+            why: 'Removes signup friction across providers and gives you a fallback when one provider has an outage. Built-in routing and cost optimization.',
+            links: [
+              L('docs', 'OpenRouter', 'https://openrouter.ai/'),
+              L('docs', 'OpenRouter Quickstart', 'https://openrouter.ai/docs/quickstart'),
+              L('docs', 'OpenRouter Models', 'https://openrouter.ai/models')
+            ]},
           { id: 'streaming', name: 'Streaming', t: 'req',
             desc: 'SSE, partial responses, UI updates as text arrives.',
             why: 'Streaming UX feels 10x faster.',
@@ -8268,6 +8373,13 @@ const DATA = [
             why: 'Self-hosted but production-ready.',
             links: [
               L('docs', 'Qdrant Docs', 'https://qdrant.tech/documentation/')
+            ]},
+          { id: 'weaviate', name: 'Weaviate', t: 'alt',
+            desc: 'Open-source vector DB with hybrid search (vector + BM25) and built-in modules for embedding/reranking.',
+            why: 'Hybrid search out of the box often beats pure vector search. Good for production RAG where keyword matches matter (legal, medical, code).',
+            links: [
+              L('docs', 'Weaviate Docs', 'https://weaviate.io/developers/weaviate'),
+              L('tutorial', 'Weaviate Quickstart', 'https://weaviate.io/developers/weaviate/quickstart')
             ]}
         ]
       },
@@ -8326,6 +8438,21 @@ const DATA = [
             why: 'Productive for prototypes.',
             links: [
               L('docs', 'LangChain Docs', 'https://python.langchain.com/docs/introduction/')
+            ]},
+          { id: 'dspy', name: 'DSPy (Programming, Not Prompting)', t: 'rec',
+            desc: 'Stanford framework that treats LLM behavior as compilable signatures. You declare what inputs map to what outputs; DSPy optimizes the prompts automatically. Replaces hand-tuning with metric-driven compilation.',
+            why: 'When your prompt+model+task combo gets brittle, DSPy compiles a better version from a few examples. Increasingly used in production agents.',
+            links: [
+              L('docs', 'DSPy Docs', 'https://dspy.ai/'),
+              L('docs', 'DSPy Tutorial', 'https://dspy.ai/tutorials/'),
+              L('video', 'DSPy Explained', 'https://www.youtube.com/watch?v=Y94tw4eDHW0')
+            ]},
+          { id: 'outlines', name: 'Outlines / Constrained Generation', t: 'opt',
+            desc: 'Library for forcing LLM output to fit a regex, JSON schema, or grammar — guaranteed structured output, not "hope the model behaves".',
+            why: 'When tool-use isn\'t enough and you must guarantee output shape (compilers, parsers, codegen).',
+            links: [
+              L('docs', 'Outlines', 'https://dottxt-ai.github.io/outlines/latest/'),
+              L('tutorial', 'Structured Generation Tutorial', 'https://dottxt-ai.github.io/outlines/latest/quickstart/')
             ]}
         ]
       },
@@ -13450,155 +13577,330 @@ function refreshFlashcardsButton(stageId, topicId) {
    #10 SKILL DEPENDENCY GRAPH (d3 force-directed)
    ============================================================ */
 // Auto-derive prereqs: stage N depends on stage N-1; within a stage, each topic depends on previous in branch.
-function buildSkillGraphData() {
+/* ============================================================
+   #10 SKILL GRAPH — layered DAG (rebuilt, no d3 dependency)
+   Stages = horizontal bands stacked top-to-bottom.
+   Branches = columns inside each band.
+   Topics = nodes stacked vertically inside their branch column.
+   Cross-stage anchor links join the last topic of stage N to the first
+   topic of the next stage's first branch.
+   Deterministic positions — never re-shuffles on reload.
+   ============================================================ */
+
+// Per-stage hue (HSL). Stable, consistent with the page palette.
+const STAGE_HUES = [40, 200, 260, 320, 0, 30, 280, 220, 160]; // 9 stages
+
+function buildSkillGraphLayout(filter) {
+  const bandHeight = 220;        // height per stage band
+  const bandPadTop = 56;          // top inside a band (room for label + branch labels)
+  const bandPadBottom = 16;
+  const xMargin = 80;
+  const branchGap = 24;           // px between branch columns
+  const topicRowHeight = 28;      // px between topic dots within a branch
+  const minWidth = 880;
+
+  // First pass: filter topics + compute branch widths per stage
+  const stagesLayout = DATA.map(stage => {
+    const branches = stage.branches.map(branch => {
+      const topics = branch.topics.filter(t => filter(stage.id, branch.name, t));
+      return { name: branch.name, topics, count: topics.length };
+    }).filter(b => b.count > 0);
+    return { stage, branches, hasAny: branches.length > 0 };
+  });
+
+  // Width: distribute branches per stage evenly within usable width
+  // Use the stage with the most branches to size columns consistently
+  const maxBranches = Math.max(1, ...stagesLayout.map(sl => sl.branches.length));
+  // Reserve a min column width
+  const minColWidth = 130;
+  const calcWidth = xMargin * 2 + maxBranches * (minColWidth + branchGap);
+  const width = Math.max(minWidth, calcWidth);
+  const colWidth = (width - xMargin * 2 - (maxBranches - 1) * branchGap) / maxBranches;
+
+  // Second pass: position
   const nodes = [];
-  const links = [];
-  DATA.forEach(stage => {
-    stage.branches.forEach(branch => {
-      branch.topics.forEach((topic, i) => {
-        const id = `${stage.id}::${topic.id}`;
-        nodes.push({
-          id, stageId: stage.id, topicId: topic.id,
-          label: topic.name, tier: topic.t, branch: branch.name,
-          complete: isComplete(stage.id, topic.id),
-        });
-        if (i > 0) {
-          // Within-branch sequential
-          links.push({ source: `${stage.id}::${branch.topics[i - 1].id}`, target: id });
-        } else if (stage.id > 0) {
-          // First topic in branch depends on the LAST required topic of the previous stage (one anchor link)
-          const prevStage = DATA[stage.id - 1];
-          if (prevStage) {
-            const lastTopic = prevStage.branches[prevStage.branches.length - 1]?.topics?.slice(-1)[0];
-            if (lastTopic) links.push({ source: `${prevStage.id}::${lastTopic.id}`, target: id });
-          }
-        }
+  const branchHeaders = [];
+  const bandRows = [];
+  const anchorLinks = [];
+  let y = 0;
+  let prevLastNode = null;
+
+  stagesLayout.forEach((sl, stageIndex) => {
+    const stage = sl.stage;
+    // Each stage gets a band — height grows with the tallest branch
+    const tallestBranch = Math.max(1, ...sl.branches.map(b => b.count));
+    const dynBandHeight = Math.max(bandHeight, bandPadTop + tallestBranch * topicRowHeight + bandPadBottom);
+
+    bandRows.push({
+      stageId: stage.id, title: stage.title,
+      yTop: y, height: dynBandHeight,
+      hue: STAGE_HUES[stage.id % STAGE_HUES.length],
+      totalTopics: stage.branches.reduce((s, b) => s + b.topics.length, 0),
+      visibleTopics: sl.branches.reduce((s, b) => s + b.count, 0),
+      doneTopics: stage.branches.reduce((s, b) => s + b.topics.filter(t => isComplete(stage.id, t.id)).length, 0)
+    });
+
+    let firstNodeOfStage = null;
+    let lastNodeOfStage = null;
+
+    sl.branches.forEach((b, bi) => {
+      const colCenter = xMargin + bi * (colWidth + branchGap) + colWidth / 2;
+      branchHeaders.push({
+        x: colCenter, y: y + 38,
+        text: b.name, stageId: stage.id
+      });
+      b.topics.forEach((t, ti) => {
+        const nodeY = y + bandPadTop + 14 + ti * topicRowHeight;
+        const n = {
+          id: `${stage.id}::${t.id}`, stageId: stage.id, topicId: t.id,
+          label: t.name, tier: t.t, branch: b.name,
+          x: colCenter, y: nodeY,
+          complete: isComplete(stage.id, t.id),
+          hue: STAGE_HUES[stage.id % STAGE_HUES.length]
+        };
+        nodes.push(n);
+        if (!firstNodeOfStage) firstNodeOfStage = n;
+        lastNodeOfStage = n;
       });
     });
+
+    // Anchor link from previous stage's last node to this stage's first node
+    if (prevLastNode && firstNodeOfStage) {
+      anchorLinks.push({ from: prevLastNode, to: firstNodeOfStage });
+    }
+    prevLastNode = lastNodeOfStage || prevLastNode;
+    y += dynBandHeight;
   });
-  return { nodes, links };
+
+  return { nodes, branchHeaders, bandRows, anchorLinks, width, height: y };
+}
+
+let __graphFilter = { req: true, rec: true, opt: true, alt: true, status: 'all', search: '' };
+
+function passesGraphFilter(stageId, branchName, topic) {
+  if (!__graphFilter[topic.t]) return false;
+  const k = `${stageId}::${topic.id}`;
+  const done = isComplete(stageId, topic.id);
+  if (__graphFilter.status === 'done' && !done) return false;
+  if (__graphFilter.status === 'open' && done) return false;
+  if (__graphFilter.search) {
+    const q = __graphFilter.search.toLowerCase();
+    if (!topic.name.toLowerCase().includes(q) && !branchName.toLowerCase().includes(q)) return false;
+  }
+  return true;
 }
 
 function openSkillGraph() {
-  const d3Available = window.d3 && !window.__d3Failed;
-  if (!d3Available) {
-    showPracticeModal('🕸 Skill Graph', `
-      <p class="practice-intro">Skill graph requires the d3 library — couldn't load it from the CDN.</p>
-      <div class="graph-fallback">
-        Network blocked or you're offline. The graph would show ${DATA.reduce((s, st) => s + st.branches.reduce((a, b) => a + b.topics.length, 0), 0)} topics with prerequisite links between them.<br><br>
-        Falling back to a flat list view by stage:
-      </div>
-      <ol>${DATA.map(s => `<li><strong>Stage ${s.id}: ${escapeHtml(s.title)}</strong> — ${s.branches.reduce((a, b) => a + b.topics.length, 0)} topics</li>`).join('')}</ol>
-    `);
-    return;
-  }
+  const totalTopics = DATA.reduce((s, st) => s + st.branches.reduce((a, b) => a + b.topics.length, 0), 0);
   const html = `
-    <p class="practice-intro">Force-directed graph of topics with prerequisite links. Click a node to highlight its prereqs and downstream topics.</p>
-    <div class="graph-container">
-      <svg class="graph-svg" id="graphSvg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet"></svg>
-      <div class="graph-info" id="graphInfo"><strong>Tip:</strong> Drag a node to reposition. Scroll to zoom. Click to highlight prereqs + dependents.</div>
-      <div class="graph-legend">
-        <span><span class="dot" style="background: var(--node-stage)"></span> required</span>
-        <span><span class="dot" style="background: var(--node-branch)"></span> recommended</span>
-        <span><span class="dot" style="background: var(--bg-card)"></span> optional</span>
-        <span><span class="dot" style="background: var(--node-done)"></span> done</span>
+    <p class="practice-intro">All ${totalTopics} topics laid out by stage (top → bottom) and branch (left → right). Click any node to open that topic. Click a stage label to jump there in the main roadmap.</p>
+    <div class="graph-toolbar" id="graphToolbar">
+      <span class="toolbar-label">Tier:</span>
+      <div class="pill-group">
+        <label class="pill active" data-tier="req"><input type="checkbox" checked /> ● required</label>
+        <label class="pill active" data-tier="rec"><input type="checkbox" checked /> ■ recommended</label>
+        <label class="pill active" data-tier="opt"><input type="checkbox" checked /> ○ optional</label>
+        <label class="pill active" data-tier="alt"><input type="checkbox" checked /> alt</label>
       </div>
+      <span class="toolbar-label" style="margin-left: 8px;">Status:</span>
+      <div class="pill-group" id="graphStatusGroup">
+        <label class="pill active" data-status="all">All</label>
+        <label class="pill" data-status="open">Open</label>
+        <label class="pill" data-status="done">Done</label>
+      </div>
+      <input type="search" id="graphSearch" placeholder="Search topic or branch..." />
+      <label class="pill" data-compact><input type="checkbox" /> Compact</label>
+      <button class="pill" onclick="resetGraphFilters()" type="button" style="border-style: dashed;">Reset</button>
+    </div>
+    <div class="graph-container" id="graphContainer">
+      <svg class="graph-svg" id="graphSvg" preserveAspectRatio="xMinYMin"></svg>
+      <div class="gtooltip" id="graphTooltip" role="tooltip"></div>
+      <div class="graph-empty" id="graphEmpty">No topics match the current filters.</div>
     </div>
   `;
   showPracticeModal('🕸 Skill Graph', html);
-  // d3 force layout setup after DOM is ready
-  setTimeout(renderSkillGraph, 50);
+  // Wire filter pills
+  setTimeout(() => {
+    document.querySelectorAll('#graphToolbar [data-tier]').forEach(p => {
+      p.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tier = p.dataset.tier;
+        __graphFilter[tier] = !__graphFilter[tier];
+        p.classList.toggle('active', __graphFilter[tier]);
+        p.querySelector('input').checked = __graphFilter[tier];
+        renderSkillGraph();
+      });
+    });
+    document.querySelectorAll('#graphStatusGroup [data-status]').forEach(p => {
+      p.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('#graphStatusGroup [data-status]').forEach(b => b.classList.remove('active'));
+        p.classList.add('active');
+        __graphFilter.status = p.dataset.status;
+        renderSkillGraph();
+      });
+    });
+    const compactPill = document.querySelector('[data-compact]');
+    compactPill?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const c = document.getElementById('graphContainer');
+      const on = !c.classList.contains('compact');
+      c.classList.toggle('compact', on);
+      compactPill.classList.toggle('active', on);
+      compactPill.querySelector('input').checked = on;
+    });
+    const search = document.getElementById('graphSearch');
+    search?.addEventListener('input', debounce(() => {
+      __graphFilter.search = search.value.trim();
+      renderSkillGraph();
+    }, 150));
+    renderSkillGraph();
+  }, 30);
+}
+
+function resetGraphFilters() {
+  __graphFilter = { req: true, rec: true, opt: true, alt: true, status: 'all', search: '' };
+  document.querySelectorAll('#graphToolbar [data-tier]').forEach(p => {
+    p.classList.add('active');
+    p.querySelector('input').checked = true;
+  });
+  document.querySelectorAll('#graphStatusGroup [data-status]').forEach(p => p.classList.toggle('active', p.dataset.status === 'all'));
+  const search = document.getElementById('graphSearch'); if (search) search.value = '';
+  renderSkillGraph();
 }
 
 function renderSkillGraph() {
-  const d3 = window.d3;
-  if (!d3) return;
-  const { nodes, links } = buildSkillGraphData();
-  const svg = d3.select('#graphSvg');
-  if (svg.empty()) return;
-  const width = 800, height = 500;
-  svg.selectAll('*').remove();
+  const svg = document.getElementById('graphSvg');
+  const empty = document.getElementById('graphEmpty');
+  const tooltip = document.getElementById('graphTooltip');
+  if (!svg) return;
+  const layout = buildSkillGraphLayout(passesGraphFilter);
 
-  const g = svg.append('g');
-  // Zoom
-  svg.call(d3.zoom().scaleExtent([0.3, 4]).on('zoom', (e) => g.attr('transform', e.transform)));
-
-  const link = g.selectAll('.graph-link').data(links).enter().append('line').attr('class', 'graph-link');
-  const node = g.selectAll('.graph-node').data(nodes).enter().append('g').attr('class', 'graph-node');
-  const colorForNode = (n) => n.complete ? 'var(--node-done)' : (n.tier === 'req' ? 'var(--node-stage)' : (n.tier === 'rec' ? 'var(--node-branch)' : 'var(--bg-card)'));
-  node.append('circle').attr('r', d => d.tier === 'req' ? 7 : 5).attr('fill', colorForNode);
-  node.append('text').attr('dx', 8).attr('dy', 3).attr('font-size', d => d.tier === 'req' ? 11 : 9).text(d => d.label.length > 22 ? d.label.slice(0, 20) + '…' : d.label);
-
-  const sim = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(40).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-50))
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collision', d3.forceCollide().radius(18));
-
-  // Respect reduce-motion: run the simulation synchronously for ~300 ticks, then freeze.
-  // No animation, but final layout is identical.
-  const reduceMotion = state.settings?.reduceMotion ||
-    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const paintPositions = () => {
-    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-    node.attr('transform', d => `translate(${d.x},${d.y})`);
-  };
-  if (reduceMotion) {
-    sim.stop();
-    sim.tick(300);
-    paintPositions();
-  } else {
-    sim.on('tick', paintPositions);
+  if (!layout.nodes.length) {
+    svg.innerHTML = '';
+    empty?.classList.add('show');
+    return;
   }
+  empty?.classList.remove('show');
 
-  // Drag
-  node.call(d3.drag()
-    .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
-    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
-    .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+  svg.setAttribute('viewBox', `0 0 ${layout.width} ${layout.height}`);
+  svg.setAttribute('width', layout.width);
+  svg.setAttribute('height', layout.height);
 
-  // Click → highlight ancestors + descendants
-  node.on('click', (e, d) => {
-    const upstream = new Set([d.id]);
-    const downstream = new Set([d.id]);
-    let added = true;
-    while (added) {
-      added = false;
-      links.forEach(l => {
-        const sid = typeof l.source === 'object' ? l.source.id : l.source;
-        const tid = typeof l.target === 'object' ? l.target.id : l.target;
-        if (downstream.has(sid) && !downstream.has(tid)) { downstream.add(tid); added = true; }
-        if (upstream.has(tid) && !upstream.has(sid)) { upstream.add(sid); added = true; }
-      });
-    }
-    const keep = new Set([...upstream, ...downstream]);
-    node.classed('dim', n => !keep.has(n.id));
-    node.classed('highlighted', n => n.id === d.id);
-    link.classed('dim', l => {
-      const sid = typeof l.source === 'object' ? l.source.id : l.source;
-      const tid = typeof l.target === 'object' ? l.target.id : l.target;
-      return !(keep.has(sid) && keep.has(tid));
-    });
-    link.classed('highlighted', l => {
-      const sid = typeof l.source === 'object' ? l.source.id : l.source;
-      const tid = typeof l.target === 'object' ? l.target.id : l.target;
-      return (upstream.has(sid) && upstream.has(tid)) || (downstream.has(sid) && downstream.has(tid));
-    });
-    document.getElementById('graphInfo').innerHTML =
-      `<strong>${escapeHtml(d.label)}</strong><br>` +
-      `Stage ${d.stageId} · ${d.tier} · ${d.complete ? '✓ done' : '○ open'}<br>` +
-      `<span style="font-size:11px; color: var(--text-mute)">${upstream.size - 1} prereqs · ${downstream.size - 1} downstream</span>`;
+  // Build SVG with strings — fast, no per-node bind churn
+  const parts = [];
+
+  // Stage bands
+  layout.bandRows.forEach(b => {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    const bandFill = isDark ? `hsla(${b.hue}, 35%, 22%, 0.55)` : `hsla(${b.hue}, 70%, 92%, 0.7)`;
+    const progressPct = b.totalTopics ? (b.doneTopics / b.totalTopics) * 100 : 0;
+    parts.push(`<g class="gband" data-stage="${b.stageId}">
+      <rect class="gband-bg" x="6" y="${b.yTop + 4}" width="${layout.width - 12}" height="${b.height - 8}" rx="10" fill="${bandFill}" />
+      <rect class="gband-progress-bar" x="6" y="${b.yTop + b.height - 8}" width="${(layout.width - 12) * progressPct / 100}" height="4" rx="2" />
+      <text class="gband-label" x="22" y="${b.yTop + 26}" data-stage-id="${b.stageId}">Stage ${b.stageId} · ${escapeXmlText(b.title)}</text>
+      <text class="gband-meta" x="22" y="${b.yTop + 42}">${b.doneTopics}/${b.totalTopics} done${b.visibleTopics !== b.totalTopics ? ` · ${b.visibleTopics} shown` : ''}</text>
+    </g>`);
   });
 
-  // Background click clears highlight
-  svg.on('click', (e) => {
-    if (e.target.tagName === 'svg' || e.target.classList.contains('graph-svg')) {
-      node.classed('dim', false).classed('highlighted', false);
-      link.classed('dim', false).classed('highlighted', false);
-      document.getElementById('graphInfo').innerHTML = '<strong>Tip:</strong> Drag a node to reposition. Scroll to zoom. Click to highlight prereqs + dependents.';
-    }
+  // Branch headers
+  layout.branchHeaders.forEach(bh => {
+    parts.push(`<text class="gbranch-label" x="${bh.x}" y="${bh.y}">${escapeXmlText(bh.text)}</text>`);
   });
+
+  // Anchor arrows between stages
+  // arrowhead marker
+  parts.push(`<defs>
+    <marker id="garrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" class="ganchor-arrow" />
+    </marker>
+  </defs>`);
+  layout.anchorLinks.forEach(l => {
+    const fx = l.from.x, fy = l.from.y, tx = l.to.x, ty = l.to.y;
+    const mid = (fy + ty) / 2;
+    parts.push(`<path class="ganchor-link" d="M ${fx} ${fy + 8} C ${fx} ${mid}, ${tx} ${mid}, ${tx} ${ty - 8}" marker-end="url(#garrow)" />`);
+  });
+
+  // Nodes
+  layout.nodes.forEach(n => {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    const fill = n.complete
+      ? 'var(--node-done)'
+      : (isDark ? `hsl(${n.hue}, 50%, 50%)` : `hsl(${n.hue}, 75%, 65%)`);
+    let shape = '';
+    const r = n.tier === 'req' ? 9 : (n.tier === 'rec' ? 8 : 7);
+    if (n.tier === 'rec') {
+      // Square
+      shape = `<rect class="gnode-shape" x="${-r}" y="${-r}" width="${r*2}" height="${r*2}" rx="2" fill="${fill}" />`;
+    } else if (n.tier === 'opt' || n.tier === 'alt') {
+      // Ring
+      shape = `<circle class="gnode-shape" r="${r}" fill="${n.complete ? fill : 'var(--bg-card)'}" />`;
+    } else {
+      // Filled circle (req)
+      shape = `<circle class="gnode-shape" r="${r}" fill="${fill}" />`;
+    }
+    const check = n.complete ? `<text class="gnode-check" dy="3.5">✓</text>` : '';
+    const labelMax = 28;
+    const label = n.label.length > labelMax ? n.label.slice(0, labelMax - 1) + '…' : n.label;
+    parts.push(`<g class="gnode tier-${n.tier} ${n.complete ? 'complete' : ''}" transform="translate(${n.x},${n.y})" data-stage="${n.stageId}" data-topic="${n.topicId}" data-name="${escapeXmlText(n.label)}" data-branch="${escapeXmlText(n.branch)}" data-tier="${n.tier}" data-complete="${n.complete}">
+      ${shape}${check}
+      <text class="gnode-label" x="${r + 6}" y="3">${escapeXmlText(label)}</text>
+    </g>`);
+  });
+
+  svg.innerHTML = parts.join('');
+
+  // Wire interactivity
+  svg.querySelectorAll('.gnode').forEach(el => {
+    el.addEventListener('click', () => {
+      const stageId = parseInt(el.dataset.stage, 10);
+      const topicId = el.dataset.topic;
+      closePracticeModal();
+      openModal(stageId, topicId);
+    });
+    el.addEventListener('mouseenter', (e) => {
+      tooltip.innerHTML = `<strong>${escapeHtml(el.dataset.name)}</strong>
+        <em>${escapeHtml(el.dataset.branch)} · ${el.dataset.tier} · ${el.dataset.complete === 'true' ? '✓ done' : '○ open'}</em>`;
+      tooltip.classList.add('show');
+    });
+    el.addEventListener('mousemove', (e) => {
+      const container = document.getElementById('graphContainer');
+      const rect = container.getBoundingClientRect();
+      tooltip.style.left = `${e.clientX - rect.left + 12}px`;
+      tooltip.style.top = `${e.clientY - rect.top + 12}px`;
+    });
+    el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
+      }
+    });
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', `${el.dataset.name} (Stage ${el.dataset.stage}, ${el.dataset.tier}${el.dataset.complete === 'true' ? ', complete' : ''}) — click to open`);
+  });
+
+  // Stage label jump-to-section
+  svg.querySelectorAll('.gband-label').forEach(el => {
+    el.addEventListener('click', () => {
+      const stageId = el.dataset.stageId;
+      closePracticeModal();
+      const target = document.getElementById(`stage-${stageId}`) || document.querySelector(`[id^="stage-"][id$="${stageId}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Fallback: scroll to the first topic in that stage
+        const node = document.querySelector(`.topic[data-tk^="${stageId}::"]`);
+        node?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+}
+
+// Helper: escape text for SVG attribute or text content
+function escapeXmlText(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 /* ============================================================
@@ -13885,7 +14187,10 @@ function dismissSkillSuggestion() {
    ============================================================ */
 applyTheme();
 applySettings();
-// Hydrate the pre-rendered static HTML (don't re-render and overwrite it)
+// Re-render from DATA so new topics added to DATA pick up automatically.
+// (Static HTML below in #roadmap is kept as the no-JS fallback only.)
+try { render(); } catch (e) { console.error('render() failed; falling back to static HTML', e); }
+// Hydrate state (complete/in-progress) into the freshly-rendered HTML.
 hydrate();
 initHowto();
 refreshTodaysFocus();
