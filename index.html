@@ -1376,6 +1376,186 @@ abbr.glossary-term:hover::after {
 }
 .phub-section-count { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400; }
 
+/* ---- AI INSTRUCTOR — chat with Claude as your tutor ---- */
+.ai-instructor-modal { display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; height: 75vh; min-height: 540px; }
+.ai-instructor-modal .ai-header {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 12px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text);
+}
+.ai-instructor-modal .ai-header strong { font-family: 'Kalam', cursive; font-weight: 700; }
+.ai-instructor-modal .ai-cost { color: var(--text-mute); margin-left: auto; font-size: 12px; }
+.ai-instructor-modal .ai-model-select {
+  padding: 3px 8px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 5px;
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text); cursor: pointer;
+}
+.ai-quick-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.ai-quick-actions button {
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12.5px;
+  cursor: pointer;
+}
+.ai-quick-actions button:hover { background: var(--node-stage); }
+.ai-chat-log {
+  flex: 1; overflow-y: auto; padding: 8px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ai-msg { display: grid; gap: 4px; max-width: 90%; }
+.ai-msg.role-user { justify-self: end; }
+.ai-msg.role-assistant { justify-self: start; }
+.ai-msg-role {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-mute);
+}
+.ai-msg-body {
+  padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px;
+  font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.55; color: var(--text);
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.ai-msg.role-user .ai-msg-body { background: var(--node-stage); }
+.ai-msg.role-assistant .ai-msg-body { background: var(--bg-card); }
+.ai-msg-body code {
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 13px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 3px;
+  padding: 1px 5px;
+}
+.ai-msg-body pre {
+  background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  padding: 10px 12px; margin: 6px 0; overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; line-height: 1.45;
+}
+.ai-msg-body pre code { background: none; border: none; padding: 0; }
+.ai-input-row { display: flex; gap: 6px; align-items: stretch; }
+.ai-input-row textarea {
+  flex: 1; min-height: 60px; max-height: 200px; resize: vertical;
+  padding: 10px 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 15px; color: var(--text);
+}
+.ai-input-row button {
+  padding: 0 18px; min-width: 80px; align-self: stretch;
+  background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; cursor: pointer;
+}
+.ai-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+.ai-input-row button.danger { background: #fee2e2; }
+
+.ai-setup { display: grid; gap: 14px; padding: 16px; }
+.ai-setup h3 { font-family: 'Architects Daughter', cursive; font-size: 22px; }
+.ai-setup p { font-family: 'Patrick Hand', cursive; font-size: 14.5px; line-height: 1.55; color: var(--text); }
+.ai-setup ol { margin: 4px 0 4px 22px; font-family: 'Patrick Hand', cursive; font-size: 14.5px; line-height: 1.6; color: var(--text); }
+.ai-setup ol li { margin-bottom: 6px; }
+.ai-setup input[type="password"] {
+  padding: 10px 14px; background: var(--bg); border: 2.5px solid var(--border); border-radius: 8px;
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; color: var(--text);
+  width: 100%;
+}
+.ai-setup .ai-security {
+  padding: 12px 14px; background: #fef3c7; color: #1a1a1a; border: 2px solid #f59e0b; border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; line-height: 1.5;
+}
+:root[data-theme="dark"] .ai-setup .ai-security { background: #422006; color: #fef3c7; border-color: #fbbf24; }
+.ai-setup .ai-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.ai-setup .ai-actions button {
+  padding: 8px 16px; background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.ai-setup .ai-actions button.secondary { background: var(--bg-card); color: var(--text); }
+.ai-empty {
+  text-align: center; padding: 30px 16px; color: var(--text-mute);
+  font-family: 'Patrick Hand', cursive; font-size: 14px;
+}
+.ai-typing { display: inline-flex; gap: 3px; align-items: center; }
+.ai-typing span {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text-mute);
+  animation: ai-bounce 1.4s infinite ease-in-out both;
+}
+.ai-typing span:nth-child(2) { animation-delay: 0.16s; }
+.ai-typing span:nth-child(3) { animation-delay: 0.32s; }
+@keyframes ai-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ---- ACCOUNTABILITY — daily commits + check-ins ---- */
+.accountability-grid { display: grid; gap: 14px; }
+.accountability-card {
+  padding: 14px 16px; border: 2.5px solid var(--border); border-radius: 10px; background: var(--bg-card);
+}
+.accountability-card h4 {
+  font-family: 'Architects Daughter', cursive; font-size: 18px; margin-bottom: 10px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.accountability-card h4 .meta {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400;
+}
+.acct-today-form { display: grid; grid-template-columns: 1fr 100px auto; gap: 6px; align-items: center; }
+.acct-today-form label {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; color: var(--text);
+  grid-column: 1 / -1;
+}
+.acct-today-form input {
+  padding: 6px 10px; background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.acct-today-form button {
+  padding: 6px 14px; background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+.acct-today-stat {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 8px 0; border-bottom: 1.5px dashed var(--border);
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.acct-today-stat:last-child { border-bottom: none; }
+.acct-today-stat strong { font-family: 'Kalam', cursive; font-weight: 700; font-size: 18px; color: var(--text); }
+.acct-progress-bar {
+  height: 8px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden;
+  margin-top: 4px;
+}
+.acct-progress-fill { height: 100%; background: var(--node-stage); transition: width 0.3s; }
+.acct-progress-fill.over { background: var(--node-done); }
+.acct-week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+  margin-top: 8px;
+}
+.acct-week-day {
+  aspect-ratio: 1; border: 2px solid var(--border); border-radius: 6px;
+  background: var(--bg); display: grid; place-items: center;
+  font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text);
+  position: relative;
+}
+.acct-week-day .day-label { font-size: 10px; color: var(--text-mute); position: absolute; top: 2px; left: 4px; }
+.acct-week-day .day-hours { font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px; }
+.acct-week-day.met { background: #d1fae5; }
+.acct-week-day.over { background: var(--node-done); }
+.acct-week-day.partial { background: #fef3c7; }
+.acct-week-day.today { border-width: 3px; }
+:root[data-theme="dark"] .acct-week-day.met { background: #064e3b; color: #6ee7b7; }
+:root[data-theme="dark"] .acct-week-day.partial { background: #422006; color: #fef3c7; }
+.acct-checkin {
+  display: grid; gap: 8px;
+}
+.acct-checkin textarea {
+  min-height: 70px; padding: 8px 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+  resize: vertical;
+}
+.acct-checkin-prompts {
+  font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); line-height: 1.5;
+}
+.acct-history {
+  display: grid; gap: 6px; max-height: 240px; overflow-y: auto;
+}
+.acct-history-entry {
+  padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--bg);
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; color: var(--text); line-height: 1.45;
+}
+.acct-history-entry .date {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px; color: var(--text-mute);
+}
+
 /* ---- BUILDS — step-by-step project guides (Stage 3 of content expansion) ---- */
 .builds-intro { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
 .builds-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
@@ -2063,6 +2243,8 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
           <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
+          <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
+          <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability</button>
           <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
@@ -2089,7 +2271,7 @@ abbr.glossary-term:hover::after {
           <li>Want to become a <strong>Full Stack + AI Engineer</strong> employable in 2026+</li>
           <li data-personal="timelineYesIf">Have <strong>16-25 months of focused learning time</strong> available at ~30 hrs/week — realistically <strong>24-36 months</strong> for most self-taught learners juggling life</li>
           <li>Prefer <strong>one opinionated path</strong> over endless "choose your own adventure" tutorials</li>
-          <li>Want a stack built around <strong>TypeScript, React, Next.js, Node, Python, Postgres, Anthropic, OpenAI</strong></li>
+          <li>Want a stack built around <strong>TypeScript, React, Next.js, Node, Python, Postgres, Anthropic Claude</strong></li>
           <li>Are okay being <strong>self-directed</strong> (no instructor will check on you)</li>
           <li>Want both <strong>traditional engineering skills AND modern AI engineering</strong> (RAG, agents, MCP)</li>
         </ul>
@@ -4857,7 +5039,7 @@ abbr.glossary-term:hover::after {
           <div class="stage-band-info">
             <div class="super">~ Weeks 41–72 · 8–12 weeks · ~240–360 hrs ~</div>
             <h2>LLM Application Development</h2>
-            <div class="desc">Integrate Anthropic and OpenAI APIs. Prompts, streaming, tool use, structured outputs, local models with Ollama.</div>
+            <div class="desc">Integrate Anthropic Claude APIs. Prompts, streaming, tool use, structured outputs, local models with Ollama.</div>
             <div class="stage-schedule-slot" data-stage-id="5"></div>
           </div>
           <div class="stage-band-meta">
@@ -4945,7 +5127,7 @@ abbr.glossary-term:hover::after {
             Provider APIs
             <span class="count">6</span>
           </div>
-          <div class="branch-desc">Anthropic and OpenAI — integrating real LLMs into your apps</div>
+          <div class="branch-desc">Anthropic Claude — integrating real LLMs into your apps + Voyage AI for embeddings</div>
           <div class="topics">
           <div class="topic req " data-tk="5::anthropic-api" onclick="openModal(5, 'anthropic-api')" role="button" tabindex="0" aria-label="Anthropic API — req">
             <div class="check" aria-hidden="true"></div>
@@ -4953,9 +5135,9 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
-          <div class="topic req " data-tk="5::openai-api" onclick="openModal(5, 'openai-api')" role="button" tabindex="0" aria-label="OpenAI API — req">
+          <div class="topic req " data-tk="5::voyage-embeddings" onclick="openModal(5, 'voyage-embeddings')" role="button" tabindex="0" aria-label="Voyage AI Embeddings — req">
             <div class="check" aria-hidden="true"></div>
-            <div class="name">OpenAI API</div>
+            <div class="name">Voyage AI Embeddings</div>
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
@@ -5034,7 +5216,7 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-head"><span class="tag req">req</span><strong>Tokens, Context, Pricing</strong> <span class="branch-label">LLM Basics</span></div>
           <div class="all-topic-desc">How models see text, context limits, $/token.</div>
           <div class="all-topic-why"><em>Why:</em> You will burn money before you understand this.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/context-windows" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/tokenizer" target="_blank" rel="noopener">undefined</a>, <a href="https://github.com/openai/tiktoken" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/context-windows" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Token Economics Deep Dive</strong> <span class="branch-label">LLM Basics</span></div>
           <div class="all-topic-desc">Input vs output token pricing, batch discounts, prompt caching, cached read pricing.</div>
@@ -5049,12 +5231,12 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-head"><span class="tag req">req</span><strong>Model Selection</strong> <span class="branch-label">LLM Basics</span></div>
           <div class="all-topic-desc">Speed vs cost vs intelligence.</div>
           <div class="all-topic-why"><em>Why:</em> Wrong model = 10x cost for same result.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/about-claude/models/overview" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/about-claude/models/overview" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row rec">
           <div class="all-topic-head"><span class="tag rec">rec</span><strong>Provider Pricing Comparison</strong> <span class="branch-label">LLM Basics</span></div>
-          <div class="all-topic-desc">Compare Anthropic, OpenAI, Google, open-source costs per million tokens.</div>
+          <div class="all-topic-desc">Compare Claude, Voyage AI, Google Gemini, Groq, and open-source costs per million tokens.</div>
           <div class="all-topic-why"><em>Why:</em> A 3x price difference for similar quality is normal. Routing requests by task can halve your bill.</div>
-          <div class="all-topic-links"><a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener">undefined</a>, <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">undefined</a>, <a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener">undefined</a>, <a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>System vs User Prompts</strong> <span class="branch-label">Prompting</span></div>
           <div class="all-topic-desc">Role of system prompt, formatting tradeoffs.</div>
@@ -5076,43 +5258,43 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-why"><em>Why:</em> Claude is core to your stack.</div>
           <div class="all-topic-links"><a href="https://docs.anthropic.com/en/api/getting-started" target="_blank" rel="noopener">undefined</a>, <a href="https://docs.anthropic.com/en/api/client-sdks" target="_blank" rel="noopener">undefined</a>, <a href="https://anthropic.skilljar.com/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
-          <div class="all-topic-head"><span class="tag req">req</span><strong>OpenAI API</strong> <span class="branch-label">Provider APIs</span></div>
-          <div class="all-topic-desc">Chat Completions, embeddings, vision.</div>
-          <div class="all-topic-why"><em>Why:</em> Most common AI provider.</div>
-          <div class="all-topic-links"><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener">undefined</a>, <a href="https://cookbook.openai.com/" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-head"><span class="tag req">req</span><strong>Voyage AI Embeddings</strong> <span class="branch-label">Provider APIs</span></div>
+          <div class="all-topic-desc">High-quality embedding models (voyage-3, voyage-code, voyage-finance). Recommended by Anthropic for use with Claude.</div>
+          <div class="all-topic-why"><em>Why:</em> Claude doesn't ship its own embedding API — Voyage AI is the Anthropic-recommended pair. Domain-specific models (code, legal, finance) outperform general embeddings.</div>
+          <div class="all-topic-links"><a href="https://docs.voyageai.com/" target="_blank" rel="noopener">undefined</a>, <a href="https://docs.voyageai.com/docs/embeddings" target="_blank" rel="noopener">undefined</a>, <a href="https://docs.voyageai.com/docs/anthropic" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Streaming</strong> <span class="branch-label">Provider APIs</span></div>
           <div class="all-topic-desc">SSE, partial responses, UI updates as text arrives.</div>
           <div class="all-topic-why"><em>Why:</em> Streaming UX feels 10x faster.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/api/messages-streaming" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/api-reference/streaming" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/api/messages-streaming" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Cost &amp; Rate Limits</strong> <span class="branch-label">Provider APIs</span></div>
           <div class="all-topic-desc">Counting tokens, backoff, usage logging.</div>
           <div class="all-topic-why"><em>Why:</em> AI bills can explode overnight.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/api/rate-limits" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/rate-limits" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/api/rate-limits" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Prompt Caching</strong> <span class="branch-label">Provider APIs</span></div>
           <div class="all-topic-desc">Mark long stable prompt prefixes (system prompts, RAG context, tool definitions) as cacheable so repeated requests skip re-billing for the cached portion.</div>
           <div class="all-topic-why"><em>Why:</em> Up to 90% input-token cost reduction and ~80% latency drop for repeated long contexts. The single biggest cost lever in 2026 agentic apps — every sub-agent invocation, every RAG-style turn benefits.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/prompt-caching" target="_blank" rel="noopener">undefined</a>, <a href="https://github.com/anthropics/anthropic-cookbook/tree/main/misc/prompt_caching" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank" rel="noopener">undefined</a>, <a href="https://github.com/anthropics/anthropic-cookbook/tree/main/misc/prompt_caching" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Multi-modal (Vision)</strong> <span class="branch-label">Provider APIs</span></div>
           <div class="all-topic-desc">Send images alongside text — screenshots, photos, diagrams, PDFs (after rasterizing). Models return text descriptions, extracted data, or follow visual instructions.</div>
-          <div class="all-topic-why"><em>Why:</em> Vision is standard since 2024 on Claude 4.x and GPT-4o. Real apps need it for receipt OCR, screenshot debugging, UI mockup analysis, accessibility descriptions, and content moderation. A roadmap that ignores it is shipping a 2023 mental model.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/vision" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/vision" target="_blank" rel="noopener">undefined</a>, <a href="https://github.com/anthropics/anthropic-cookbook/tree/main/multimodal" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-why"><em>Why:</em> Vision is standard since 2024 on Claude 4.x. Real apps need it for receipt OCR, screenshot debugging, UI mockup analysis, accessibility descriptions, and content moderation. A roadmap that ignores it is shipping a 2023 mental model.</div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/vision" target="_blank" rel="noopener">undefined</a>, <a href="https://github.com/anthropics/anthropic-cookbook/tree/main/multimodal" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>JSON Mode &amp; Schemas</strong> <span class="branch-label">Structured &amp; Tools</span></div>
           <div class="all-topic-desc">Forcing valid JSON output, validating with Zod/Pydantic.</div>
           <div class="all-topic-why"><em>Why:</em> Structured outputs unlock real features.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/structured-outputs" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Tool / Function Calling</strong> <span class="branch-label">Structured &amp; Tools</span></div>
           <div class="all-topic-desc">Defining tools, multi-turn calls, errors.</div>
           <div class="all-topic-why"><em>Why:</em> How LLMs interact with the world.</div>
-          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Vercel AI SDK (after raw APIs)</strong> <span class="branch-label">AI SDK &amp; Local</span></div>
-          <div class="all-topic-desc">useChat hook, streamUI, multi-provider. Learn this AFTER building at least one feature with the raw Anthropic + OpenAI APIs above — otherwise you'll think the SDK's abstractions are how LLMs work.</div>
+          <div class="all-topic-desc">useChat hook, streamUI, multi-provider. Learn this AFTER building at least one feature with the raw Anthropic API above — otherwise you'll think the SDK's abstractions are how LLMs work.</div>
           <div class="all-topic-why"><em>Why:</em> Fastest way to build AI features in Next.js once you understand what it's wrapping. Raw API first, SDK second.</div>
           <div class="all-topic-links"><a href="https://ai-sdk.dev/" target="_blank" rel="noopener">undefined</a>, <a href="https://ai-sdk.dev/cookbook" target="_blank" rel="noopener">undefined</a>, <a href="https://ai-sdk.dev/docs/guides/multi-modal-chatbot" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row rec">
@@ -5308,7 +5490,7 @@ abbr.glossary-term:hover::after {
           </div>
           <div class="extra-card pitfall">
             <span class="label">! Pitfalls</span>
-            <ul><li>Treating LLM output as deterministic</li><li>No error handling for malformed JSON</li><li>Ignoring token costs until the bill arrives</li><li>Hardcoding prompts inline</li><li>Not implementing prompt caching when context is repeated (90% cost savings missed)</li><li>Using GPT-4/Sonnet for trivial tasks when Haiku/4o-mini would suffice</li><li>Skipping system prompts and stuffing everything into user messages</li></ul>
+            <ul><li>Treating LLM output as deterministic</li><li>No error handling for malformed JSON</li><li>Ignoring token costs until the bill arrives</li><li>Hardcoding prompts inline</li><li>Not implementing prompt caching when context is repeated (90% cost savings missed)</li><li>Using Sonnet/Opus for trivial tasks when Haiku would suffice</li><li>Skipping system prompts and stuffing everything into user messages</li></ul>
           </div>
         </div>
       </div>
@@ -5508,7 +5690,7 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-head"><span class="tag req">req</span><strong>Embeddings &amp; Similarity</strong> <span class="branch-label">Embeddings &amp; Vectors</span></div>
           <div class="all-topic-desc">What embeddings are, cosine similarity, model choice. Anthropic recommends Voyage AI for embeddings.</div>
           <div class="all-topic-why"><em>Why:</em> The foundation of RAG. Pick the right model for your domain.</div>
-          <div class="all-topic-links"><a href="https://platform.openai.com/docs/guides/embeddings" target="_blank" rel="noopener">undefined</a>, <a href="https://docs.voyageai.com/docs/introduction" target="_blank" rel="noopener">undefined</a>, <a href="https://www.pinecone.io/learn/vector-embeddings/" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://docs.voyageai.com/docs/introduction" target="_blank" rel="noopener">undefined</a>, <a href="https://www.pinecone.io/learn/vector-embeddings/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row alt">
           <div class="all-topic-head"><span class="tag alt">alt</span><strong>pgvector</strong> <span class="branch-label">Embeddings &amp; Vectors</span></div>
           <div class="all-topic-desc">Vector search inside Postgres.</div>
@@ -5548,7 +5730,7 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-head"><span class="tag req">req</span><strong>Agent Loops &amp; Tools</strong> <span class="branch-label">Agents</span></div>
           <div class="all-topic-desc">Reason → act → observe loops.</div>
           <div class="all-topic-why"><em>Why:</em> Hot hiring area in 2026.</div>
-          <div class="all-topic-links"><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener">undefined</a>, <a href="https://platform.openai.com/docs/guides/agents" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-links"><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row rec">
           <div class="all-topic-head"><span class="tag rec">rec</span><strong>LangGraph</strong> <span class="branch-label">Agents</span></div>
           <div class="all-topic-desc">State machines for LLM agents.</div>
@@ -5792,7 +5974,7 @@ abbr.glossary-term:hover::after {
           </div>
           <div class="extra-card pitfall">
             <span class="label">! Pitfalls</span>
-            <ul><li>Reaching for LangChain before understanding mechanics</li><li>Ignoring chunk size / overlap tuning</li><li>Building agents without evals</li><li>Overengineering: one LLM call often beats a 5-step agent</li><li>Using the wrong embedding model for your domain (default OpenAI isn't always best)</li><li>Skipping reranking when retrieval quality is poor</li><li>Building "agentic" loops without iteration limits (infinite costs)</li></ul>
+            <ul><li>Reaching for LangChain before understanding mechanics</li><li>Ignoring chunk size / overlap tuning</li><li>Building agents without evals</li><li>Overengineering: one LLM call often beats a 5-step agent</li><li>Using the wrong embedding model for your domain (Voyage code/finance/multilingual models often beat the default)</li><li>Skipping reranking when retrieval quality is poor</li><li>Building "agentic" loops without iteration limits (infinite costs)</li></ul>
           </div>
         </div>
       </div>
@@ -8293,7 +8475,7 @@ const DATA = [
   },
   {
     id: 5, title: 'LLM Application Development', weeks: '41–72', duration: '8–12 weeks · ~240–360 hrs',
-    desc: 'Integrate Anthropic and OpenAI APIs. Prompts, streaming, tool use, structured outputs, local models with Ollama.',
+    desc: 'Integrate Anthropic Claude APIs. Prompts, streaming, tool use, structured outputs, local models with Ollama.',
     branches: [
       {
         name: 'LLM Basics',
@@ -8303,8 +8485,7 @@ const DATA = [
             why: 'You will burn money before you understand this.',
             links: [
               L('docs', 'Anthropic — Context Windows', 'https://docs.anthropic.com/en/docs/build-with-claude/context-windows'),
-              L('docs', 'OpenAI Tokenizer', 'https://platform.openai.com/tokenizer'),
-              L('tutorial', 'tiktoken', 'https://github.com/openai/tiktoken')
+              L('tutorial', 'Anthropic — Token counting', 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting')
             ]},
           { id: 'token-economics', name: 'Token Economics Deep Dive', t: 'req',
             desc: 'Input vs output token pricing, batch discounts, prompt caching, cached read pricing.',
@@ -8325,15 +8506,13 @@ const DATA = [
             desc: 'Speed vs cost vs intelligence.',
             why: 'Wrong model = 10x cost for same result.',
             links: [
-              L('docs', 'Anthropic — Models', 'https://docs.anthropic.com/en/docs/about-claude/models/overview'),
-              L('docs', 'OpenAI Models', 'https://platform.openai.com/docs/models')
+              L('docs', 'Anthropic — Models', 'https://docs.anthropic.com/en/docs/about-claude/models/overview')
             ]},
           { id: 'provider-pricing', name: 'Provider Pricing Comparison', t: 'rec',
-            desc: 'Compare Anthropic, OpenAI, Google, open-source costs per million tokens.',
+            desc: 'Compare Claude, Voyage AI, Google Gemini, Groq, and open-source costs per million tokens.',
             why: 'A 3x price difference for similar quality is normal. Routing requests by task can halve your bill.',
             links: [
               L('docs', 'Anthropic Pricing', 'https://www.anthropic.com/pricing'),
-              L('docs', 'OpenAI Pricing', 'https://openai.com/api/pricing/'),
               L('tutorial', 'LLM Price Comparison', 'https://artificialanalysis.ai/')
             ]}
         ]
@@ -8375,15 +8554,16 @@ const DATA = [
               L('docs', 'Anthropic SDKs', 'https://docs.anthropic.com/en/api/client-sdks'),
               L('course', 'Anthropic Courses', 'https://anthropic.skilljar.com/')
             ]},
-          { id: 'openai-api', name: 'OpenAI API', t: 'req',
-            desc: 'Chat Completions, embeddings, vision.',
-            why: 'Most common AI provider.',
+          { id: 'voyage-embeddings', name: 'Voyage AI Embeddings', t: 'req',
+            desc: 'High-quality embedding models (voyage-3, voyage-code, voyage-finance). Recommended by Anthropic for use with Claude.',
+            why: 'Claude doesn\'t ship its own embedding API — Voyage AI is the Anthropic-recommended pair. Domain-specific models (code, legal, finance) outperform general embeddings.',
             links: [
-              L('docs', 'OpenAI API', 'https://platform.openai.com/docs/api-reference'),
-              L('docs', 'OpenAI Cookbook', 'https://cookbook.openai.com/')
+              L('docs', 'Voyage AI Docs', 'https://docs.voyageai.com/'),
+              L('docs', 'Voyage Embeddings Quickstart', 'https://docs.voyageai.com/docs/embeddings'),
+              L('tutorial', 'Voyage + Claude RAG', 'https://docs.voyageai.com/docs/anthropic')
             ]},
           { id: 'other-providers', name: 'Other LLM Providers (Gemini / Groq / Mistral)', t: 'rec',
-            desc: 'Google Gemini for long-context (2M tokens) + cheaper Flash. Groq for blazing-fast inference (open Llama at <500ms). Mistral for European-hosted open models. Each fills a niche Anthropic+OpenAI miss.',
+            desc: 'Google Gemini for long-context (2M tokens) + cheaper Flash. Groq for blazing-fast inference (open Llama at <500ms). Mistral for European-hosted open models. Each fills a niche Claude misses.',
             why: 'Real production apps often route to different providers per task (cheap classification → Gemini Flash, fast UI → Groq, EU compliance → Mistral). Vendor diversity also de-risks outages.',
             links: [
               L('docs', 'Google Gemini API', 'https://ai.google.dev/gemini-api/docs'),
@@ -8392,7 +8572,7 @@ const DATA = [
               L('tutorial', 'Gemini Cookbook (Google)', 'https://github.com/google-gemini/cookbook')
             ]},
           { id: 'openrouter', name: 'OpenRouter (Unified Gateway)', t: 'rec',
-            desc: 'One API key, 100+ models from every provider. Use $5 of credits and try Claude, GPT, Gemini, Llama, Grok, etc. with the same OpenAI-compatible client.',
+            desc: 'One API key, 100+ models from every provider. Use $5 of credits and try Claude, Gemini, Llama, Grok, Mistral, etc. behind one API.',
             why: 'Removes signup friction across providers and gives you a fallback when one provider has an outage. Built-in routing and cost optimization.',
             links: [
               L('docs', 'OpenRouter', 'https://openrouter.ai/'),
@@ -8403,30 +8583,26 @@ const DATA = [
             desc: 'SSE, partial responses, UI updates as text arrives.',
             why: 'Streaming UX feels 10x faster.',
             links: [
-              L('docs', 'Anthropic — Streaming', 'https://docs.anthropic.com/en/api/messages-streaming'),
-              L('docs', 'OpenAI — Streaming', 'https://platform.openai.com/docs/api-reference/streaming')
+              L('docs', 'Anthropic — Streaming', 'https://docs.anthropic.com/en/api/messages-streaming')
             ]},
           { id: 'cost-tracking', name: 'Cost & Rate Limits', t: 'req',
             desc: 'Counting tokens, backoff, usage logging.',
             why: 'AI bills can explode overnight.',
             links: [
-              L('docs', 'Anthropic Rate Limits', 'https://docs.anthropic.com/en/api/rate-limits'),
-              L('docs', 'OpenAI Rate Limits', 'https://platform.openai.com/docs/guides/rate-limits')
+              L('docs', 'Anthropic Rate Limits', 'https://docs.anthropic.com/en/api/rate-limits')
             ]},
           { id: 'prompt-caching', name: 'Prompt Caching', t: 'req',
             desc: 'Mark long stable prompt prefixes (system prompts, RAG context, tool definitions) as cacheable so repeated requests skip re-billing for the cached portion.',
             why: 'Up to 90% input-token cost reduction and ~80% latency drop for repeated long contexts. The single biggest cost lever in 2026 agentic apps — every sub-agent invocation, every RAG-style turn benefits.',
             links: [
               L('docs', 'Anthropic — Prompt Caching', 'https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching'),
-              L('docs', 'OpenAI — Prompt Caching', 'https://platform.openai.com/docs/guides/prompt-caching'),
               L('tutorial', 'Anthropic Cookbook — Prompt Caching examples', 'https://github.com/anthropics/anthropic-cookbook/tree/main/misc/prompt_caching')
             ]},
           { id: 'multimodal', name: 'Multi-modal (Vision)', t: 'req',
             desc: 'Send images alongside text — screenshots, photos, diagrams, PDFs (after rasterizing). Models return text descriptions, extracted data, or follow visual instructions.',
-            why: 'Vision is standard since 2024 on Claude 4.x and GPT-4o. Real apps need it for receipt OCR, screenshot debugging, UI mockup analysis, accessibility descriptions, and content moderation. A roadmap that ignores it is shipping a 2023 mental model.',
+            why: 'Vision is standard since 2024 on Claude 4.x. Real apps need it for receipt OCR, screenshot debugging, UI mockup analysis, accessibility descriptions, and content moderation. A roadmap that ignores it is shipping a 2023 mental model.',
             links: [
               L('docs', 'Anthropic — Vision', 'https://docs.anthropic.com/en/docs/build-with-claude/vision'),
-              L('docs', 'OpenAI — Vision', 'https://platform.openai.com/docs/guides/vision'),
               L('tutorial', 'Anthropic Cookbook — Vision examples', 'https://github.com/anthropics/anthropic-cookbook/tree/main/multimodal')
             ]}
         ]
@@ -8438,15 +8614,13 @@ const DATA = [
             desc: 'Forcing valid JSON output, validating with Zod/Pydantic.',
             why: 'Structured outputs unlock real features.',
             links: [
-              L('docs', 'Anthropic — Consistency', 'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency'),
-              L('docs', 'OpenAI Structured Outputs', 'https://platform.openai.com/docs/guides/structured-outputs')
+              L('docs', 'Anthropic — Consistency', 'https://docs.anthropic.com/en/docs/test-and-evaluate/strengthen-guardrails/increase-consistency')
             ]},
           { id: 'tool-use', name: 'Tool / Function Calling', t: 'req',
             desc: 'Defining tools, multi-turn calls, errors.',
             why: 'How LLMs interact with the world.',
             links: [
-              L('docs', 'Anthropic — Tool Use', 'https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview'),
-              L('docs', 'OpenAI — Function Calling', 'https://platform.openai.com/docs/guides/function-calling')
+              L('docs', 'Anthropic — Tool Use', 'https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview')
             ]}
         ]
       },
@@ -8454,7 +8628,7 @@ const DATA = [
         name: 'AI SDK & Local',
         topics: [
           { id: 'ai-sdk', name: 'Vercel AI SDK (after raw APIs)', t: 'req',
-            desc: 'useChat hook, streamUI, multi-provider. Learn this AFTER building at least one feature with the raw Anthropic + OpenAI APIs above — otherwise you\'ll think the SDK\'s abstractions are how LLMs work, and you\'ll be lost when an SDK shortcut doesn\'t fit.',
+            desc: 'useChat hook, streamUI, multi-provider. Learn this AFTER building at least one feature with the raw Anthropic API above — otherwise you\'ll think the SDK\'s abstractions are how LLMs work, and you\'ll be lost when an SDK shortcut doesn\'t fit.',
             why: 'Fastest way to build AI features in Next.js once you understand what it\'s wrapping. Raw API first, SDK second.',
             links: [
               L('docs', 'Vercel AI SDK', 'https://ai-sdk.dev/'),
@@ -8482,7 +8656,7 @@ const DATA = [
       'Ignoring token costs until the bill arrives',
       'Hardcoding prompts inline',
       'Not implementing prompt caching when context is repeated (90% cost savings missed)',
-      'Using GPT-4/Sonnet for trivial tasks when Haiku/4o-mini would suffice',
+      'Using Sonnet/Opus for trivial tasks when Haiku would suffice',
       'Skipping system prompts and stuffing everything into user messages'
     ]
   },
@@ -8497,7 +8671,6 @@ const DATA = [
             desc: 'What embeddings are, cosine similarity, model choice. Anthropic recommends Voyage AI for embeddings.',
             why: 'The foundation of RAG. Pick the right model for your domain.',
             links: [
-              L('docs', 'OpenAI Embeddings Guide', 'https://platform.openai.com/docs/guides/embeddings'),
               L('docs', 'Voyage AI (Anthropic-recommended)', 'https://docs.voyageai.com/docs/introduction'),
               L('tutorial', 'Pinecone — Vector Embeddings', 'https://www.pinecone.io/learn/vector-embeddings/')
             ]},
@@ -8571,8 +8744,7 @@ const DATA = [
             desc: 'Reason → act → observe loops.',
             why: 'Hot hiring area in 2026.',
             links: [
-              L('docs', 'Anthropic — Effective Agents', 'https://www.anthropic.com/research/building-effective-agents'),
-              L('docs', 'OpenAI Agents Guide', 'https://platform.openai.com/docs/guides/agents')
+              L('docs', 'Anthropic — Effective Agents', 'https://www.anthropic.com/research/building-effective-agents')
             ]},
           { id: 'langgraph', name: 'LangGraph', t: 'rec',
             desc: 'State machines for LLM agents.',
@@ -8690,7 +8862,7 @@ const DATA = [
       'Ignoring chunk size / overlap tuning',
       'Building agents without evals',
       'Overengineering: one LLM call often beats a 5-step agent',
-      'Using the wrong embedding model for your domain (default OpenAI isn\'t always best)',
+      'Using the wrong embedding model for your domain (Voyage code/finance/multilingual often beat the default)',
       'Skipping reranking when retrieval quality is poor',
       'Building "agentic" loops without iteration limits (infinite costs)'
     ]
@@ -9249,7 +9421,7 @@ const PROJECT_IDEAS = {
       'VS Code customized: theme picked, Prettier + GitLens + an icon pack installed',
       'Separate "hello world" projects in Python and Node both run successfully',
       'Git repo initialized with a proper `.gitignore` and pushed to GitHub'
-    ]},
+    ]}
   ],
   1: [
     { name: 'CLI to-do app (Python + JSON)', criteria: [
@@ -9582,7 +9754,6 @@ const REFERENCE_IMPLS = {
   ],
   5: [
     { name: 'Anthropic Cookbook', desc: 'Official Claude examples for every common pattern', url: 'https://github.com/anthropics/anthropic-cookbook' },
-    { name: 'OpenAI Cookbook', desc: 'Patterns for using OpenAI APIs in production', url: 'https://github.com/openai/openai-cookbook' },
     { name: 'Vercel AI SDK examples', desc: 'Streaming chat, structured outputs, tool calling in Next.js', url: 'https://github.com/vercel/ai/tree/main/examples' },
     { name: 'librechat (multi-model chat clone)', desc: 'Production chat app supporting multiple AI providers', url: 'https://github.com/danny-avila/LibreChat' },
     { name: 'Continue.dev (AI coding assistant)', desc: 'How an AI app handles streaming, tool use, and context', url: 'https://github.com/continuedev/continue' }
@@ -9803,7 +9974,7 @@ const BRANCH_DESCS = {
   '4::Real-Time': 'WebSockets and SSE — for live chat, streams, and notifications',
   '5::LLM Basics': 'How models actually work — tokens, context windows, pricing',
   '5::Prompting': 'How to talk to models effectively — system prompts, few-shot, chain-of-thought',
-  '5::Provider APIs': 'Anthropic and OpenAI — integrating real LLMs into your apps',
+  '5::Provider APIs': 'Anthropic Claude — integrating real LLMs into your apps + Voyage AI for embeddings',
   '5::Structured & Tools': 'JSON outputs and tool calling — how LLMs interact with the world',
   '5::AI SDK & Local': 'Vercel AI SDK for production, Ollama for local experimentation',
   '6::Embeddings & Vectors': 'Semantic search foundations — how RAG retrieves the right context',
@@ -9868,6 +10039,22 @@ const DEFAULT_STATE = {
   customFlashcards: {},       // #2  — user-added cards, same shape
   // ── Phase 7 ──
   projectCriteria: {},        // — { "stageId::projectIdx::criterionIdx": true }  per-criterion checkboxes
+  // ── AI Instructor (chat with Claude as tutor) ──
+  aiInstructor: {
+    apiKey: '',                  // user's own Anthropic API key (localStorage only)
+    model: 'claude-haiku-4-5',   // default model — cheapest for tutoring
+    history: [],                 // [{ role: 'user' | 'assistant', content: string, ts: ISO }]
+    totalCost: 0,                // running cost in USD across all sessions
+    totalTokensIn: 0,
+    totalTokensOut: 0,
+  },
+  // ── Accountability (daily commits + weekly check-ins) ──
+  accountability: {
+    dailyGoalHours: 0,           // user's daily hour commitment (set by user)
+    sessions: {},                // { "YYYY-MM-DD": { goalHours, actualHours, note } }
+    checkins: [],                // [{ date, text, mood, ts }] weekly reflections
+    streakHistoryDays: 0,        // days the user met their daily goal in a row
+  },
 };
 
 // Stage hour estimates used by #9 Schedule and #13 Salary readiness.
@@ -9907,6 +10094,11 @@ try {
     state.flashcards = parsed.flashcards || {};
     state.customFlashcards = parsed.customFlashcards || {};
     state.projectCriteria = parsed.projectCriteria || {};
+    state.aiInstructor = { ...DEFAULT_STATE.aiInstructor, ...(parsed.aiInstructor || {}) };
+    state.aiInstructor.history = (parsed.aiInstructor && parsed.aiInstructor.history) || [];
+    state.accountability = { ...DEFAULT_STATE.accountability, ...(parsed.accountability || {}) };
+    state.accountability.sessions = (parsed.accountability && parsed.accountability.sessions) || {};
+    state.accountability.checkins = (parsed.accountability && parsed.accountability.checkins) || [];
   }
 } catch (e) {}
 
@@ -11403,7 +11595,7 @@ document.addEventListener('click', e => {
 const GLOSSARY = {
   'RAG': 'Retrieval-Augmented Generation — an LLM pattern where you fetch relevant context (often via vector search) and stuff it into the prompt so the model can answer from up-to-date or private data.',
   'MCP': 'Model Context Protocol — Anthropic\'s open standard for letting LLMs talk to external tools, data sources, and applications through a standardized server interface.',
-  'LLM': 'Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, GPT-4, Llama).',
+  'LLM': 'Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).',
   'JWT': 'JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.',
   'CORS': 'Cross-Origin Resource Sharing — the browser security model that controls which origins can make requests to your API.',
   'CSRF': 'Cross-Site Request Forgery — an attack where a malicious site tricks the browser into making authenticated requests to another site.',
@@ -12052,7 +12244,7 @@ const TERMS = {
     { name: 'System prompt', def: 'A high-priority instruction that shapes the model\'s persona, rules, and output format for the whole conversation. Passed in the `system` field, not as a user message.', t: 'req' },
     { name: 'User message', def: 'The actual question or task. The model answers user messages in the context of the system prompt.', t: 'req' },
     { name: 'Assistant message', def: 'The model\'s response. In multi-turn conversations, prior assistant messages stay in the context window.', t: 'req' },
-    { name: 'Context window', def: 'The max tokens the model can see at once (Claude Sonnet 4: 200K-1M, GPT-5: 256K, Gemini 2: 2M). Includes system + user + assistant history.', t: 'req' },
+    { name: 'Context window', def: 'The max tokens the model can see at once (Claude Sonnet 4.5: 200K-1M, Claude Opus 4: 200K, Gemini 2: 2M). Includes system + user + assistant history.', t: 'req' },
     { name: 'Token', def: 'The unit a model processes. ~4 chars or 0.75 words per token in English. Track these for cost.', t: 'req' },
     { name: 'XML tags in prompts', def: 'Wrap input sections in `<context>...</context>` or `<instruction>...</instruction>` — Claude responds strongly to these. Improves parseable output.', t: 'rec' }
   ],
@@ -12075,11 +12267,13 @@ const TERMS = {
     { name: 'API key', def: 'Bearer token in the `x-api-key` header. NEVER expose this in client-side JS — always proxy through your own backend.', t: 'req' },
     { name: 'beta header', def: '`anthropic-beta` opts into experimental features (prompt caching, extended outputs, etc.) before they\'re GA.', t: 'rec' }
   ],
-  '5:openai-api': [
-    { name: 'Chat Completions', def: 'OpenAI\'s primary endpoint: `POST /v1/chat/completions`. Takes messages, returns choices.', t: 'req' },
-    { name: 'Responses API', def: 'OpenAI\'s newer endpoint that bundles tool use + multi-turn + structured outputs. Replaces Chat Completions for new apps.', t: 'rec' },
-    { name: 'temperature', def: 'Randomness knob: 0 = deterministic, 1 = creative, 2 = chaotic. Use 0 for classification/extraction, 0.7+ for ideation.', t: 'req' },
-    { name: 'max_tokens', def: 'Cap on the response length. Watch this — hitting it mid-sentence is a common bug.', t: 'req' }
+  '5:voyage-embeddings': [
+    { name: 'Embedding', def: 'A dense vector (e.g. 1024 floats) representing the semantic meaning of text. Similar texts produce similar vectors.', t: 'req' },
+    { name: 'voyage-3', def: 'Voyage AI\'s general-purpose embedding model. 1024 dims, recommended default for RAG over docs/web content.', t: 'req' },
+    { name: 'voyage-code', def: 'Embedding model specialized for code search. Big quality jump over general models for code retrieval.', t: 'rec' },
+    { name: 'voyage-finance / voyage-law / voyage-multilingual', def: 'Domain-specific embedding models. Use these instead of generic embeddings when your corpus is one domain.', t: 'rec' },
+    { name: 'Cosine similarity', def: 'How similar two embedding vectors are: 1 = identical direction, 0 = perpendicular, -1 = opposite. Standard distance metric for RAG.', t: 'req' },
+    { name: 'Embedding dimensions', def: 'Number of floats per vector. More dims = more detail but slower search + bigger DB. voyage-3 = 1024.', t: 'rec' }
   ],
   '5:other-providers': [
     { name: 'Gemini Flash', def: 'Google\'s cheap fast model with 2M context. Great for long-doc classification and extraction at fractional Claude cost.', t: 'rec' },
@@ -12088,13 +12282,13 @@ const TERMS = {
     { name: 'Multi-provider routing', def: 'Sending different requests to different providers — cheap classification to Gemini Flash, complex reasoning to Claude. Saves 5-10x on cost.', t: 'rec' }
   ],
   '5:openrouter': [
-    { name: 'Unified API', def: 'OpenRouter exposes 100+ models behind the OpenAI-compatible API. Swap models by changing one string.', t: 'rec' },
+    { name: 'Unified API', def: 'OpenRouter exposes 100+ models behind one HTTP API. Swap models by changing one string.', t: 'rec' },
     { name: 'Credits', def: 'OpenRouter\'s pay-as-you-go balance. Top up $5, use it across any model. Removes signup friction across providers.', t: 'rec' },
     { name: 'Fallback', def: 'Configure a model + backup. If the primary is rate-limited or down, OpenRouter automatically routes to the fallback.', t: 'rec' }
   ],
   '5:streaming': [
     { name: 'Server-Sent Events (SSE)', def: 'A one-way streaming protocol over HTTP. Each chunk is a `data:` line. The default for LLM streaming.', t: 'req' },
-    { name: 'Delta', def: 'A streaming event carrying the next chunk of text (Claude: `content_block_delta`; OpenAI: `delta.content`). Concatenate them to build the full response.', t: 'req' },
+    { name: 'Delta', def: 'A streaming event carrying the next chunk of text (Claude: `content_block_delta`). Concatenate them to build the full response.', t: 'req' },
     { name: 'Partial JSON', def: 'When streaming structured output, you receive incomplete JSON until the end. Parse defensively or use a streaming JSON parser.', t: 'rec' },
     { name: 'ReadableStream', def: 'The browser/Node API for consuming streams. `for await (const chunk of stream)` reads them async.', t: 'req' }
   ],
@@ -12122,7 +12316,7 @@ const TERMS = {
     { name: 'streamText / generateText', def: 'Server-side helpers wrapping any provider. `streamText` returns a stream you can pipe to a Response.', t: 'req' },
     { name: 'streamUI', def: 'Server-rendered streaming React components from the LLM. Lets the model render UI components, not just text.', t: 'rec' },
     { name: 'tool() helper', def: 'Defines a tool with a Zod schema + execute function — type-safe end-to-end.', t: 'rec' },
-    { name: 'Provider abstraction', def: 'Swap `openai("gpt-4")` for `anthropic("claude-3-5-sonnet")` in one line. The SDK hides provider differences.', t: 'rec' }
+    { name: 'Provider abstraction', def: 'Swap `anthropic("claude-haiku-4-5")` for `anthropic("claude-opus-4")` in one line. The SDK hides model differences.', t: 'rec' }
   ],
   '5:ollama': [
     { name: 'Local model', def: 'An LLM running on your machine instead of a paid API. Free, private, slower, lower quality than cloud frontier models.', t: 'req' },
@@ -12440,7 +12634,6 @@ const PRACTICE_HUB = {
   ],
   'AI / LLM Engineering': [
     { name: 'Anthropic Prompt Tutorial', url: 'https://github.com/anthropics/prompt-eng-interactive-tutorial', type: 'tutorial', diff: 'beginner', desc: 'Free Anthropic interactive course on prompt engineering.' },
-    { name: 'OpenAI Cookbook', url: 'https://cookbook.openai.com/', type: 'tutorial', diff: 'beginner', desc: 'Recipes for common LLM patterns.' },
     { name: 'ChatGPT Prompt Eng (DeepLearning.AI)', url: 'https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/', type: 'tutorial', diff: 'beginner', desc: 'Free Andrew Ng + Isa Fulford course (~1 hr).' },
     { name: 'Gemini Cookbook (Google)', url: 'https://github.com/google-gemini/cookbook', type: 'tutorial', diff: 'beginner', desc: 'Recipes for Gemini API patterns.' },
     { name: 'Hugging Face MCP Course', url: 'https://huggingface.co/learn/mcp-course', type: 'tutorial', diff: 'intermediate', desc: 'Free official MCP course.' },
@@ -12559,7 +12752,7 @@ pnpm dev   # http://localhost:3000</code></pre>
     stack: ["TypeScript", "React", "Tailwind"],
     live: "https://example.com",
     repo: "https://github.com/you/roadmap",
-  },
+  }
 ];</code></pre>
 <p>Import this into a ProjectGrid component that renders a card per project. Show stack as small pills.</p>` },
       { title: `Style with Tailwind`, body: `<p>Pick ONE design vibe — minimalist beats fancy. Stick to:</p>
@@ -13321,7 +13514,7 @@ const result = streamText({
 <p>You are NOT fine-tuning. You are NOT training. Just smart prompt-stuffing with vector search.</p>` },
       { title: `Setup`, body: `<pre><code>npx create-next-app@latest rag-app --typescript --tailwind --app
 cd rag-app
-pnpm add ai @ai-sdk/anthropic @ai-sdk/openai
+pnpm add ai @ai-sdk/anthropic voyageai
 pnpm add pg drizzle-orm drizzle-kit pdf-parse</code></pre>
 <p>Run pgvector-enabled Postgres in Docker:</p>
 <pre><code>docker run -d --name pgvec -e POSTGRES_PASSWORD=secret -p 5432:5432 pgvector/pgvector:pg16</code></pre>` },
@@ -13340,7 +13533,6 @@ export const chunks = pgTable("chunks", {
 CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);</code></pre>` },
       { title: `Chunk + embed + insert`, body: `<pre><code>// scripts/index-pdf.ts
 import pdfParse from "pdf-parse";
-import { openai } from "@ai-sdk/openai";
 import { embedMany } from "ai";
 import { db, chunks } from "./db";
 import { readFileSync } from "fs";
@@ -13360,7 +13552,7 @@ async function indexPdf(path: string, docId: string) {
   const data = await pdfParse(readFileSync(path));
   const pieces = chunk(data.text);
   const { embeddings } = await embedMany({
-    model: openai.embedding("text-embedding-3-small"),
+    model: voyage("voyage-3"),
     values: pieces,
   });
   await db.insert(chunks).values(
@@ -13368,7 +13560,6 @@ async function indexPdf(path: string, docId: string) {
   );
 }</code></pre>` },
       { title: `Retrieve + generate`, body: `<pre><code>// app/api/chat/route.ts
-import { openai } from "@ai-sdk/openai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { embed, streamText } from "ai";
 import { db } from "@/db";
@@ -13378,7 +13569,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
   const userMsg = messages[messages.length - 1].content;
   const { embedding } = await embed({
-    model: openai.embedding("text-embedding-3-small"),
+    model: voyage("voyage-3"),
     value: userMsg,
   });
   const results = await db.execute(sql\`
@@ -13590,6 +13781,528 @@ function openBuild(id) {
     </div>
   `;
   showPracticeModal(`🔨 ${build.title}`, html);
+}
+
+
+/* ============================================================
+   AI INSTRUCTOR — chat with Claude as your tutor
+   Uses the user's own Anthropic API key (stored only in localStorage,
+   never sent anywhere except api.anthropic.com).
+   Requires the `anthropic-dangerous-direct-browser-access` header for CORS.
+   ============================================================ */
+const AI_INSTRUCTOR_MODELS = [
+  { id: 'claude-haiku-4-5', label: 'Claude Haiku 4.5 — cheapest, fast', pricing: { in: 1.00, out: 5.00 } },
+  { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 — recommended', pricing: { in: 3.00, out: 15.00 } },
+  { id: 'claude-opus-4-7', label: 'Claude Opus 4.7 — most capable, pricey', pricing: { in: 15.00, out: 75.00 } }
+];
+
+function aiBuildSystemPrompt() {
+  const p = state.profile || {};
+  const stageProgress = DATA.map(s => {
+    const total = s.branches.reduce((n, b) => n + b.topics.length, 0);
+    const done = s.branches.reduce((n, b) => n + b.topics.filter(t => isComplete(s.id, t.id)).length, 0);
+    return `Stage ${s.id} (${s.title}): ${done}/${total}`;
+  }).join(' · ');
+  const currentTopicCtx = currentTopic
+    ? `Currently viewing topic: "${currentTopic.topic?.name}" (Stage ${currentTopic.stageId}). desc: ${currentTopic.topic?.desc || ''}`
+    : 'No specific topic open right now.';
+  return [
+    'You are an experienced senior engineer acting as a personal tutor for a self-taught Full Stack + AI Engineering learner.',
+    'You know this roadmap intimately: 9 stages (0=Env, 1=Programming Fundamentals, 2=Web Fundamentals, 3=Frontend/React/Next, 4=Backend/Hono/Postgres, 5=LLM Apps with Claude, 6=RAG/Agents/MCP, 7=Production/DevOps, 8=Job Hunt).',
+    '',
+    `Learner profile: goal=${p.goal || 'unknown'}, skill=${p.skill || 'unknown'}, time=${p.time || 'unknown'}.`,
+    `Current progress across stages: ${stageProgress}.`,
+    currentTopicCtx,
+    '',
+    'How to teach:',
+    '- Be Socratic when they\'re stuck: ask one focused question rather than dump the answer.',
+    '- Match their level — don\'t use jargon they haven\'t learned yet (check the roadmap stage).',
+    '- When they ask for an explanation, give a 1-paragraph intuitive version FIRST, then optionally drill into details if they want more.',
+    '- For debugging help, ask: what did you try? what did you expect? what happened? Get a minimal repro.',
+    '- For "I\'m overwhelmed" moments, validate the feeling, then propose ONE concrete next step (15-30 min).',
+    '- Reference roadmap content when relevant (Stage X / topic Y).',
+    '- Be encouraging but honest. Don\'t coddle; don\'t crush.',
+    '- The roadmap uses Anthropic Claude exclusively. Use Voyage AI for embeddings. Recommend Claude / Voyage / Gemini / Groq / Mistral / open-source alternatives — but do NOT recommend non-Anthropic American hyperscaler-affiliated AI services.',
+    '- Keep responses concise. Prefer 2-4 short paragraphs over a wall of text. Use bullet lists when listing more than 3 items.',
+    '',
+    'When they ask for code, write it inline with proper formatting. Always explain the key idea before the code, not after.',
+    'When they finish a topic, ask if they want a quick 3-question quiz to verify retention.',
+    'NEVER claim to remember past sessions you don\'t have in the conversation history — only what you see here.'
+  ].join('\n');
+}
+
+let __aiStreaming = false;
+let __aiAbort = null;
+
+function openAiInstructor() {
+  const ai = state.aiInstructor;
+  if (!ai.apiKey) {
+    openAiInstructorSetup();
+    return;
+  }
+  const modelOptions = AI_INSTRUCTOR_MODELS.map(m =>
+    `<option value="${m.id}" ${m.id === ai.model ? 'selected' : ''}>${escapeHtml(m.label)}</option>`
+  ).join('');
+  const messagesHtml = ai.history.length === 0
+    ? `<div class="ai-empty">Ask me anything about your roadmap, your code, an unfamiliar concept, or how to get unstuck. I have your current topic + progress in context.</div>`
+    : ai.history.map(m => aiRenderMessage(m)).join('');
+  const costStr = ai.totalCost < 0.01 ? '< $0.01' : `$${ai.totalCost.toFixed(3)}`;
+  const html = `
+    <div class="ai-instructor-modal" id="aiInstructorModal">
+      <div class="ai-header">
+        <strong>🎓 AI Instructor</strong>
+        <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)">${modelOptions}</select>
+        <button class="phub-skill-pill" onclick="openAiInstructorSetup()" type="button">⚙ Settings</button>
+        <button class="phub-skill-pill" onclick="aiClearHistory()" type="button">🗑 Clear</button>
+        <span class="ai-cost">Session: ${costStr} · ${ai.totalTokensIn || 0} in / ${ai.totalTokensOut || 0} out</span>
+      </div>
+      <div class="ai-quick-actions">
+        <button onclick="aiQuickAction('explain')" type="button">📚 Explain current topic</button>
+        <button onclick="aiQuickAction('quiz')" type="button">🎯 Quiz me</button>
+        <button onclick="aiQuickAction('stuck')" type="button">🤔 I'm stuck</button>
+        <button onclick="aiQuickAction('plan')" type="button">📋 Plan my week</button>
+        <button onclick="aiQuickAction('debug')" type="button">🐛 Help me debug</button>
+        <button onclick="aiQuickAction('motivate')" type="button">💪 I need motivation</button>
+      </div>
+      <div class="ai-chat-log" id="aiChatLog">${messagesHtml}</div>
+      <div class="ai-input-row">
+        <textarea id="aiInput" placeholder="Ask anything — paste an error, describe a concept you don't get, request a code review..." onkeydown="aiInputKey(event)"></textarea>
+        <button id="aiSendBtn" onclick="aiSend()" type="button">Send</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('🎓 AI Instructor', html);
+  setTimeout(() => {
+    const log = document.getElementById('aiChatLog');
+    if (log) log.scrollTop = log.scrollHeight;
+    document.getElementById('aiInput')?.focus();
+  }, 50);
+}
+
+function openAiInstructorSetup() {
+  const ai = state.aiInstructor;
+  const hasKey = !!ai.apiKey;
+  const maskedKey = hasKey ? ai.apiKey.slice(0, 10) + '...' + ai.apiKey.slice(-4) : '';
+  const html = `
+    <div class="ai-setup">
+      <h3>${hasKey ? 'Update' : 'Set up'} your Anthropic API key</h3>
+      <p>Your AI Instructor uses <strong>your own</strong> Anthropic API key to chat with Claude. The key is stored only in your browser (localStorage) and is only ever sent to <code>api.anthropic.com</code>. It is never sent anywhere else, never logged, never shared.</p>
+      <ol>
+        <li>Go to <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a> and sign up (you get $5 free credits).</li>
+        <li>Click "API Keys" → "Create Key", copy the value (starts with <code>sk-ant-</code>).</li>
+        <li>Paste it below. You can rotate or revoke it any time from the Anthropic console.</li>
+      </ol>
+      ${hasKey ? `<p>Current key: <code>${escapeHtml(maskedKey)}</code></p>` : ''}
+      <label style="font-family: 'Kalam', cursive; font-weight: 700;">Your Anthropic API key</label>
+      <input type="password" id="aiKeyInput" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
+      <div class="ai-security">
+        <strong>⚠ Security note:</strong> Any JavaScript running in this page can read your API key from localStorage. This site is a single static HTML file with no third-party scripts, but if you ever paste code from an untrusted source into the page or DevTools, treat the key as compromised and rotate it on console.anthropic.com.
+      </div>
+      <div class="ai-actions">
+        ${hasKey ? `<button class="secondary" onclick="aiRemoveKey()" type="button">Remove key</button>` : ''}
+        <button class="secondary" onclick="closePracticeModal()" type="button">Cancel</button>
+        <button onclick="aiSaveKey()" type="button">${hasKey ? 'Update' : 'Save'} key</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('🎓 AI Instructor — Setup', html);
+  setTimeout(() => document.getElementById('aiKeyInput')?.focus(), 30);
+}
+
+function aiSaveKey() {
+  const input = document.getElementById('aiKeyInput');
+  if (!input) return;
+  const key = input.value.trim();
+  if (!key.startsWith('sk-ant-')) {
+    alert('That does not look like an Anthropic API key. Keys start with "sk-ant-".');
+    return;
+  }
+  state.aiInstructor.apiKey = key;
+  save();
+  openAiInstructor();
+}
+
+function aiRemoveKey() {
+  if (!confirm('Remove the saved API key? You will need to paste it again to use the AI Instructor.')) return;
+  state.aiInstructor.apiKey = '';
+  state.aiInstructor.history = [];
+  state.aiInstructor.totalCost = 0;
+  state.aiInstructor.totalTokensIn = 0;
+  state.aiInstructor.totalTokensOut = 0;
+  save();
+  openAiInstructorSetup();
+}
+
+function aiSetModel(modelId) {
+  state.aiInstructor.model = modelId;
+  save();
+}
+
+function aiClearHistory() {
+  if (!confirm('Clear all chat history?')) return;
+  state.aiInstructor.history = [];
+  save();
+  openAiInstructor();
+}
+
+function aiRenderMessage(m) {
+  const body = aiFormatMarkdown(m.content);
+  return `<div class="ai-msg role-${m.role}">
+    <div class="ai-msg-role">${m.role === 'user' ? 'You' : 'Claude'}</div>
+    <div class="ai-msg-body">${body}</div>
+  </div>`;
+}
+
+// Minimal markdown-ish formatting for assistant responses (since marked.js may not be loaded).
+function aiFormatMarkdown(text) {
+  // First, extract fenced code blocks
+  const blocks = [];
+  text = text.replace(/```([\w-]*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    blocks.push(`<pre><code>${escapeHtml(code.trim())}</code></pre>`);
+    return ` BLOCK${blocks.length - 1} `;
+  });
+  // Escape the rest
+  text = escapeHtml(text);
+  // Inline code
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Bold
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Restore code blocks
+  text = text.replace(/ BLOCK(\d+) /g, (_, i) => blocks[parseInt(i)]);
+  return text;
+}
+
+function aiInputKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    aiSend();
+  }
+}
+
+function aiQuickAction(kind) {
+  const map = {
+    explain: currentTopic
+      ? `Explain "${currentTopic.topic?.name}" in plain language — what it is, why it matters, the one or two gotchas I should remember.`
+      : 'Pick a key concept from where I am in the roadmap and explain it in plain language.',
+    quiz: currentTopic
+      ? `Quiz me on "${currentTopic.topic?.name}" with 3 short questions. Wait for each answer before showing the next.`
+      : `Quiz me on a topic I should have learned by now. Pick something appropriate to my progress. 3 questions, one at a time.`,
+    stuck: `I'm stuck. Help me unstuck myself by asking me the right questions, not by giving me the answer. Start with one focused question.`,
+    plan: `Plan my next 7 days of learning. Use my current progress and stage to make 5-7 concrete daily tasks. Each should be ~1-3 hours.`,
+    debug: `I need debugging help. I will paste my code and the error next. First, ask me what I expected to happen vs what's happening.`,
+    motivate: `I'm feeling demotivated. Don't sugarcoat it but help me reconnect with why I'm doing this. Ask me one question to get me unblocked.`
+  };
+  const text = map[kind];
+  if (!text) return;
+  const input = document.getElementById('aiInput');
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+}
+
+async function aiSend() {
+  if (__aiStreaming) return;
+  const input = document.getElementById('aiInput');
+  const text = input?.value.trim();
+  if (!text) return;
+  const ai = state.aiInstructor;
+  if (!ai.apiKey) {
+    openAiInstructorSetup();
+    return;
+  }
+
+  // Push user message
+  ai.history.push({ role: 'user', content: text, ts: new Date().toISOString() });
+  save();
+  input.value = '';
+  const log = document.getElementById('aiChatLog');
+  if (log) {
+    log.querySelector('.ai-empty')?.remove();
+    log.insertAdjacentHTML('beforeend', aiRenderMessage(ai.history[ai.history.length - 1]));
+    log.insertAdjacentHTML('beforeend', `<div class="ai-msg role-assistant" id="aiPendingMsg">
+      <div class="ai-msg-role">Claude</div>
+      <div class="ai-msg-body"><span class="ai-typing"><span></span><span></span><span></span></span></div>
+    </div>`);
+    log.scrollTop = log.scrollHeight;
+  }
+  const sendBtn = document.getElementById('aiSendBtn');
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Stop'; sendBtn.classList.add('danger'); sendBtn.onclick = aiCancel; }
+
+  __aiStreaming = true;
+  __aiAbort = new AbortController();
+  let fullText = '';
+  let usage = null;
+
+  try {
+    const apiMessages = ai.history
+      .filter(m => m.role === 'user' || m.role === 'assistant')
+      .map(m => ({ role: m.role, content: m.content }));
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ai.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: ai.model,
+        max_tokens: 2000,
+        system: aiBuildSystemPrompt(),
+        messages: apiMessages,
+        stream: true,
+      }),
+      signal: __aiAbort.signal,
+    });
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      throw new Error(`API error ${resp.status}: ${errBody.slice(0, 300)}`);
+    }
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (!data) continue;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText += evt.delta.text;
+            const pending = document.getElementById('aiPendingMsg');
+            if (pending) {
+              pending.querySelector('.ai-msg-body').innerHTML = aiFormatMarkdown(fullText);
+              if (log) log.scrollTop = log.scrollHeight;
+            }
+          } else if (evt.type === 'message_delta' && evt.usage) {
+            usage = evt.usage;
+          } else if (evt.type === 'message_start' && evt.message?.usage) {
+            usage = { ...usage, ...evt.message.usage };
+          }
+        } catch (e) {
+          // Ignore non-JSON lines (event: type lines, etc.)
+        }
+      }
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      fullText = fullText || '[stopped]';
+    } else {
+      fullText = `⚠ Error: ${err.message}\n\nIf this is a CORS or auth error, check your API key in Settings.`;
+    }
+  } finally {
+    __aiStreaming = false;
+    __aiAbort = null;
+    const pending = document.getElementById('aiPendingMsg');
+    if (pending) {
+      pending.id = '';
+      pending.querySelector('.ai-msg-body').innerHTML = aiFormatMarkdown(fullText || '[no response]');
+    }
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send'; sendBtn.classList.remove('danger'); sendBtn.onclick = aiSend; }
+
+    // Save the assistant message
+    ai.history.push({ role: 'assistant', content: fullText, ts: new Date().toISOString() });
+    if (usage) {
+      const m = AI_INSTRUCTOR_MODELS.find(x => x.id === ai.model);
+      if (m) {
+        const cost = (usage.input_tokens || 0) / 1_000_000 * m.pricing.in + (usage.output_tokens || 0) / 1_000_000 * m.pricing.out;
+        ai.totalCost += cost;
+        ai.totalTokensIn += usage.input_tokens || 0;
+        ai.totalTokensOut += usage.output_tokens || 0;
+      }
+    }
+    save();
+    // Update the cost display in the header
+    const costEl = document.querySelector('.ai-instructor-modal .ai-cost');
+    if (costEl) {
+      const costStr = ai.totalCost < 0.01 ? '< $0.01' : `$${ai.totalCost.toFixed(3)}`;
+      costEl.textContent = `Session: ${costStr} · ${ai.totalTokensIn} in / ${ai.totalTokensOut} out`;
+    }
+  }
+}
+
+function aiCancel() {
+  if (__aiAbort) __aiAbort.abort();
+}
+
+/* ============================================================
+   ACCOUNTABILITY — daily commit + actual hours + weekly check-in
+   ============================================================ */
+function acctTodayKey() {
+  return todayStr();
+}
+
+function acctSession(date) {
+  return state.accountability.sessions[date] || { goalHours: state.accountability.dailyGoalHours || 0, actualHours: 0, note: '' };
+}
+
+function acctSaveToday(goal, actual, note) {
+  const date = acctTodayKey();
+  state.accountability.sessions[date] = {
+    goalHours: goal,
+    actualHours: actual,
+    note: note || '',
+  };
+  if (goal > 0) state.accountability.dailyGoalHours = goal;
+  recomputeAcctStreak();
+  save();
+}
+
+function recomputeAcctStreak() {
+  const sessions = state.accountability.sessions;
+  const today = todayStr();
+  let streak = 0;
+  // Parse today as LOCAL date (not UTC) so date arithmetic stays in user's timezone
+  const [y, mo, da] = today.split('-').map(Number);
+  let d = new Date(y, mo - 1, da);
+  while (true) {
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const s = sessions[key];
+    if (!s || s.actualHours < s.goalHours || s.goalHours <= 0) break;
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  state.accountability.streakHistoryDays = streak;
+}
+
+function acctCheckin(text, mood) {
+  const entry = { date: todayStr(), text, mood: mood || 3, ts: new Date().toISOString() };
+  state.accountability.checkins.unshift(entry);
+  // Cap at 52 entries (one year of weekly check-ins)
+  state.accountability.checkins = state.accountability.checkins.slice(0, 52);
+  save();
+}
+
+function acctWeekDays() {
+  // Last 7 days including today
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    days.push({ key, label: ['S','M','T','W','T','F','S'][d.getDay()] });
+  }
+  return days;
+}
+
+function openAccountability() {
+  const today = acctTodayKey();
+  const sess = acctSession(today);
+  const a = state.accountability;
+  // Last 7 days
+  const week = acctWeekDays();
+  const weekHtml = week.map(d => {
+    const s = a.sessions[d.key];
+    const goal = s?.goalHours || a.dailyGoalHours || 0;
+    const actual = s?.actualHours || 0;
+    let cls = '';
+    if (actual >= goal && goal > 0 && actual > goal) cls = 'over';
+    else if (actual >= goal && goal > 0) cls = 'met';
+    else if (actual > 0) cls = 'partial';
+    if (d.key === today) cls += ' today';
+    return `<div class="acct-week-day ${cls}" title="${d.key}: ${actual}h / ${goal}h">
+      <span class="day-label">${d.label}</span>
+      <span class="day-hours">${actual || '·'}</span>
+    </div>`;
+  }).join('');
+  // Goal progress
+  const goalH = sess.goalHours || a.dailyGoalHours || 0;
+  const actualH = sess.actualHours || 0;
+  const pct = goalH > 0 ? Math.min(150, (actualH / goalH) * 100) : 0;
+  const isOver = actualH > goalH && goalH > 0;
+  // Weekly stats
+  const weekActualTotal = week.reduce((s, d) => s + (a.sessions[d.key]?.actualHours || 0), 0);
+  const weekGoalTotal = week.reduce((s, d) => s + (a.sessions[d.key]?.goalHours || a.dailyGoalHours || 0), 0);
+  // Check-in history
+  const checkinHistory = (a.checkins || []).slice(0, 6).map(c => `
+    <div class="acct-history-entry">
+      <div class="date">${escapeHtml(c.date)} · mood ${'★'.repeat(c.mood || 3)}${'☆'.repeat(5 - (c.mood || 3))}</div>
+      ${escapeHtml(c.text)}
+    </div>
+  `).join('');
+
+  const html = `
+    <div class="accountability-grid">
+      <div class="accountability-card">
+        <h4>📅 Today <span class="meta">${today}</span></h4>
+        <div class="acct-today-form">
+          <label>Daily commitment (hrs):</label>
+          <input type="number" id="acctGoal" min="0" max="24" step="0.25" value="${goalH || ''}" placeholder="e.g. 3" />
+          <span></span>
+          <label>Actual hours today (so far):</label>
+          <input type="number" id="acctActual" min="0" max="24" step="0.25" value="${actualH || ''}" placeholder="e.g. 2.5" />
+          <button onclick="saveAcctToday()" type="button">Save</button>
+        </div>
+        <div class="acct-progress-bar"><div class="acct-progress-fill ${isOver ? 'over' : ''}" style="width: ${pct}%"></div></div>
+        <div class="acct-today-stat" style="margin-top: 8px;">
+          <span>Progress today</span>
+          <strong>${actualH}h / ${goalH}h ${actualH >= goalH && goalH > 0 ? '✓' : ''}</strong>
+        </div>
+        <div class="acct-today-stat">
+          <span>Streak (consecutive days meeting goal)</span>
+          <strong>${a.streakHistoryDays || 0} ${a.streakHistoryDays > 0 ? '🔥' : ''}</strong>
+        </div>
+      </div>
+
+      <div class="accountability-card">
+        <h4>📊 This Week</h4>
+        <div class="acct-week-grid">${weekHtml}</div>
+        <div class="acct-today-stat" style="margin-top: 12px;">
+          <span>This week total</span>
+          <strong>${weekActualTotal.toFixed(1)}h / ${weekGoalTotal.toFixed(1)}h</strong>
+        </div>
+      </div>
+
+      <div class="accountability-card">
+        <h4>🪞 Weekly Check-In <span class="meta">Reflect Sundays · ${(a.checkins || []).length} prior entries</span></h4>
+        <div class="acct-checkin">
+          <div class="acct-checkin-prompts">Quick prompts: <em>What clicked this week? What did you struggle with? What will you do differently next week?</em></div>
+          <textarea id="acctCheckinText" placeholder="Write 3-5 sentences about your week..."></textarea>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;">Mood:</span>
+            <select id="acctMood" style="padding: 4px 8px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg); font-family: 'Patrick Hand', cursive;">
+              <option value="1">★☆☆☆☆ rough</option>
+              <option value="2">★★☆☆☆ meh</option>
+              <option value="3" selected>★★★☆☆ ok</option>
+              <option value="4">★★★★☆ good</option>
+              <option value="5">★★★★★ great</option>
+            </select>
+            <button onclick="saveAcctCheckin()" style="padding: 6px 14px; background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 6px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; cursor: pointer;" type="button">Save check-in</button>
+          </div>
+        </div>
+      </div>
+
+      ${checkinHistory ? `<div class="accountability-card">
+        <h4>📖 Check-in History</h4>
+        <div class="acct-history">${checkinHistory}</div>
+      </div>` : ''}
+    </div>
+  `;
+  showPracticeModal('📊 Accountability', html);
+}
+
+function saveAcctToday() {
+  const goal = parseFloat(document.getElementById('acctGoal')?.value || '0') || 0;
+  const actual = parseFloat(document.getElementById('acctActual')?.value || '0') || 0;
+  if (goal < 0 || actual < 0) { alert('Hours must be non-negative.'); return; }
+  if (goal > 24 || actual > 24) { alert('Hours cannot exceed 24 per day.'); return; }
+  acctSaveToday(goal, actual, '');
+  openAccountability();  // re-render
+}
+
+function saveAcctCheckin() {
+  const text = document.getElementById('acctCheckinText')?.value.trim();
+  const mood = parseInt(document.getElementById('acctMood')?.value || '3', 10);
+  if (!text) { alert('Write something before saving.'); return; }
+  acctCheckin(text, mood);
+  openAccountability();  // re-render
 }
 
 
@@ -14120,8 +14833,8 @@ const AI_PRICING = {
   'claude-opus-4-7':    { in: 15.00, out: 75.00 },
   'claude-sonnet-4-6':  { in:  3.00, out: 15.00 },
   'claude-haiku-4-5':   { in:  1.00, out:  5.00 },
-  'gpt-4o':             { in:  2.50, out: 10.00 },
-  'gpt-4o-mini':        { in:  0.15, out:  0.60 },
+  'voyage-3':           { in:  0.06, out:  0.00 },
+  'voyage-code':        { in:  0.18, out:  0.00 },
 };
 
 function calcCost(model, inputTokens, outputTokens) {
@@ -14163,7 +14876,7 @@ function renderCostTracker() {
     <div class="cost-form">
       <select id="costProvider" onchange="syncCostModels()">
         <option value="anthropic">Anthropic</option>
-        <option value="openai">OpenAI</option>
+        <option value="voyage">Voyage AI</option>
       </select>
       <select id="costModel"></select>
       <input type="number" id="costIn" placeholder="Input tokens" min="0" />
@@ -14199,7 +14912,7 @@ function syncCostModels() {
   const sel = document.getElementById('costModel');
   if (!sel) return;
   const models = Object.keys(AI_PRICING).filter(k =>
-    provider === 'anthropic' ? k.startsWith('claude') : k.startsWith('gpt')
+    provider === 'anthropic' ? k.startsWith('claude') : k.startsWith('voyage')
   );
   sel.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
 }
@@ -14366,7 +15079,7 @@ function buildICS() {
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Roadmap v3//EN',
-    'CALSCALE:GREGORIAN',
+    'CALSCALE:GREGORIAN'
   ];
   // One full-day event per stage milestone
   for (const stage of DATA) {
@@ -14900,7 +15613,7 @@ function stackHashtags(stack) {
   const tagMap = {
     'react': '#React', 'next.js': '#NextJS', 'nextjs': '#NextJS', 'typescript': '#TypeScript', 'javascript': '#JavaScript',
     'python': '#Python', 'fastapi': '#FastAPI', 'node': '#NodeJS', 'postgres': '#PostgreSQL', 'postgresql': '#PostgreSQL',
-    'docker': '#Docker', 'aws': '#AWS', 'anthropic': '#Anthropic', 'claude': '#Claude', 'openai': '#OpenAI',
+    'docker': '#Docker', 'aws': '#AWS', 'anthropic': '#Anthropic', 'claude': '#Claude', 'voyage': '#VoyageAI',
     'rag': '#RAG', 'llm': '#LLM', 'tailwind': '#TailwindCSS', 'prisma': '#Prisma', 'vercel': '#Vercel',
   };
   const tokens = stack.toLowerCase().split(/[,;·•\s]+/).filter(Boolean);
@@ -14949,7 +15662,7 @@ function fillResumeToken(token, stageProjects) {
     case 'stage3Projects': return joinProjectNames(stageProjects[3]) || '[your project names]';
     case 'deployTargets': return 'Vercel and Netlify';
     case 'stage4Projects': return joinProjectNames(stageProjects[4]) || 'a CRUD API with authentication';
-    case 'stage5Tools': return 'Anthropic Claude, OpenAI, function calling, structured outputs';
+    case 'stage5Tools': return 'Anthropic Claude, Voyage AI embeddings, function calling, structured outputs';
     case 'stage5Projects': return joinProjectNames(stageProjects[5]) || 'an LLM-powered tool';
     case 'stage6Projects': return joinProjectNames(stageProjects[6]) || 'a RAG-powered Q&A system';
     case 'stage7Projects': return joinProjectNames(stageProjects[7]) || 'an internal SaaS deployed to a VPS';
