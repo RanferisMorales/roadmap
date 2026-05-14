@@ -182,6 +182,34 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 .intro-card.bad { border-color: #ef4444; }
 :root[data-theme="dark"] .intro-card.bad { border-color: #f87171; }
 .intro-card.meta { border-color: var(--accent); }
+.intro-jump-row {
+  display: flex; gap: 10px; justify-content: space-between; align-items: center;
+  margin-bottom: 8px; flex-wrap: wrap;
+}
+.intro-jump-link {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  color: var(--text); text-decoration: none;
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card);
+}
+.intro-jump-link:hover { background: var(--node-stage); }
+.intro-whats-new {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  color: #1a1a1a; cursor: pointer; user-select: none;
+  padding: 4px 12px; border: 2px solid #f59e0b; border-radius: 999px;
+  background: #fef3c7; display: inline-flex; align-items: center; gap: 4px;
+}
+.intro-whats-new:hover { background: #fde68a; }
+:root[data-theme="dark"] .intro-whats-new { background: #422006; color: #fef3c7; border-color: #fbbf24; }
+:root[data-theme="dark"] .intro-whats-new:hover { background: #62390a; }
+.whats-new-list { display: grid; gap: 8px; }
+.whats-new-item {
+  padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg-card);
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5;
+}
+.whats-new-item strong { font-family: 'Kalam', cursive; font-weight: 700; }
+.whats-new-item .date { font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; color: var(--text-mute); display: block; margin-bottom: 2px; }
 .intro-callout {
   margin-top: 14px; padding: 14px 18px; border: 3px solid #f59e0b; border-radius: 10px;
   background: #fef3c7; color: #1a1a1a;
@@ -1244,6 +1272,14 @@ html[data-hide-optional="true"] .topic.opt { display: none; }
   padding: 6px 10px; border-radius: 6px; cursor: pointer;
 }
 .more-menu button:hover { background: var(--bg); border-color: var(--border); }
+.more-menu-group {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px 2px; margin-top: 4px;
+  font-family: 'Architects Daughter', cursive; font-size: 11px;
+  color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em;
+  border-top: 1.5px dashed var(--border);
+}
+.more-menu-group:first-child { border-top: none; margin-top: 0; padding-top: 2px; }
 
 /* ---- #11 GLOSSARY tooltips (auto-wrapped in static HTML) ---- */
 abbr.glossary-term {
@@ -2452,23 +2488,27 @@ abbr.glossary-term:hover::after {
           More
         </button>
         <div class="more-menu" id="moreMenu" role="menu">
+          <div class="more-menu-group" role="presentation"><span>Learn</span></div>
+          <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
+          <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
+          <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
           <button onclick="closeMoreMenu(); openFlashcards()">🧠 Flashcards</button>
-          <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
+          <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
+          <div class="more-menu-group" role="presentation"><span>Plan &amp; Track</span></div>
+          <button onclick="closeMoreMenu(); openBootcamp()">🏫 Bootcamp (full curriculum)</button>
+          <button onclick="closeMoreMenu(); openSchedule()">📅 Schedule (dates only)</button>
+          <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability</button>
+          <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
+          <div class="more-menu-group" role="presentation"><span>Build &amp; Career</span></div>
+          <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
+          <button onclick="closeMoreMenu(); openPortfolio()">📁 My Portfolio</button>
           <button onclick="closeMoreMenu(); openResumeGen()">📄 Resume Bullets</button>
           <button onclick="closeMoreMenu(); openLinkedInGen()">📢 LinkedIn Post</button>
-          <button onclick="closeMoreMenu(); openSchedule()">📅 Schedule</button>
           <button onclick="closeMoreMenu(); openSalary()">💼 Salary</button>
           <button onclick="closeMoreMenu(); openInterviewRandom()">🎲 Random Interview</button>
-          <button onclick="closeMoreMenu(); openPortfolio()">📁 My Portfolio</button>
           <button onclick="closeMoreMenu(); openCostTracker()">💰 AI Spend</button>
-          <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
-          <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
-          <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
-          <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
-          <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability</button>
-          <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
-          <button onclick="closeMoreMenu(); openBootcamp()">🏫 Bootcamp</button>
-          <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
+          <div class="more-menu-group" role="presentation"><span>Tools</span></div>
+          <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
         </div>
@@ -2486,6 +2526,10 @@ abbr.glossary-term:hover::after {
 
   <!-- INTRODUCTION -->
   <div class="intro-section" id="intro">
+    <div class="intro-jump-row">
+      <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
+      <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
+    </div>
     <h2>🎯 Is This Roadmap For You?</h2>
     <div class="intro-grid">
       <div class="intro-card good">
@@ -2597,6 +2641,7 @@ abbr.glossary-term:hover::after {
             <li>Hours/week will <strong>oscillate</strong> — 50 some weeks when something clicks, 10 the next when life happens. Plan for variance, not consistency.</li>
             <li>If you're spending 30+ hrs/week and still behind these ranges, that's normal — self-teaching is slower than bootcamps</li>
             <li>Stage 8 (Job Hunt) can run in parallel with Stage 7 to save time</li>
+            <li><strong>Electives add on top:</strong> Stage 9 (Mobile) ≈ +10-12 weeks · ~300 hrs. Stage 10 (DS/ML) ≈ +14-20 weeks · ~480 hrs. These are AFTER your first job, not before.</li>
             <li>Don't rush. Don't drag. Move on when you hit each stage's exit criteria.</li>
           </ul>
         </div>
@@ -2814,6 +2859,8 @@ abbr.glossary-term:hover::after {
         <div class="tf-sub" id="tfSub">Pick up where you left off</div>
       </div>
       <div class="tf-actions">
+        <button onclick="openBootcamp()" title="Open Bootcamp — see what's planned for this entire week">🏫 Week plan</button>
+        <button onclick="openAccountability()" title="Log today's hours + weekly check-in">📊 Log hours</button>
         <button onclick="refreshTodaysFocus(true)" id="tfRefreshBtn" title="Pick new topics">↻ Refresh</button>
         <button class="primary" onclick="markTodaysFocusDone()" id="tfMarkBtn">Mark all done</button>
       </div>
@@ -2822,6 +2869,7 @@ abbr.glossary-term:hover::after {
   </div>
 
   <!-- ROADMAP -->
+  <div id="stages"></div>
   <div id="roadmap">
   <div class="stage-cluster">
         <div class="stage-band">
@@ -7464,7 +7512,7 @@ abbr.glossary-term:hover::after {
     </div>
 
   <footer>
-    your progress saves automatically · last updated <span id="lastUpdated">—</span><br />
+    your progress saves automatically (<a href="#" onclick="event.preventDefault(); openBackup()" style="color: var(--accent); text-decoration: underline;">backup / restore</a>) · last updated <span id="lastUpdated">—</span><br />
     <span data-personal="footer">638 curated links · 11 stages (9 core + 2 electives) · 853 glossary entries · ~16–25 months core at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
   </footer>
 </div>
@@ -15044,7 +15092,7 @@ const BUILD_CATEGORIES = [
   { key: `site`, label: `Websites` },
   { key: `api`, label: `APIs` },
   { key: `ai`, label: `AI Apps` },
-  { key: `bot`, label: `Trading Bots` }
+  { key: `bot`, label: `Trading / Finance` }
 ];
 
 let __buildsFilter = { category: `all`, search: `` };
@@ -15723,6 +15771,51 @@ function aiBuildSystemPrompt() {
 
 let __aiStreaming = false;
 let __aiAbort = null;
+
+/* ============================================================
+   WHAT'S NEW — recent additions changelog (shown in modal)
+   ============================================================ */
+const WHATS_NEW = [
+  { date: '2026-05', items: [
+    '🏫 New <strong>Bootcamp</strong> mode — compress the roadmap into 12 / 16 / 24 / 52 / 84-week schedules with week-by-week curriculum, calendar view, and completion tracking.',
+    '🎓 New <strong>AI Instructor</strong> — chat with Claude as your personal tutor (uses your own Anthropic API key, stored only in your browser).',
+    '📊 New <strong>Accountability</strong> tracker — daily commitment, hour tracker, weekly check-ins with mood, streak counter.',
+    '📝 New <strong>Definitions Quiz</strong> — 4-choice multiple-choice drill over 853 glossary entries. By stage, by tier, or acronyms-only.',
+  ]},
+  { date: '2026-04', items: [
+    '📱 New <strong>Stage 9: Mobile Development</strong> elective — React Native + Expo, push notifications, App Store / Play Store distribution.',
+    '🧪 New <strong>Stage 10: Data Science / ML Research</strong> elective — NumPy/Pandas, scikit-learn, PyTorch, Transformers, HuggingFace, fine-tuning.',
+    '🧮 New <strong>Math &amp; Logic Fundamentals</strong> branch in Stage 1 — Boolean logic, sets, statistics, probability, Polya problem-solving, Fermi estimation.',
+    '📚 Massive <strong>Glossary expansion</strong> — now 853 entries (was 72). Per-topic Key Terms in every modal.',
+    '🎮 New <strong>Practice Hub</strong> + per-topic Practice section — 60+ curated practice resources grouped by skill.',
+    '🔨 New <strong>Builds</strong> section — 11 full step-by-step project guides with copy-paste code: portfolio site, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots.',
+  ]},
+  { date: '2026-03', items: [
+    '🕸 <strong>Skill Graph</strong> rebuilt — replaced force-directed clump with a layered DAG (deterministic positions, stage bands, filters, search).',
+    '✋ <strong>OpenAI removed</strong> — roadmap is now Anthropic Claude exclusive (Voyage AI for embeddings).',
+    'Honest <strong>timeline reframe</strong> — 16-25 months "ideal" alongside 24-36 months "realistic for most".',
+    '<strong>Stage 8 (Job Hunt)</strong> expanded with: 2025-2026 junior market reality, portfolio differentiation, first-job year 1 expectations, when to specialize.',
+    'Built-in static-HTML re-render from DATA so future content updates pick up automatically.',
+  ]},
+];
+
+function openWhatsNew() {
+  const itemsHtml = WHATS_NEW.map(g => `
+    <div style="margin-bottom: 16px;">
+      <span class="date">${escapeHtml(g.date)}</span>
+      <div class="whats-new-list">
+        ${g.items.map(i => `<div class="whats-new-item">${i}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  const html = `
+    <p style="font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.55; margin-bottom: 14px;">
+      Recent additions to the roadmap. Bookmark this — features keep landing.
+    </p>
+    ${itemsHtml}
+  `;
+  showPracticeModal('✨ What\'s new', html);
+}
 
 function openAiInstructor() {
   const ai = state.aiInstructor;
