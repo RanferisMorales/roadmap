@@ -1376,6 +1376,89 @@ abbr.glossary-term:hover::after {
 }
 .phub-section-count { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400; }
 
+/* ---- BUILDS — step-by-step project guides (Stage 3 of content expansion) ---- */
+.builds-intro { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
+.builds-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+.builds-toolbar input[type="search"] {
+  flex: 1; min-width: 180px; padding: 6px 10px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.builds-pill {
+  display: inline-flex; padding: 3px 11px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+  cursor: pointer; user-select: none;
+}
+.builds-pill.active { background: var(--node-stage); }
+.builds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.build-card {
+  display: grid; gap: 6px; padding: 14px 16px;
+  border: 2.5px solid var(--border); border-radius: 10px; background: var(--bg-card);
+  cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+}
+.build-card:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+.build-card[hidden] { display: none; }
+.build-card .b-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.build-card .b-title { font-family: 'Architects Daughter', cursive; font-size: 19px; color: var(--text); }
+.build-card .b-cat { font-family: 'Patrick Hand', cursive; font-size: 11px; padding: 1px 8px; border: 2px solid var(--border); border-radius: 999px; background: var(--bg); }
+.build-card.cat-bot .b-cat { background: #fee2e2; color: #1a1a1a; }
+.build-card.cat-site .b-cat { background: #d1fae5; color: #1a1a1a; }
+.build-card.cat-ai .b-cat { background: #ede9fe; color: #1a1a1a; }
+.build-card.cat-api .b-cat { background: #dbeafe; color: #1a1a1a; }
+.build-card .b-desc { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5; }
+.build-card .b-meta { display: flex; gap: 8px; flex-wrap: wrap; font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); margin-top: 4px; }
+.build-card .b-meta strong { color: var(--text); font-family: 'Kalam', cursive; font-weight: 700; }
+.build-card .b-diff {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 10.5px; letter-spacing: 0.04em;
+  padding: 1px 7px; border: 1.5px solid var(--border); border-radius: 4px;
+  text-transform: uppercase;
+}
+.build-card .b-diff.beginner { background: #d1fae5; color: #064e3b; }
+.build-card .b-diff.intermediate { background: #fef3c7; color: #78350f; }
+.build-card .b-diff.advanced { background: #fee2e2; color: #7f1d1d; }
+.build-detail { display: grid; gap: 14px; }
+.build-detail .bd-head { display: grid; gap: 6px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+.build-detail .bd-head h3 { font-family: 'Architects Daughter', cursive; font-size: 24px; }
+.build-detail .bd-back {
+  align-self: flex-start;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text); cursor: pointer;
+}
+.build-detail .bd-back:hover { background: var(--node-stage); }
+.build-step { border: 2px solid var(--border); border-radius: 8px; background: var(--bg-card); overflow: hidden; }
+.build-step summary {
+  padding: 10px 14px; cursor: pointer; user-select: none;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px; color: var(--text);
+  background: var(--bg); display: flex; align-items: center; gap: 10px;
+}
+.build-step summary::-webkit-details-marker { display: none; }
+.build-step summary::before { content: '▶'; font-size: 11px; transition: transform 0.15s; }
+.build-step[open] summary::before { transform: rotate(90deg); }
+.build-step .bs-num {
+  font-family: 'Architects Daughter', cursive; font-size: 13px; color: var(--text-mute);
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 999px;
+  padding: 1px 9px;
+}
+.build-step .bs-body { padding: 12px 16px; font-family: 'Patrick Hand', cursive; font-size: 14.5px; line-height: 1.6; color: var(--text); }
+.build-step .bs-body p { margin: 8px 0; }
+.build-step .bs-body ul, .build-step .bs-body ol { margin: 6px 0 8px 22px; }
+.build-step .bs-body li { margin-bottom: 4px; }
+.build-step .bs-body code {
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 12.5px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 4px;
+  padding: 1px 6px; color: var(--text);
+}
+.build-step .bs-body pre {
+  background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  padding: 10px 12px; margin: 8px 0; overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 12.5px;
+  color: var(--text); line-height: 1.55;
+}
+.build-step .bs-body pre code { background: none; border: none; padding: 0; }
+.build-step .bs-body a { color: var(--accent); text-decoration: underline; }
+
 /* Global glossary improvements — letter index + origin badges */
 .glossary-letter-index {
   display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; margin-bottom: 8px;
@@ -1979,6 +2062,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openCostTracker()">💰 AI Spend</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
+          <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
           <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
@@ -12439,6 +12523,1075 @@ function filterPracticeHub(q) {
     if (query) section.hidden = visibleInSection === 0;
   });
 }
+
+/* ------------------------------------------------------------
+   BUILDS — step-by-step build guides. All strings use backticks
+   (template literals) to side-step apostrophe escape issues.
+   ------------------------------------------------------------ */
+const BUILDS = [
+  {
+    id: `portfolio-site`,
+    title: `Personal Portfolio Website`,
+    category: `site`,
+    difficulty: `beginner`,
+    time: `2-4 hrs`,
+    stack: `Next.js · Tailwind · MDX · Vercel`,
+    desc: `Your professional front door. Domain, About, Projects, Contact. Built with Next.js 15 App Router, deployed free on Vercel.`,
+    steps: [
+      { title: `Scaffold the project`, body: `<p>Create a fresh Next.js project with TypeScript and Tailwind preconfigured:</p>
+<pre><code>npx create-next-app@latest my-portfolio --typescript --tailwind --app
+cd my-portfolio
+pnpm dev   # http://localhost:3000</code></pre>
+<p>Confirm the starter page renders in your browser before touching anything.</p>` },
+      { title: `Design the information architecture`, body: `<p>Plan 4 pages, in this order of priority:</p>
+<ol>
+  <li><strong>/</strong> — hero + 1-paragraph pitch + top 3 projects</li>
+  <li><strong>/projects</strong> — full grid of projects with links</li>
+  <li><strong>/about</strong> — your story, skills, contact</li>
+  <li><strong>/blog</strong> (optional) — MDX-powered if you have anything to say</li>
+</ol>
+<p>Open <code>app/page.tsx</code> and write the hero by hand. The site should feel like you.</p>` },
+      { title: `Add a Projects component`, body: `<p>Create <code>data/projects.ts</code> as your source of truth:</p>
+<pre><code>export const projects = [
+  {
+    title: "Roadmap App",
+    desc: "A self-teaching roadmap with 25 interactive features.",
+    stack: ["TypeScript", "React", "Tailwind"],
+    live: "https://example.com",
+    repo: "https://github.com/you/roadmap",
+  },
+];</code></pre>
+<p>Import this into a ProjectGrid component that renders a card per project. Show stack as small pills.</p>` },
+      { title: `Style with Tailwind`, body: `<p>Pick ONE design vibe — minimalist beats fancy. Stick to:</p>
+<ul>
+  <li>Max width container: <code>max-w-2xl mx-auto px-4</code></li>
+  <li>One accent color via theme.extend.colors in tailwind.config.ts</li>
+  <li>Two fonts max — body + display</li>
+  <li>Generous whitespace: <code>py-16 md:py-24</code> between sections</li>
+</ul>
+<p>Inspiration that punches above its weight: <a href="https://brittanychiang.com/" target="_blank" rel="noopener">brittanychiang.com</a>, <a href="https://leerob.io/" target="_blank" rel="noopener">leerob.io</a>, <a href="https://paco.me/" target="_blank" rel="noopener">paco.me</a>.</p>` },
+      { title: `Add MDX blog (optional)`, body: `<p>Install <code>@next/mdx</code> and configure App Router MDX:</p>
+<pre><code>pnpm add @next/mdx @mdx-js/loader @mdx-js/react</code></pre>
+<p>Create <code>app/blog/[slug]/page.tsx</code> that reads MDX files from <code>content/blog/*.mdx</code>. Use gray-matter for frontmatter.</p>
+<p>Or skip and use <a href="https://contentlayer.dev/" target="_blank" rel="noopener">Contentlayer</a> for richer type-safe MDX.</p>` },
+      { title: `Wire up a contact form`, body: `<p>Use <a href="https://resend.com/" target="_blank" rel="noopener">Resend</a> (free tier: 3K emails/mo). Create a Server Action:</p>
+<pre><code>// app/actions/contact.ts
+"use server";
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function sendContact(formData: FormData) {
+  await resend.emails.send({
+    from: "portfolio@yourdomain.com",
+    to: "you@yourmail.com",
+    subject: "New message",
+    text: formData.get("message") as string,
+  });
+}</code></pre>
+<p>Wire <code>&lt;form action={sendContact}&gt;</code> on the contact page.</p>` },
+      { title: `Deploy to Vercel`, body: `<p>Push to GitHub, then connect on <a href="https://vercel.com/" target="_blank" rel="noopener">vercel.com</a>:</p>
+<ol>
+  <li>Import the repo</li>
+  <li>Set env vars (RESEND_API_KEY)</li>
+  <li>Deploy — first deploy in ~30s, future pushes auto-deploy</li>
+</ol>
+<p>Buy a domain (~$12/yr on Namecheap or Porkbun) and add it in Vercel → Settings → Domains.</p>` },
+      { title: `Verify quality before "shipping"`, body: `<ul>
+  <li>Lighthouse score &ge; 90 on /, /projects, /about (test in incognito)</li>
+  <li>Works on a real phone — borrow one if needed</li>
+  <li>Keyboard navigable (Tab through everything; nothing should trap focus)</li>
+  <li>SEO meta tags set (title, description, og:image)</li>
+  <li>404 page styled (the default is ugly)</li>
+</ul>` }
+    ]
+  },
+  {
+    id: `rest-api`,
+    title: `REST API (Hono + Postgres + Prisma)`,
+    category: `api`,
+    difficulty: `intermediate`,
+    time: `6-10 hrs`,
+    stack: `Hono · Prisma · Postgres · Zod · JWT`,
+    desc: `A production-shape REST API. Auth, CRUD, input validation, structured errors, deployable to Cloudflare Workers or a VPS.`,
+    steps: [
+      { title: `Initialize the project`, body: `<pre><code>mkdir my-api && cd my-api
+pnpm init
+pnpm add hono @hono/node-server zod
+pnpm add -D typescript tsx @types/node</code></pre>
+<p>Create the most basic Hono server in index.ts:</p>
+<pre><code>import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+
+const app = new Hono();
+app.get("/health", (c) =&gt; c.json({ ok: true }));
+serve({ fetch: app.fetch, port: 3000 });</code></pre>
+<p>Run with <code>pnpm tsx index.ts</code> and curl /health.</p>` },
+      { title: `Set up Postgres + Prisma`, body: `<p>Run Postgres in Docker:</p>
+<pre><code>docker run -d --name mypg -e POSTGRES_PASSWORD=secret -p 5432:5432 postgres:16</code></pre>
+<pre><code>pnpm add @prisma/client
+pnpm add -D prisma
+npx prisma init</code></pre>
+<p>Edit prisma/schema.prisma with your data model:</p>
+<pre><code>model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}</code></pre>
+<p>Set DATABASE_URL in .env, then:</p>
+<pre><code>npx prisma migrate dev --name init
+npx prisma generate</code></pre>` },
+      { title: `Define Zod schemas`, body: `<pre><code>// src/schemas.ts
+import { z } from "zod";
+
+export const createPostSchema = z.object({
+  title: z.string().min(1).max(200),
+  body: z.string().min(1).max(10000),
+});
+
+export type CreatePost = z.infer&lt;typeof createPostSchema&gt;;</code></pre>
+<p>Every POST/PUT endpoint validates against one of these.</p>` },
+      { title: `Build CRUD routes`, body: `<pre><code>import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { prisma } from "./db";
+import { createPostSchema } from "./schemas";
+
+const posts = new Hono();
+
+posts.get("/", async (c) =&gt; {
+  const list = await prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+  return c.json(list);
+});
+
+posts.post("/", zValidator("json", createPostSchema), async (c) =&gt; {
+  const data = c.req.valid("json");
+  const userId = c.get("userId");
+  const post = await prisma.post.create({ data: { ...data, authorId: userId } });
+  return c.json(post, 201);
+});
+
+posts.delete("/:id", async (c) =&gt; {
+  const id = c.req.param("id");
+  await prisma.post.delete({ where: { id } });
+  return c.body(null, 204);
+});
+
+export default posts;</code></pre>
+<p>Mount at <code>app.route("/posts", posts)</code>.</p>` },
+      { title: `Add JWT auth`, body: `<pre><code>pnpm add hono/jwt bcryptjs
+pnpm add -D @types/bcryptjs</code></pre>
+<pre><code>import { sign } from "hono/jwt";
+import bcrypt from "bcryptjs";
+
+auth.post("/register", async (c) =&gt; {
+  const { email, password } = await c.req.json();
+  const hash = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({ data: { email, password: hash } });
+  const token = await sign({ sub: user.id }, process.env.JWT_SECRET!);
+  return c.json({ token });
+});</code></pre>
+<p>Add middleware:</p>
+<pre><code>import { jwt } from "hono/jwt";
+app.use("/posts/*", jwt({ secret: process.env.JWT_SECRET! }));</code></pre>` },
+      { title: `Structured errors`, body: `<pre><code>app.onError((err, c) =&gt; {
+  console.error(err);
+  if (err instanceof z.ZodError) {
+    return c.json({ error: "validation", issues: err.issues }, 400);
+  }
+  return c.json({ error: "internal" }, 500);
+});
+
+app.notFound((c) =&gt; c.json({ error: "not_found" }, 404));</code></pre>
+<p>Always return JSON, never HTML error pages from an API.</p>` },
+      { title: `Deploy`, body: `<p>Two easiest paths:</p>
+<ol>
+  <li><strong>Cloudflare Workers</strong> — Hono is built for it. <code>pnpm wrangler deploy</code>. Use Neon or Supabase for Postgres.</li>
+  <li><strong>VPS</strong> — Render, Railway, or Fly.io. Pair with Render Postgres or Neon.</li>
+</ol>
+<p>Either way, set env vars (DATABASE_URL, JWT_SECRET) in the platform dashboard.</p>` }
+    ]
+  },
+  {
+    id: `crypto-bot`,
+    title: `Crypto Trading Bot (Binance)`,
+    category: `bot`,
+    difficulty: `intermediate`,
+    time: `8-16 hrs`,
+    stack: `Python · ccxt · pandas · TA-Lib · Binance API`,
+    desc: `A bot that places buy/sell orders on Binance based on simple technical indicators (SMA crossover). Includes paper-trading mode, backtesting, and risk management.`,
+    steps: [
+      { title: `⚠ Risk warning — read this first`, body: `<p><strong>Trading bots can and do lose real money.</strong> Before any live trading:</p>
+<ul>
+  <li>Run paper-trading (Binance Testnet) for at least 4 weeks</li>
+  <li>Start with risk capital you can lose entirely — not rent money</li>
+  <li>Backtest on at least 1 year of historical data — winning in a bull market is meaningless</li>
+  <li>Set hard daily/weekly stop-loss limits in code</li>
+  <li>Understand: you are competing against funds with HFT infrastructure</li>
+</ul>
+<p>This guide teaches the mechanics. <strong>You are responsible for the strategy and the losses.</strong></p>` },
+      { title: `Setup: Python + Binance Testnet`, body: `<ol>
+  <li>Go to <a href="https://testnet.binance.vision/" target="_blank" rel="noopener">testnet.binance.vision</a> and create a test account (free, no KYC)</li>
+  <li>Generate API key + secret (save them — only shown once)</li>
+  <li>Install Python 3.12 + uv if not done (see Stage 0)</li>
+</ol>
+<pre><code>uv init crypto-bot && cd crypto-bot
+uv add ccxt pandas python-dotenv numpy ta-lib-binary backtesting</code></pre>
+<p>Create .env with your keys (gitignore this file!):</p>
+<pre><code>BINANCE_API_KEY=your_testnet_key
+BINANCE_SECRET=your_testnet_secret
+BINANCE_TESTNET=true</code></pre>` },
+      { title: `Connect to the exchange`, body: `<pre><code># exchange.py
+import ccxt, os
+from dotenv import load_dotenv
+load_dotenv()
+
+exchange = ccxt.binance({
+    "apiKey": os.getenv("BINANCE_API_KEY"),
+    "secret": os.getenv("BINANCE_SECRET"),
+    "enableRateLimit": True,
+    "options": {"defaultType": "spot"},
+})
+if os.getenv("BINANCE_TESTNET") == "true":
+    exchange.set_sandbox_mode(True)</code></pre>
+<p>Sanity check:</p>
+<pre><code>print(exchange.fetch_balance()["USDT"])
+print(exchange.fetch_ticker("BTC/USDT"))</code></pre>` },
+      { title: `Strategy: SMA crossover`, body: `<pre><code># strategy.py
+import pandas as pd
+from exchange import exchange
+
+def fetch_ohlcv(symbol="BTC/USDT", timeframe="1h", limit=500):
+    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
+    df = pd.DataFrame(ohlcv, columns=["ts","open","high","low","close","volume"])
+    df["ts"] = pd.to_datetime(df["ts"], unit="ms")
+    df.set_index("ts", inplace=True)
+    return df
+
+def signal(df, fast=20, slow=50):
+    df["sma_fast"] = df["close"].rolling(fast).mean()
+    df["sma_slow"] = df["close"].rolling(slow).mean()
+    df["signal"] = 0
+    df.loc[df["sma_fast"] &gt; df["sma_slow"], "signal"] = 1
+    df.loc[df["sma_fast"] &lt; df["sma_slow"], "signal"] = -1
+    return df</code></pre>
+<p>This is a basic SMA crossover — replace with your own strategy once you understand the plumbing.</p>` },
+      { title: `Place orders with risk management`, body: `<pre><code># bot.py
+from exchange import exchange
+from strategy import fetch_ohlcv, signal
+
+SYMBOL = "BTC/USDT"
+POSITION_SIZE_USD = 100
+STOP_LOSS_PCT = 0.02
+
+def get_position():
+    balance = exchange.fetch_balance()
+    return balance.get("BTC", {}).get("free", 0)
+
+def place_buy():
+    price = exchange.fetch_ticker(SYMBOL)["last"]
+    amount = POSITION_SIZE_USD / price
+    order = exchange.create_market_buy_order(SYMBOL, amount)
+    sl_price = price * (1 - STOP_LOSS_PCT)
+    exchange.create_order(SYMBOL, "stop_loss", "sell", amount, None, {"stopPrice": sl_price})
+    print(f"BUY {amount:.6f} @ {price:.2f}, SL @ {sl_price:.2f}")
+    return order
+
+def run():
+    df = signal(fetch_ohlcv())
+    latest = df.iloc[-1]
+    prev = df.iloc[-2]
+    pos = get_position()
+    if latest["signal"] == 1 and prev["signal"] != 1 and pos == 0:
+        place_buy()
+    elif latest["signal"] == -1 and pos &gt; 0:
+        amount = get_position()
+        exchange.create_market_sell_order(SYMBOL, amount)
+
+if __name__ == "__main__":
+    run()</code></pre>` },
+      { title: `Backtest before going live`, body: `<p>NEVER deploy without backtesting. Use backtesting.py:</p>
+<pre><code>from backtesting import Backtest, Strategy
+from backtesting.lib import crossover
+
+class SmaCross(Strategy):
+    fast = 20; slow = 50
+    def init(self):
+        close = self.data.Close
+        self.sma_fast = self.I(lambda x: pd.Series(x).rolling(self.fast).mean(), close)
+        self.sma_slow = self.I(lambda x: pd.Series(x).rolling(self.slow).mean(), close)
+    def next(self):
+        if crossover(self.sma_fast, self.sma_slow): self.buy()
+        elif crossover(self.sma_slow, self.sma_fast): self.position.close()
+
+df = fetch_ohlcv("BTC/USDT", "1h", limit=2000)
+df.columns = ["Open","High","Low","Close","Volume"]
+bt = Backtest(df, SmaCross, cash=10_000, commission=.001)
+print(bt.run())</code></pre>
+<p>Look at: <strong>Sharpe Ratio &gt; 1.0</strong>, <strong>Max Drawdown &lt; 30%</strong>, <strong>Profit Factor &gt; 1.5</strong>. If your backtest is worse than buy-and-hold, the strategy fails.</p>` },
+      { title: `Run on a schedule`, body: `<p>Two options:</p>
+<ol>
+  <li><strong>cron on a VPS</strong> — cheapest. <code>0 * * * * cd /home/bot && python3 bot.py</code> for hourly checks.</li>
+  <li><strong>GitHub Actions cron</strong> — free, no VPS. .github/workflows/bot.yml with <code>on: schedule: - cron: "0 * * * *"</code>. Store API keys in repo secrets.</li>
+</ol>
+<p>Add Telegram notifications on every trade — you want to know immediately if something is off.</p>` },
+      { title: `Going live — staged rollout`, body: `<ol>
+  <li>Week 1-4: <strong>Paper trading on testnet</strong>. Track metrics in a CSV.</li>
+  <li>Week 5: <strong>$100 of real money</strong> on live API. Reduce position size to $10/trade.</li>
+  <li>Week 6+: Scale up only if Sharpe in production matches your backtest.</li>
+</ol>
+<p><strong>Kill switch:</strong> if drawdown exceeds 15% in any month, halt the bot and review.</p>` }
+    ]
+  },
+  {
+    id: `stock-bot`,
+    title: `Stock Trading Bot (Alpaca)`,
+    category: `bot`,
+    difficulty: `intermediate`,
+    time: `6-12 hrs`,
+    stack: `Python · alpaca-py · pandas`,
+    desc: `A US-equities trading bot using Alpaca commission-free API. Paper-trading mode for free, then real money with no minimum.`,
+    steps: [
+      { title: `⚠ Same risk warning as crypto`, body: `<p>Stock bots can lose real money. <strong>Same rules apply</strong>: paper-trade first, backtest, set hard stops, only risk capital you can lose.</p>
+<p>Additionally: US market hours are 9:30-16:00 ET, M-F. Your bot only trades during these hours.</p>` },
+      { title: `Sign up for Alpaca + get keys`, body: `<ol>
+  <li>Create a free account at <a href="https://alpaca.markets/" target="_blank" rel="noopener">alpaca.markets</a></li>
+  <li>Go to "Paper Trading" mode in the dashboard (default for new accounts)</li>
+  <li>Generate API Key ID and Secret Key</li>
+</ol>
+<pre><code>uv init stock-bot && cd stock-bot
+uv add alpaca-py pandas yfinance python-dotenv</code></pre>
+<p>Create .env:</p>
+<pre><code>ALPACA_API_KEY=your_key
+ALPACA_SECRET=your_secret
+ALPACA_PAPER=true</code></pre>` },
+      { title: `Connect to Alpaca`, body: `<pre><code># client.py
+from alpaca.trading.client import TradingClient
+from alpaca.data.historical import StockHistoricalDataClient
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+trading = TradingClient(
+    api_key=os.getenv("ALPACA_API_KEY"),
+    secret_key=os.getenv("ALPACA_SECRET"),
+    paper=os.getenv("ALPACA_PAPER") == "true",
+)
+data = StockHistoricalDataClient(
+    api_key=os.getenv("ALPACA_API_KEY"),
+    secret_key=os.getenv("ALPACA_SECRET"),
+)
+print(trading.get_account())</code></pre>` },
+      { title: `RSI signal`, body: `<pre><code># strategy.py
+from alpaca.data.requests import StockBarsRequest
+from alpaca.data.timeframe import TimeFrame
+from datetime import datetime, timedelta
+from client import data
+import pandas as pd
+
+def get_bars(symbol, days=200):
+    req = StockBarsRequest(
+        symbol_or_symbols=[symbol],
+        timeframe=TimeFrame.Day,
+        start=datetime.now() - timedelta(days=days),
+    )
+    bars = data.get_stock_bars(req).df
+    return bars.xs(symbol)
+
+def rsi_signal(df, window=14, oversold=30, overbought=70):
+    delta = df["close"].diff()
+    gain = delta.where(delta &gt; 0, 0).rolling(window).mean()
+    loss = (-delta.where(delta &lt; 0, 0)).rolling(window).mean()
+    rs = gain / loss
+    df["rsi"] = 100 - 100 / (1 + rs)
+    df["signal"] = 0
+    df.loc[df["rsi"] &lt; oversold, "signal"] = 1
+    df.loc[df["rsi"] &gt; overbought, "signal"] = -1
+    return df</code></pre>` },
+      { title: `Place orders`, body: `<pre><code># bot.py
+from alpaca.trading.requests import MarketOrderRequest
+from alpaca.trading.enums import OrderSide, TimeInForce
+from client import trading
+from strategy import get_bars, rsi_signal
+
+SYMBOL = "AAPL"; QTY = 1
+
+def get_position(symbol):
+    try:
+        return float(trading.get_open_position(symbol).qty)
+    except Exception:
+        return 0.0
+
+def order(side, qty):
+    req = MarketOrderRequest(symbol=SYMBOL, qty=qty, side=side, time_in_force=TimeInForce.DAY)
+    return trading.submit_order(order_data=req)
+
+def run():
+    df = rsi_signal(get_bars(SYMBOL))
+    latest = df.iloc[-1]
+    pos = get_position(SYMBOL)
+    if latest["signal"] == 1 and pos == 0:
+        order(OrderSide.BUY, QTY)
+    elif latest["signal"] == -1 and pos &gt; 0:
+        order(OrderSide.SELL, pos)
+
+if __name__ == "__main__":
+    run()</code></pre>` },
+      { title: `Live trading checklist`, body: `<ol>
+  <li>Paper trade for 4+ weeks; track total P&L</li>
+  <li>If P&L beats SPY over that period, switch to live with $500-$1000</li>
+  <li>Add daily loss limit: if today P&L &lt; -2% of account, halt bot</li>
+  <li>Add account-level kill switch: if equity &lt; starting_equity * 0.85, alert and halt</li>
+  <li>Log every order to a SQLite DB or Postgres for audit</li>
+</ol>` }
+    ]
+  },
+  {
+    id: `dca-bot`,
+    title: `DCA Bot (Dollar-Cost Average)`,
+    category: `bot`,
+    difficulty: `beginner`,
+    time: `3-5 hrs`,
+    stack: `Python · ccxt · cron`,
+    desc: `The simplest profitable bot: buy a fixed dollar amount every N days. No prediction, no timing, no stress. Beats most active strategies long-term.`,
+    steps: [
+      { title: `Why DCA wins`, body: `<p>Dollar-Cost Averaging buys a fixed amount on a schedule regardless of price. You buy more when prices are low, less when high — without trying to predict either. This:</p>
+<ul>
+  <li>Beats lump-sum about 33% of the time AND reduces variance</li>
+  <li>Eliminates timing decisions (the biggest source of human-trader losses)</li>
+  <li>Works for crypto, stocks, ETFs — anything you can buy on a schedule</li>
+</ul>
+<p>If you take ONE bot from this list, take this one.</p>` },
+      { title: `Setup (same as crypto bot)`, body: `<pre><code>uv init dca-bot && cd dca-bot
+uv add ccxt python-dotenv</code></pre>
+<p>Use Binance / Coinbase / Kraken keys (or Alpaca for stocks). Set .env.</p>` },
+      { title: `The whole bot`, body: `<pre><code># dca.py
+import os, ccxt
+from dotenv import load_dotenv
+load_dotenv()
+
+exchange = ccxt.binance({
+    "apiKey": os.getenv("BINANCE_API_KEY"),
+    "secret": os.getenv("BINANCE_SECRET"),
+})
+
+SYMBOL = "BTC/USDT"
+AMOUNT_USD = 50
+
+def dca_buy():
+    price = exchange.fetch_ticker(SYMBOL)["last"]
+    amount = AMOUNT_USD / price
+    order = exchange.create_market_buy_order(SYMBOL, amount)
+    print(f"Bought {amount:.6f} BTC @ {price:.2f} (\${AMOUNT_USD})")
+    return order
+
+if __name__ == "__main__":
+    dca_buy()</code></pre>
+<p>That is the whole strategy. 15 lines.</p>` },
+      { title: `Schedule it`, body: `<p>Cron for weekly buy every Sunday at 10am:</p>
+<pre><code>0 10 * * 0 cd /home/dca && python3 dca.py &gt;&gt; dca.log 2&gt;&amp;1</code></pre>
+<p>Or GitHub Actions:</p>
+<pre><code># .github/workflows/dca.yml
+on:
+  schedule:
+    - cron: "0 10 * * 0"
+  workflow_dispatch:
+jobs:
+  dca:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ccxt python-dotenv
+      - run: python dca.py
+        env:
+          BINANCE_API_KEY: \${{ secrets.BINANCE_API_KEY }}
+          BINANCE_SECRET: \${{ secrets.BINANCE_SECRET }}</code></pre>` },
+      { title: `Track performance`, body: `<p>Append every buy to history.csv:</p>
+<pre><code>import csv
+from datetime import datetime
+def log_buy(price, amount, usd):
+    with open("history.csv", "a") as f:
+        w = csv.writer(f)
+        w.writerow([datetime.now().isoformat(), price, amount, usd])</code></pre>
+<p>After 6 months, compute average buy price vs current price. If you stuck to the schedule through a downturn, you will see why DCA wins.</p>` }
+    ]
+  },
+  {
+    id: `grid-bot`,
+    title: `Grid Trading Bot`,
+    category: `bot`,
+    difficulty: `advanced`,
+    time: `10-20 hrs`,
+    stack: `Python · ccxt · asyncio · Redis (optional)`,
+    desc: `Places a grid of buy and sell orders at fixed price intervals. Profits from sideways volatility. Loses badly in strong trends.`,
+    steps: [
+      { title: `How grid trading works`, body: `<p>Pick a price range, e.g. BTC between $40K and $60K. Divide into N grid levels:</p>
+<ul>
+  <li>$40K: buy 0.001 BTC, set sell at $42K</li>
+  <li>$42K: buy 0.001 BTC, set sell at $44K</li>
+  <li>... (and so on, all levels)</li>
+</ul>
+<p>Each time price oscillates between levels, you capture the spread. The grid profits from <em>volatility</em>, not direction.</p>
+<p><strong>Critical caveat:</strong> if price breaks out of your range (especially down), you are stuck holding bags. Set a stop-loss at the bottom of the grid.</p>` },
+      { title: `Setup + parameters`, body: `<pre><code>uv init grid-bot && cd grid-bot
+uv add ccxt python-dotenv</code></pre>
+<pre><code># config.py
+SYMBOL = "BTC/USDT"
+GRID_LOWER = 40_000
+GRID_UPPER = 60_000
+GRID_LEVELS = 20
+QTY_PER_LEVEL = 0.001
+STOP_LOSS_PRICE = 35_000</code></pre>` },
+      { title: `Place initial grid`, body: `<pre><code># grid.py
+import ccxt
+from config import *
+
+exchange = ccxt.binance({})
+
+def place_grid():
+    step = (GRID_UPPER - GRID_LOWER) / GRID_LEVELS
+    orders = []
+    for i in range(GRID_LEVELS):
+        buy_price = GRID_LOWER + i * step
+        b = exchange.create_limit_buy_order(SYMBOL, QTY_PER_LEVEL, buy_price)
+        orders.append(b)
+    print(f"Placed {len(orders)} buy orders")
+    return orders</code></pre>` },
+      { title: `Listen for fills + corresponding sell`, body: `<pre><code>import time
+filled_buys = set()
+
+def monitor():
+    while True:
+        orders = exchange.fetch_orders(SYMBOL)
+        for o in orders:
+            if o["status"] == "closed" and o["side"] == "buy" and o["id"] not in filled_buys:
+                filled_buys.add(o["id"])
+                sell_price = float(o["price"]) + ((GRID_UPPER - GRID_LOWER) / GRID_LEVELS)
+                exchange.create_limit_sell_order(SYMBOL, o["amount"], sell_price)
+        price = exchange.fetch_ticker(SYMBOL)["last"]
+        if price &lt; STOP_LOSS_PRICE:
+            emergency_exit()
+            break
+        time.sleep(30)</code></pre>` },
+      { title: `When grid loses money`, body: `<p>Grid is profitable when price <em>oscillates</em> within your range. It loses badly when:</p>
+<ul>
+  <li><strong>Strong downtrend</strong>: you keep buying as price falls, never get sells filled. Stop-loss exits at a big loss.</li>
+  <li><strong>Strong uptrend</strong>: you sell early, miss the rally.</li>
+  <li><strong>Low volatility</strong>: no fills, no profit, just locked-up capital.</li>
+</ul>
+<p>Grid is best in range-bound markets. Use 4hr-1d candles to check the regime before deploying.</p>` }
+    ]
+  },
+  {
+    id: `sentiment-bot`,
+    title: `Sentiment-Driven Trading Bot`,
+    category: `bot`,
+    difficulty: `advanced`,
+    time: `12-20 hrs`,
+    stack: `Python · Claude API · NewsAPI · ccxt`,
+    desc: `Reads news/social media, asks an LLM to score sentiment, places trades on shifts. Combines AI + trading risks.`,
+    steps: [
+      { title: `⚠ Extra risk + cost warning`, body: `<p>Sentiment bots add two risks on top of standard trading risks:</p>
+<ul>
+  <li><strong>LLM cost</strong>: 1 sentiment score every 10 min × 24/7 = ~4,300 calls/day. Budget hard limits.</li>
+  <li><strong>LLM hallucination</strong>: the model might invent sentiment that is not there. Validate scores against 100 manually-labeled examples first.</li>
+  <li><strong>Sentiment lag</strong>: news is often priced-in within minutes.</li>
+</ul>` },
+      { title: `Data sources`, body: `<p>Pick 1-2 sources to start.</p>
+<ul>
+  <li><strong>X/Twitter API</strong> ($100/mo basic tier)</li>
+  <li><strong>Reddit JSON API</strong> (free, rate limited)</li>
+  <li><strong>NewsAPI.org</strong> (free tier ~500/day)</li>
+  <li><strong>RSS feeds</strong> from CoinDesk, Bloomberg, Reuters</li>
+</ul>` },
+      { title: `Score sentiment with Claude`, body: `<pre><code># sentiment.py
+from anthropic import Anthropic
+import json
+client = Anthropic()
+
+SYSTEM = """You are a financial sentiment analyzer.
+Score the input text 1-10 for bullishness on the asset.
+1 = extremely bearish, 5 = neutral, 10 = extremely bullish.
+Reply with JSON: {"score": int, "reason": "short explanation"}."""
+
+def score_text(text):
+    resp = client.messages.create(
+        model="claude-haiku-4-5",
+        max_tokens=200,
+        system=SYSTEM,
+        messages=[{"role": "user", "content": text[:2000]}],
+    )
+    return json.loads(resp.content[0].text)</code></pre>` },
+      { title: `Trading logic`, body: `<pre><code>from sentiment import score_text
+from fetch import fetch_news, fetch_reddit
+import ccxt
+
+exchange = ccxt.binance({})
+SYMBOL = "BTC/USDT"
+
+def get_sentiment_score():
+    news = fetch_news("bitcoin")
+    scores = [score_text(a["title"])["score"] for a in news[:10]]
+    return sum(scores) / len(scores)
+
+def run():
+    score = get_sentiment_score()
+    print(f"Sentiment: {score:.2f}")
+    if score &gt; 7: place_buy()
+    elif score &lt; 3: place_sell()</code></pre>` },
+      { title: `Validate before going live`, body: `<ol>
+  <li><strong>Manually score 100 articles</strong>. Compare to LLM scores. Aim for &gt;0.8 correlation.</li>
+  <li><strong>Backtest 6 months</strong>: did sentiment shifts precede price moves, or follow them?</li>
+  <li><strong>Track LLM costs daily</strong>. Bot must remain profitable AFTER infra costs.</li>
+  <li><strong>Cap position size</strong>. Sentiment-driven moves can reverse fast.</li>
+</ol>` }
+    ]
+  },
+  {
+    id: `arbitrage-bot`,
+    title: `Arbitrage Bot (Cross-Exchange)`,
+    category: `bot`,
+    difficulty: `advanced`,
+    time: `15-30 hrs`,
+    stack: `Python · ccxt · asyncio`,
+    desc: `Buys on one exchange where price is cheap, sells on another where it is more expensive. In theory free money — in practice eaten by fees, latency, withdrawal time.`,
+    steps: [
+      { title: `Why most arbitrage is not profitable`, body: `<p>Retail arbitrage usually loses money to:</p>
+<ul>
+  <li><strong>Maker/taker fees</strong> (~0.1% each side = 0.2% round trip)</li>
+  <li><strong>Withdrawal fees</strong> ($5-30 per transfer)</li>
+  <li><strong>Transfer time</strong> (10-60 min on-chain — prices move during transfer)</li>
+  <li><strong>API latency</strong> (you are 100ms behind HFT shops)</li>
+</ul>
+<p><strong>Triangular arbitrage within ONE exchange</strong> avoids transfer problems and can occasionally work.</p>` },
+      { title: `Detect price differences`, body: `<pre><code># scanner.py
+import ccxt, asyncio
+
+EXCHANGES = ["binance", "kraken", "coinbase"]
+SYMBOL = "BTC/USDT"
+
+async def get_price(name):
+    exch = getattr(ccxt.async_support, name)()
+    try:
+        t = await exch.fetch_ticker(SYMBOL)
+        return name, t["bid"], t["ask"]
+    except Exception:
+        return name, None, None
+    finally:
+        await exch.close()
+
+async def scan():
+    results = await asyncio.gather(*[get_price(e) for e in EXCHANGES])
+    prices = {n: (b, a) for n, b, a in results if b}
+    best_buy = min(prices.items(), key=lambda x: x[1][1])
+    best_sell = max(prices.items(), key=lambda x: x[1][0])
+    spread = (best_sell[1][0] - best_buy[1][1]) / best_buy[1][1] * 100
+    print(f"Spread: {spread:.3f}%")
+    return spread
+
+asyncio.run(scan())</code></pre>` },
+      { title: `Account for fees realistically`, body: `<pre><code>FEE = 0.001
+def net_profit(spread_pct):
+    return spread_pct - (FEE * 2 * 100)
+
+if net_profit(spread_pct) &gt; 0.05:
+    execute()</code></pre>
+<p>Most spreads disappear after fees. Be brutally honest in your math.</p>` },
+      { title: `Reality check`, body: `<p>Run the scanner for 1 week without executing. Track:</p>
+<ul>
+  <li>How often does spread exceed 0.3%? (Probably ~1-2x/day at best)</li>
+  <li>How long does each opportunity last? (Often &lt;30 seconds)</li>
+  <li>Average net profit after fees? (Often $0.50-$5)</li>
+</ul>
+<p>If after a week you do not see &gt;$50/day in opportunities, this is not going to be profitable. Spend the time on a better strategy.</p>` }
+    ]
+  },
+  {
+    id: `ai-chatbot`,
+    title: `AI Chatbot (Next.js + Vercel AI SDK)`,
+    category: `ai`,
+    difficulty: `beginner`,
+    time: `3-5 hrs`,
+    stack: `Next.js · Vercel AI SDK · Anthropic Claude`,
+    desc: `A streaming AI chatbot in your portfolio site. Talks to Claude (or any other model). Deployed free on Vercel.`,
+    steps: [
+      { title: `Scaffold + add the AI SDK`, body: `<pre><code>npx create-next-app@latest chatbot --typescript --tailwind --app
+cd chatbot
+pnpm add ai @ai-sdk/anthropic @ai-sdk/react</code></pre>
+<p>Get an Anthropic API key from <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a> ($5 free credits). Add to .env.local:</p>
+<pre><code>ANTHROPIC_API_KEY=sk-ant-...</code></pre>` },
+      { title: `Create the route handler`, body: `<pre><code>// app/api/chat/route.ts
+import { anthropic } from "@ai-sdk/anthropic";
+import { streamText } from "ai";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const result = streamText({
+    model: anthropic("claude-sonnet-4-5"),
+    system: "You are a helpful assistant on a personal portfolio site. Be concise.",
+    messages,
+  });
+  return result.toDataStreamResponse();
+}</code></pre>
+<p>That is the entire backend.</p>` },
+      { title: `Build the chat UI`, body: `<pre><code>// app/chat/page.tsx
+"use client";
+import { useChat } from "@ai-sdk/react";
+
+export default function Chat() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  return (
+    &lt;div className="max-w-2xl mx-auto p-4"&gt;
+      &lt;div className="space-y-3 mb-4"&gt;
+        {messages.map(m =&gt; (
+          &lt;div key={m.id} className={m.role === "user" ? "text-right" : ""}&gt;
+            &lt;div className="inline-block bg-gray-100 dark:bg-gray-800 rounded-lg p-3"&gt;
+              {m.content}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;input value={input} onChange={handleInputChange}
+          placeholder="Ask anything..."
+          className="w-full border rounded-lg p-3" /&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+<p>Run pnpm dev, visit /chat, ask a question. Streaming should "type out" the response.</p>` },
+      { title: `Add tool use`, body: `<pre><code>import { tool } from "ai";
+import { z } from "zod";
+
+const tools = {
+  weather: tool({
+    description: "Get the current weather for a location",
+    parameters: z.object({ location: z.string() }),
+    execute: async ({ location }) =&gt; {
+      const r = await fetch(\`https://api.weather.com/...?q=\${location}\`);
+      return await r.json();
+    },
+  }),
+};
+
+const result = streamText({
+  model: anthropic("claude-sonnet-4-5"),
+  tools,
+  messages,
+  maxSteps: 5,
+});</code></pre>
+<p>Now the bot can fetch live data. Add more tools — calendar, weather, calculator — and you have a mini-agent.</p>` },
+      { title: `Cost guardrails`, body: `<p>Cap usage before deployment:</p>
+<ul>
+  <li>Set maxTokens: 500 on the streamText call</li>
+  <li>Add rate limiting (e.g. 20 messages per session)</li>
+  <li>Check daily spend on the console</li>
+  <li>Set a budget alert at $5/day</li>
+</ul>` },
+      { title: `Deploy + integrate into portfolio`, body: `<p>Push to GitHub, deploy on Vercel. Add ANTHROPIC_API_KEY as a Vercel env var.</p>
+<p>Link from your portfolio. Every recruiter will play with it. Portfolio gold.</p>` }
+    ]
+  },
+  {
+    id: `rag-app`,
+    title: `RAG App (Chat With Your Docs)`,
+    category: `ai`,
+    difficulty: `intermediate`,
+    time: `8-14 hrs`,
+    stack: `Next.js · Anthropic · pgvector · Postgres`,
+    desc: `Upload a PDF, ask questions, get cited answers grounded in the doc. The canonical AI portfolio project.`,
+    steps: [
+      { title: `How RAG works`, body: `<p>RAG = Retrieval-Augmented Generation. Pipeline:</p>
+<ol>
+  <li><strong>Index time:</strong> chunk the doc into ~500-word passages. Embed each chunk. Store chunk + vector in a DB.</li>
+  <li><strong>Query time:</strong> embed the question. Find top-K similar chunks. Inject them into the LLM prompt.</li>
+  <li><strong>Generate:</strong> the LLM answers using only the retrieved context + cites sources.</li>
+</ol>
+<p>You are NOT fine-tuning. You are NOT training. Just smart prompt-stuffing with vector search.</p>` },
+      { title: `Setup`, body: `<pre><code>npx create-next-app@latest rag-app --typescript --tailwind --app
+cd rag-app
+pnpm add ai @ai-sdk/anthropic @ai-sdk/openai
+pnpm add pg drizzle-orm drizzle-kit pdf-parse</code></pre>
+<p>Run pgvector-enabled Postgres in Docker:</p>
+<pre><code>docker run -d --name pgvec -e POSTGRES_PASSWORD=secret -p 5432:5432 pgvector/pgvector:pg16</code></pre>` },
+      { title: `Schema with pgvector`, body: `<pre><code>// db/schema.ts
+import { pgTable, text, serial, vector, timestamp } from "drizzle-orm/pg-core";
+
+export const chunks = pgTable("chunks", {
+  id: serial("id").primaryKey(),
+  docId: text("doc_id").notNull(),
+  content: text("content").notNull(),
+  embedding: vector("embedding", { dimensions: 1536 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});</code></pre>
+<p>Enable pgvector + create the index:</p>
+<pre><code>CREATE EXTENSION IF NOT EXISTS vector;
+CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);</code></pre>` },
+      { title: `Chunk + embed + insert`, body: `<pre><code>// scripts/index-pdf.ts
+import pdfParse from "pdf-parse";
+import { openai } from "@ai-sdk/openai";
+import { embedMany } from "ai";
+import { db, chunks } from "./db";
+import { readFileSync } from "fs";
+
+const CHUNK_SIZE = 500;
+
+function chunk(text: string) {
+  const words = text.split(/\\s+/);
+  const out = [];
+  for (let i = 0; i &lt; words.length; i += CHUNK_SIZE) {
+    out.push(words.slice(i, i + CHUNK_SIZE).join(" "));
+  }
+  return out;
+}
+
+async function indexPdf(path: string, docId: string) {
+  const data = await pdfParse(readFileSync(path));
+  const pieces = chunk(data.text);
+  const { embeddings } = await embedMany({
+    model: openai.embedding("text-embedding-3-small"),
+    values: pieces,
+  });
+  await db.insert(chunks).values(
+    pieces.map((content, i) =&gt; ({ docId, content, embedding: embeddings[i] }))
+  );
+}</code></pre>` },
+      { title: `Retrieve + generate`, body: `<pre><code>// app/api/chat/route.ts
+import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { embed, streamText } from "ai";
+import { db } from "@/db";
+import { sql } from "drizzle-orm";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const userMsg = messages[messages.length - 1].content;
+  const { embedding } = await embed({
+    model: openai.embedding("text-embedding-3-small"),
+    value: userMsg,
+  });
+  const results = await db.execute(sql\`
+    SELECT content, 1 - (embedding &lt;=&gt; \${embedding}::vector) as score
+    FROM chunks
+    ORDER BY embedding &lt;=&gt; \${embedding}::vector
+    LIMIT 5
+  \`);
+  const context = results.rows.map(r =&gt; r.content).join("\\n\\n---\\n\\n");
+  const result = streamText({
+    model: anthropic("claude-sonnet-4-5"),
+    system: \`You answer questions using ONLY the following context.
+
+Context:
+\${context}\`,
+    messages,
+  });
+  return result.toDataStreamResponse();
+}</code></pre>` },
+      { title: `Improve quality`, body: `<ul>
+  <li><strong>Reranking</strong>: after vector search, run top-20 through Cohere Rerank or a cross-encoder. Picks the best 5 of 20.</li>
+  <li><strong>Hybrid search</strong>: combine vector + keyword (BM25). Catches keyword matches vectors miss.</li>
+  <li><strong>Better chunking</strong>: split on sentences/paragraphs, not arbitrary 500-word slices.</li>
+  <li><strong>Metadata filtering</strong>: store page numbers, dates. Filter chunks before vector search.</li>
+</ul>
+<p>The bare pipeline is easy; the quality work is the engineering.</p>` }
+    ]
+  },
+  {
+    id: `saas-starter`,
+    title: `Full-Stack SaaS Starter`,
+    category: `site`,
+    difficulty: `advanced`,
+    time: `20-40 hrs`,
+    stack: `Next.js · Drizzle · Postgres · Better Auth · Stripe · Resend`,
+    desc: `A production-shaped SaaS skeleton. Auth, billing, dashboard, transactional emails, webhooks. Adapt to any product idea.`,
+    steps: [
+      { title: `Use a template (do not reinvent)`, body: `<p>Building auth+billing+dashboard from scratch is 100+ hrs. Start from one of these:</p>
+<ul>
+  <li><strong><a href="https://github.com/nextjs/saas-starter" target="_blank" rel="noopener">Next.js SaaS Starter</a></strong> — Drizzle + Stripe + auth</li>
+  <li><strong><a href="https://github.com/iamShaunJP/SaaS-Starter-Kit" target="_blank" rel="noopener">iamShaunJP SaaS Starter</a></strong> — Lucia auth + Stripe</li>
+</ul>
+<p>Clone, strip what you do not need, customize. Saves 30+ hours.</p>` },
+      { title: `Auth: Better Auth`, body: `<pre><code>pnpm add better-auth</code></pre>
+<pre><code>// lib/auth.ts
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./db";
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, { provider: "pg" }),
+  emailAndPassword: { enabled: true },
+  socialProviders: {
+    google: { clientId: "...", clientSecret: "..." },
+  },
+});</code></pre>` },
+      { title: `Stripe subscriptions`, body: `<pre><code>pnpm add stripe @stripe/stripe-js</code></pre>
+<p>Three pieces:</p>
+<ol>
+  <li>Checkout session (Server Action returning a Stripe-hosted URL)</li>
+  <li>Customer portal (link users to Stripe billing UI)</li>
+  <li>Webhook handler (/api/webhooks/stripe — Stripe POSTs subscription updates here)</li>
+</ol>
+<p>Verify webhook signatures or anyone can forge subscription events:</p>
+<pre><code>import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET!);
+
+export async function POST(req: Request) {
+  const sig = req.headers.get("stripe-signature")!;
+  const body = await req.text();
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+  } catch (err) {
+    return new Response("Signature failed", { status: 400 });
+  }
+  if (event.type === "customer.subscription.updated") {
+    // Update user plan in DB
+  }
+  return new Response(null, { status: 200 });
+}</code></pre>` },
+      { title: `Transactional emails (Resend)`, body: `<pre><code>pnpm add resend react-email @react-email/components</code></pre>
+<p>Write emails as React components in emails/welcome.tsx, send with:</p>
+<pre><code>import { resend } from "@/lib/resend";
+import WelcomeEmail from "@/emails/welcome";
+
+await resend.emails.send({
+  from: "team@yourdomain.com",
+  to: user.email,
+  subject: "Welcome!",
+  react: WelcomeEmail({ name: user.name }),
+});</code></pre>` },
+      { title: `Protected routes`, body: `<pre><code>// middleware.ts
+import { NextResponse } from "next/server";
+import { auth } from "./lib/auth";
+
+export async function middleware(req: Request) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session && !req.url.includes("/auth")) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+}
+
+export const config = { matcher: ["/dashboard/:path*"] };</code></pre>` },
+      { title: `Observability`, body: `<p>Before shipping to real users, add:</p>
+<ul>
+  <li><strong>Sentry</strong> — auto-captures errors + traces. Free tier covers most early-stage SaaS.</li>
+  <li><strong>PostHog</strong> — product analytics. Track signups, conversions, feature usage.</li>
+  <li><strong>Vercel Analytics</strong> — built-in, free.</li>
+</ul>` },
+      { title: `Ship to production`, body: `<ol>
+  <li>Buy a domain</li>
+  <li>Deploy on Vercel, attach domain</li>
+  <li>Switch Stripe from test to live keys</li>
+  <li>Configure Resend with verified sending domain (SPF/DKIM)</li>
+  <li>Run through full signup → subscribe → cancel flow as a real user</li>
+  <li>Tell 5 people you trust to try breaking it</li>
+</ol>` }
+    ]
+  }
+];
+
+const BUILD_CATEGORIES = [
+  { key: `all`, label: `All` },
+  { key: `site`, label: `Websites` },
+  { key: `api`, label: `APIs` },
+  { key: `ai`, label: `AI Apps` },
+  { key: `bot`, label: `Trading Bots` }
+];
+
+let __buildsFilter = { category: `all`, search: `` };
+
+function openBuilds() {
+  __buildsFilter = { category: `all`, search: `` };
+  const pills = BUILD_CATEGORIES.map(c =>
+    `<button type="button" class="builds-pill ${c.key === 'all' ? 'active' : ''}" data-cat="${c.key}" onclick="filterBuildsByCategory('${c.key}')">${escapeHtml(c.label)}</button>`
+  ).join('');
+  const cards = BUILDS.map(b => `
+    <div class="build-card cat-${b.category}" data-cat="${b.category}" data-name="${escapeHtml(b.title.toLowerCase())}" data-desc="${escapeHtml(b.desc.toLowerCase())}" onclick="openBuild('${b.id}')" role="button" tabindex="0">
+      <div class="b-head">
+        <span class="b-title">${escapeHtml(b.title)}</span>
+        <span class="b-cat">${escapeHtml(b.category)}</span>
+      </div>
+      <div class="b-desc">${escapeHtml(b.desc)}</div>
+      <div class="b-meta">
+        <span class="b-diff ${b.difficulty}">${escapeHtml(b.difficulty)}</span>
+        <span>⏱ ${escapeHtml(b.time)}</span>
+        <span><strong>Stack:</strong> ${escapeHtml(b.stack)}</span>
+      </div>
+    </div>
+  `).join('');
+  const html = `
+    <p class="builds-intro">${BUILDS.length} full step-by-step build guides. Click any to read the steps. Each has working code you can copy-paste.</p>
+    <div class="builds-toolbar">
+      <input type="search" id="buildsSearch" placeholder="Search builds..." />
+      ${pills}
+    </div>
+    <div class="builds-grid" id="buildsGrid">${cards}</div>
+  `;
+  showPracticeModal('🔨 Builds', html);
+  setTimeout(() => {
+    document.getElementById('buildsSearch')?.addEventListener('input', debounce(filterBuilds, 150));
+    document.querySelectorAll('#buildsGrid .build-card').forEach(card => {
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+      });
+    });
+  }, 30);
+}
+
+function filterBuildsByCategory(cat) {
+  __buildsFilter.category = cat;
+  document.querySelectorAll('.builds-pill[data-cat]').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  filterBuilds();
+}
+
+function filterBuilds() {
+  const q = (document.getElementById('buildsSearch')?.value || '').toLowerCase().trim();
+  __buildsFilter.search = q;
+  document.querySelectorAll('#buildsGrid .build-card').forEach(card => {
+    const matchesCat = __buildsFilter.category === 'all' || card.dataset.cat === __buildsFilter.category;
+    const matchesSearch = !q || card.dataset.name.includes(q) || card.dataset.desc.includes(q);
+    card.hidden = !(matchesCat && matchesSearch);
+  });
+}
+
+function openBuild(id) {
+  const build = BUILDS.find(b => b.id === id);
+  if (!build) return;
+  const stepsHtml = build.steps.map((s, i) => `
+    <details class="build-step" ${i === 0 ? 'open' : ''}>
+      <summary><span class="bs-num">Step ${i + 1}</span>${escapeHtml(s.title)}</summary>
+      <div class="bs-body">${s.body}</div>
+    </details>
+  `).join('');
+  const html = `
+    <div class="build-detail">
+      <button type="button" class="bd-back" onclick="openBuilds()">← All builds</button>
+      <div class="bd-head">
+        <h3>${escapeHtml(build.title)}</h3>
+        <div class="b-meta">
+          <span class="b-diff ${build.difficulty}">${escapeHtml(build.difficulty)}</span>
+          <span>⏱ ${escapeHtml(build.time)}</span>
+          <span><strong>Stack:</strong> ${escapeHtml(build.stack)}</span>
+        </div>
+        <p style="font-family: 'Patrick Hand', cursive; font-size: 14.5px; color: var(--text); margin-top: 8px;">${escapeHtml(build.desc)}</p>
+      </div>
+      ${stepsHtml}
+    </div>
+  `;
+  showPracticeModal(`🔨 ${build.title}`, html);
+}
+
 
 function buildGlossaryRegex() {
   const escaped = GLOSSARY_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
