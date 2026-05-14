@@ -1376,6 +1376,105 @@ abbr.glossary-term:hover::after {
 }
 .phub-section-count { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400; }
 
+/* ---- DEFINITIONS QUIZ — multiple-choice term recall ---- */
+.defq-setup { display: grid; gap: 14px; }
+.defq-setup h3 { font-family: 'Architects Daughter', cursive; font-size: 20px; }
+.defq-setup p { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5; }
+.defq-cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.defq-cat-btn {
+  padding: 10px 14px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; color: var(--text);
+  cursor: pointer; text-align: left;
+  display: grid; gap: 4px;
+}
+.defq-cat-btn:hover { background: var(--node-stage); }
+.defq-cat-btn .defq-cat-meta {
+  font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 12px; color: var(--text-mute);
+}
+.defq-cat-btn .defq-cat-best {
+  font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 11px; color: var(--text-mute);
+}
+.defq-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.defq-controls label { font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; color: var(--text); }
+.defq-controls input[type="number"] {
+  width: 60px; padding: 4px 8px; background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.defq-game { display: grid; gap: 14px; }
+.defq-progress {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.defq-progress strong { font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px; }
+.defq-progress-bar {
+  height: 8px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.defq-progress-bar .fill { height: 100%; background: var(--node-stage); transition: width 0.3s; }
+.defq-defcard {
+  padding: 16px 18px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+}
+.defq-defcard .defq-prompt {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+}
+.defq-defcard .defq-def {
+  font-family: 'Patrick Hand', cursive; font-size: 17px; line-height: 1.55; color: var(--text);
+}
+.defq-choices { display: grid; gap: 8px; }
+.defq-choices button {
+  padding: 12px 16px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; color: var(--text);
+  cursor: pointer; text-align: left; transition: transform 0.1s, background 0.1s;
+}
+.defq-choices button:hover:not(:disabled) { transform: translate(-1px, -1px); }
+.defq-choices button.correct { background: #d1fae5; border-color: #10b981; color: #064e3b; }
+.defq-choices button.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+.defq-choices button.was-correct { background: #d1fae5; border-color: #10b981; opacity: 0.7; }
+.defq-choices button:disabled { cursor: default; }
+:root[data-theme="dark"] .defq-choices button.correct { background: #064e3b; color: #6ee7b7; }
+:root[data-theme="dark"] .defq-choices button.wrong { background: #7f1d1d; color: #fca5a5; }
+:root[data-theme="dark"] .defq-choices button.was-correct { background: #064e3b; color: #6ee7b7; }
+
+.defq-feedback {
+  padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg);
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.45;
+  min-height: 24px;
+}
+.defq-feedback.correct { border-color: #10b981; background: #d1fae5; color: #064e3b; }
+.defq-feedback.wrong { border-color: #ef4444; background: #fee2e2; color: #7f1d1d; }
+:root[data-theme="dark"] .defq-feedback.correct { background: #064e3b; color: #6ee7b7; }
+:root[data-theme="dark"] .defq-feedback.wrong { background: #7f1d1d; color: #fca5a5; }
+.defq-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.defq-actions button {
+  padding: 8px 16px; background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.defq-actions button.secondary { background: var(--bg-card); color: var(--text); }
+.defq-result {
+  text-align: center; padding: 30px 20px;
+  font-family: 'Architects Daughter', cursive; color: var(--text);
+}
+.defq-result .score { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+.defq-result .label { font-size: 20px; }
+.defq-result .grade {
+  display: inline-block; padding: 4px 16px; margin-top: 12px;
+  border: 2.5px solid var(--border); border-radius: 999px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px;
+}
+.defq-result.passing .grade { background: #d1fae5; }
+.defq-result.failing .grade { background: #fee2e2; }
+:root[data-theme="dark"] .defq-result.passing .grade { background: #064e3b; color: #6ee7b7; }
+:root[data-theme="dark"] .defq-result.failing .grade { background: #7f1d1d; color: #fca5a5; }
+.defq-missed {
+  display: grid; gap: 6px; max-height: 280px; overflow-y: auto; margin-top: 14px; padding: 8px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+}
+.defq-missed-entry {
+  padding: 8px 10px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; color: var(--text); line-height: 1.5;
+}
+.defq-missed-entry strong { font-family: 'Kalam', cursive; font-weight: 700; }
+
 /* ---- AI INSTRUCTOR — chat with Claude as your tutor ---- */
 .ai-instructor-modal { display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; height: 75vh; min-height: 540px; }
 .ai-instructor-modal .ai-header {
@@ -2245,6 +2344,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
           <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
           <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability</button>
+          <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
           <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
@@ -2290,7 +2390,7 @@ abbr.glossary-term:hover::after {
       <div class="intro-card meta">
         <h3>What this is</h3>
         <ul>
-          <li data-personal="stats"><strong>9 stages</strong>, 47 branches, 219 topics, 510 curated links</li>
+          <li data-personal="stats"><strong>11 stages</strong> (9 core + 2 electives), 56 branches, 257 topics, 630 curated links</li>
           <li><strong>Built for self-teaching</strong> — no instructor, no cohort, no fixed schedule</li>
           <li><strong>Production-focused</strong> — System Design, DevOps, Security included</li>
           <li><strong>2026-current</strong> — covers MCP, agents, RAG that older roadmaps miss</li>
@@ -7215,7 +7315,7 @@ abbr.glossary-term:hover::after {
 
   <footer>
     your progress saves automatically · last updated <span id="lastUpdated">—</span><br />
-    <span data-personal="footer">510 curated links · 9 stages · ~16–25 months at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
+    <span data-personal="footer">630 curated links · 11 stages (9 core + 2 electives) · ~16–25 months core at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
   </footer>
 </div>
 
@@ -7726,6 +7826,74 @@ const DATA = [
               L('tutorial', 'JavaScript — Anatomy of a Stack Trace (MDN)', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors'),
               L('video', 'How to Read Stack Traces (Fireship)', 'https://www.youtube.com/watch?v=fmyvWz5TUWg'),
               L('tutorial', 'Debugging Mindset', 'https://www.freecodecamp.org/news/how-to-be-a-great-debugger/')
+            ]}
+        ]
+      },
+      {
+        name: 'Math & Logic Fundamentals',
+        topics: [
+          { id: 'fund-boolean', name: 'Boolean Logic & Truth Tables', t: 'req',
+            desc: 'AND, OR, NOT, XOR, NAND. Truth tables. De Morgan\'s laws. Short-circuit evaluation. Bitwise operators in code.',
+            why: 'Every if-statement, every filter, every guard clause is Boolean logic. Misunderstanding it is the #1 cause of off-by-one + edge-case bugs.',
+            links: [
+              L('tutorial', 'Khan Academy — Logical Reasoning', 'https://www.khanacademy.org/math/cc-sixth-grade-math/cc-6th-equivalent-exp'),
+              L('tutorial', 'Boolean Algebra Crash Course', 'https://www.electronics-tutorials.ws/boolean/bool_1.html'),
+              L('practice', 'Logic Gate Simulator', 'https://logic.ly/demo'),
+              L('video', 'Boolean Logic (Crash Course CS)', 'https://www.youtube.com/watch?v=gI-qXk7XojA')
+            ]},
+          { id: 'fund-sets', name: 'Sets, Relations & SQL Joins', t: 'req',
+            desc: 'Set membership, union, intersection, difference, symmetric difference. Cartesian product. Relations as sets of tuples. Why SQL joins are set operations.',
+            why: 'Sets are the mental model behind databases, dedup, type unions, and most "find the overlap between X and Y" problems.',
+            links: [
+              L('tutorial', 'Set Theory Basics (Brilliant)', 'https://brilliant.org/wiki/sets/'),
+              L('tutorial', 'Sets in Python', 'https://realpython.com/python-sets/'),
+              L('tutorial', 'SQL Joins as Set Operations', 'https://www.codeproject.com/Articles/33052/Visual-Representation-of-SQL-Joins'),
+              L('video', 'Set Theory (Mathologer)', 'https://www.youtube.com/watch?v=elvOZm0d4H0')
+            ]},
+          { id: 'fund-stats', name: 'Basic Statistics (Mean / Median / Stddev)', t: 'req',
+            desc: 'Mean, median, mode, range, variance, standard deviation. When to use each. Normal vs skewed distributions. Outliers.',
+            why: 'Performance benchmarks lie if you use mean instead of p50/p95. Logs lie without distribution awareness. A/B tests fail without stats.',
+            links: [
+              L('course', 'Khan Academy — Statistics & Probability', 'https://www.khanacademy.org/math/statistics-probability'),
+              L('tutorial', 'StatQuest (Josh Starmer)', 'https://statquest.org/'),
+              L('book', 'Think Stats (free)', 'https://greenteapress.com/wp/think-stats-2e/'),
+              L('practice', 'Brilliant Statistics', 'https://brilliant.org/courses/statistics/')
+            ]},
+          { id: 'fund-probability', name: 'Probability Fundamentals', t: 'rec',
+            desc: 'Independent vs dependent events. Conditional probability. Bayes\' theorem (intuition, not memorization). Expected value.',
+            why: 'AB tests, ML model evaluation, risk estimation, recommendation systems — all sit on probability.',
+            links: [
+              L('course', 'Harvard Stat 110 (free)', 'https://projects.iq.harvard.edu/stat110/youtube'),
+              L('tutorial', 'Seeing Theory (interactive)', 'https://seeing-theory.brown.edu/'),
+              L('video', '3Blue1Brown — Bayes\' theorem visual', 'https://www.youtube.com/watch?v=HZGCoVF3YvM'),
+              L('book', 'Probability & Statistics for Programmers (Think Bayes)', 'https://greenteapress.com/wp/think-bayes/')
+            ]},
+          { id: 'fund-discrete', name: 'Discrete Math (Graphs, Recurrences, Counting)', t: 'rec',
+            desc: 'Graph theory basics (nodes, edges, paths). Counting (permutations, combinations). Recurrence relations (Fibonacci, factorial).',
+            why: 'Graphs power dependency resolvers, route finders, social networks, knowledge graphs. Counting drives complexity analysis.',
+            links: [
+              L('book', 'Discrete Mathematics — Open Textbook', 'https://discrete.openmathbooks.org/dmoi3.html'),
+              L('course', 'MIT 6.042 Math for CS (free)', 'https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/'),
+              L('practice', 'Brilliant — Graph Theory', 'https://brilliant.org/courses/graph-theory/'),
+              L('video', 'Counting (3Blue1Brown)', 'https://www.youtube.com/watch?v=jpkysYg5Gl0')
+            ]},
+          { id: 'fund-polya', name: 'Problem-Solving Framework (Polya)', t: 'req',
+            desc: '1) Understand the problem 2) Devise a plan 3) Carry out the plan 4) Look back / review. The disciplined alternative to "stare at the code until it works".',
+            why: 'Most coding interview failures aren\'t coding failures — they\'re problem-solving framework failures. Same on the job.',
+            links: [
+              L('book', 'How to Solve It (Polya, free PDF)', 'https://math.hawaii.edu/home/pdf/putnam/PolyaHowToSolveIt.pdf'),
+              L('tutorial', 'Polya\'s 4 Steps for Coding Interviews', 'https://www.freecodecamp.org/news/the-secret-to-solving-coding-challenges-2c52b13ce2e3/'),
+              L('book', 'The Pragmatic Programmer (Hunt & Thomas)', 'https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/'),
+              L('video', 'How to Solve Coding Problems (CS Dojo)', 'https://www.youtube.com/watch?v=GBuHSRDGZBY')
+            ]},
+          { id: 'fund-estimation', name: 'Mental Math & Fermi Estimation', t: 'rec',
+            desc: 'Back-of-the-envelope calculation. Latency numbers every programmer should know (L1 cache ~1ns, RAM ~100ns, SSD ~100µs, network ~10ms). Order-of-magnitude estimation.',
+            why: 'System design interviews. Capacity planning. Spotting "this can\'t possibly be right" performance bugs. Cost estimation.',
+            links: [
+              L('tutorial', 'Latency Numbers Every Programmer Should Know', 'https://gist.github.com/jboner/2841832'),
+              L('tutorial', 'Fermi Estimation Guide', 'https://www.lesswrong.com/posts/PsEppdvgRisz5xAHG/fermi-estimates'),
+              L('video', 'Powers of Ten for Programmers (Jeff Dean)', 'https://www.youtube.com/watch?v=modXC5IWTJI'),
+              L('practice', 'Estimation Quiz', 'https://www.gwern.net/Fermi-estimates')
             ]}
         ]
       }
@@ -9382,6 +9550,415 @@ const DATA = [
       'Hiding the self-taught background instead of owning it',
       'Quitting too early in the job hunt — average is 100+ applications'
     ]
+  },
+  {
+    id: 9, title: 'Mobile Development (Elective)', weeks: 'after Stage 3+', duration: '8-12 weeks · ~240-360 hrs',
+    desc: 'OPTIONAL — only if you want to build mobile apps. React Native + Expo lets you reuse your React knowledge across iOS + Android. Skip this stage if you are targeting purely web/backend roles.',
+    branches: [
+      {
+        name: 'Mobile Foundations',
+        topics: [
+          { id: 'mob-platforms', name: 'iOS vs Android vs Cross-Platform', t: 'req',
+            desc: 'Differences between native iOS (Swift/UIKit/SwiftUI), native Android (Kotlin/Compose), React Native, Flutter. Tradeoffs in performance, dev velocity, hiring market.',
+            why: 'Pick the wrong path and you waste 6 months. Cross-platform (RN/Flutter) is the dominant choice for solo/small-team apps in 2026.',
+            links: [
+              L('tutorial', 'React Native vs Flutter (Reactiflux)', 'https://reactnative.dev/'),
+              L('docs', 'Apple Human Interface Guidelines', 'https://developer.apple.com/design/human-interface-guidelines'),
+              L('docs', 'Material Design 3', 'https://m3.material.io/'),
+              L('video', 'Native vs Cross-Platform (Theo)', 'https://www.youtube.com/c/t3dotgg')
+            ]},
+          { id: 'mob-ux', name: 'Mobile UX Patterns', t: 'req',
+            desc: 'Touch targets (44pt iOS / 48dp Android minimum), gestures (swipe, pinch, long-press), navigation patterns (tabs vs drawer vs stack), pull-to-refresh, infinite scroll, modal sheets.',
+            why: 'Mobile UX is materially different from desktop. Web patterns don\'t translate directly.',
+            links: [
+              L('docs', 'Apple HIG — Touch Bar', 'https://developer.apple.com/design/human-interface-guidelines/inputs/touch-bar/'),
+              L('docs', 'Mobile Patterns Library', 'https://mobbin.com/'),
+              L('tutorial', 'Common Mobile UX Mistakes', 'https://www.nngroup.com/articles/mobile-ux-mistakes/')
+            ]},
+          { id: 'mob-toolchain', name: 'Build Pipeline & Dev Environment', t: 'req',
+            desc: 'Xcode (Mac required for iOS builds), Android Studio, Watchman, CocoaPods (deprecated for RN 0.74+), Gradle, EAS Build (cloud build for Expo).',
+            why: 'Mobile toolchain is heavier than web — install once, then forget.',
+            links: [
+              L('docs', 'Expo Setup', 'https://docs.expo.dev/get-started/installation/'),
+              L('docs', 'React Native Setup', 'https://reactnative.dev/docs/environment-setup'),
+              L('docs', 'EAS Build', 'https://docs.expo.dev/build/introduction/')
+            ]}
+        ]
+      },
+      {
+        name: 'React Native',
+        topics: [
+          { id: 'mob-rn-basics', name: 'React Native Basics', t: 'req',
+            desc: 'View, Text, ScrollView, FlatList, TextInput, Image. StyleSheet (no CSS). The component model maps 1:1 from React on the web — only the primitives change.',
+            why: 'Reuse 80%+ of your React knowledge. Hooks, JSX, props all work the same.',
+            links: [
+              L('docs', 'React Native Docs', 'https://reactnative.dev/docs/getting-started'),
+              L('course', 'React Native Express', 'https://www.reactnative.express/'),
+              L('tutorial', 'RN Cheatsheet', 'https://reactnative.dev/docs/components-and-apis')
+            ]},
+          { id: 'mob-expo', name: 'Expo SDK', t: 'req',
+            desc: 'Managed workflow (recommended for solo devs). Native modules (camera, location, push) without writing Swift/Kotlin. EAS for cloud builds + OTA updates.',
+            why: 'Bare React Native is painful. Expo SDK is the 2026 default for new apps.',
+            links: [
+              L('docs', 'Expo SDK', 'https://docs.expo.dev/'),
+              L('course', 'Expo Tutorial', 'https://docs.expo.dev/tutorial/introduction/'),
+              L('docs', 'Expo Modules', 'https://docs.expo.dev/versions/latest/')
+            ]},
+          { id: 'mob-nav', name: 'Navigation (Stack / Tab / Drawer)', t: 'req',
+            desc: 'Expo Router (file-based, recommended) or React Navigation (programmatic, older). Stack for drill-down, tabs for top-level sections, drawer for utility menus.',
+            why: 'Almost every screen transition. Expo Router brings Next.js-style file-based routing to mobile.',
+            links: [
+              L('docs', 'Expo Router', 'https://docs.expo.dev/router/introduction/'),
+              L('docs', 'React Navigation', 'https://reactnavigation.org/docs/getting-started'),
+              L('video', 'Expo Router in 100 Seconds', 'https://www.youtube.com/watch?v=Hd6cs8VHGTo')
+            ]},
+          { id: 'mob-state', name: 'State & Async on Mobile', t: 'rec',
+            desc: 'Zustand + AsyncStorage for persisted state. TanStack Query works same as web. SWR alternative.',
+            why: 'Same patterns as Stage 3 — your React Query knowledge transfers directly.',
+            links: [
+              L('docs', 'AsyncStorage (Expo)', 'https://docs.expo.dev/versions/latest/sdk/async-storage/'),
+              L('docs', 'TanStack Query (RN)', 'https://tanstack.com/query/latest/docs/framework/react/react-native')
+            ]},
+          { id: 'mob-native-apis', name: 'Native APIs (Camera, Location, Sensors)', t: 'rec',
+            desc: 'expo-camera, expo-location, expo-sensors, expo-haptics, expo-notifications. All async, all permission-gated.',
+            why: 'What makes a mobile app feel mobile vs being a wrapped website.',
+            links: [
+              L('docs', 'Expo Camera', 'https://docs.expo.dev/versions/latest/sdk/camera/'),
+              L('docs', 'Expo Location', 'https://docs.expo.dev/versions/latest/sdk/location/'),
+              L('docs', 'Expo Sensors', 'https://docs.expo.dev/versions/latest/sdk/sensors/')
+            ]},
+          { id: 'mob-perf', name: 'Mobile Performance', t: 'rec',
+            desc: 'FlatList virtualization, image caching, JS bridge cost, Hermes engine, useMemo / memo for re-renders, native driver for animations.',
+            why: 'Phones have far less CPU/RAM than your laptop. Performance matters more than on web.',
+            links: [
+              L('docs', 'RN Performance', 'https://reactnative.dev/docs/performance'),
+              L('docs', 'Hermes Engine', 'https://reactnative.dev/docs/hermes'),
+              L('tutorial', 'FlatList Optimization', 'https://reactnative.dev/docs/optimizing-flatlist-configuration')
+            ]}
+        ]
+      },
+      {
+        name: 'Mobile-Specific Features',
+        topics: [
+          { id: 'mob-push', name: 'Push Notifications', t: 'req',
+            desc: 'Expo Push (free tier, cross-platform) or Firebase Cloud Messaging. APN tokens (iOS), FCM tokens (Android). Server-side delivery + handling app-state (foreground/background/killed).',
+            why: 'The single highest-leverage feature for retention. Most apps without push fade out.',
+            links: [
+              L('docs', 'Expo Push Notifications', 'https://docs.expo.dev/push-notifications/overview/'),
+              L('docs', 'Firebase Cloud Messaging', 'https://firebase.google.com/docs/cloud-messaging')
+            ]},
+          { id: 'mob-offline', name: 'Offline-First & Local DB', t: 'rec',
+            desc: 'WatermelonDB, SQLite via expo-sqlite, MMKV for fast key-value. Sync strategies: optimistic UI + retry queue, CRDT for collaborative offline.',
+            why: 'Mobile users frequently have flaky/no connection. Apps that break offline feel broken.',
+            links: [
+              L('docs', 'expo-sqlite', 'https://docs.expo.dev/versions/latest/sdk/sqlite/'),
+              L('docs', 'WatermelonDB', 'https://github.com/Nozbe/WatermelonDB'),
+              L('tutorial', 'react-native-mmkv', 'https://github.com/mrousavy/react-native-mmkv')
+            ]},
+          { id: 'mob-deeplinks', name: 'Deep Links & Universal Links', t: 'rec',
+            desc: 'Open the app at a specific screen from a URL (myapp://invoice/123 or https://myapp.com/invoice/123). Required for marketing emails, sharing, password resets.',
+            why: 'Apps without deep links can\'t be reached from the web. Limits user growth.',
+            links: [
+              L('docs', 'Expo Linking', 'https://docs.expo.dev/guides/linking/'),
+              L('docs', 'iOS Universal Links', 'https://developer.apple.com/ios/universal-links/')
+            ]},
+          { id: 'mob-auth', name: 'Mobile Auth (Apple Sign In + Google + Magic Link)', t: 'req',
+            desc: 'Sign in with Apple is REQUIRED by App Store if you offer any third-party login. Google Sign-In, magic links, biometric (Face ID / Touch ID via expo-local-authentication).',
+            why: 'Auth is mandatory + has more friction on mobile. Pick a managed solution (Clerk, Better Auth, Supabase Auth).',
+            links: [
+              L('docs', 'Apple Sign In (Expo)', 'https://docs.expo.dev/versions/latest/sdk/apple-authentication/'),
+              L('docs', 'Clerk for RN', 'https://clerk.com/docs/quickstarts/expo'),
+              L('docs', 'Biometric Auth', 'https://docs.expo.dev/versions/latest/sdk/local-authentication/')
+            ]},
+          { id: 'mob-crashlytics', name: 'Crash Reporting + Analytics', t: 'rec',
+            desc: 'Sentry for crashes + traces. PostHog for product analytics. Firebase Crashlytics is the older free option.',
+            why: 'Mobile crashes are silent — you find out when reviews tank or users churn. Instrument from day one.',
+            links: [
+              L('docs', 'Sentry React Native', 'https://docs.sentry.io/platforms/react-native/'),
+              L('docs', 'PostHog React Native', 'https://posthog.com/docs/libraries/react-native')
+            ]}
+        ]
+      },
+      {
+        name: 'Distribution',
+        topics: [
+          { id: 'mob-ios-store', name: 'iOS App Store Submission', t: 'req',
+            desc: 'Apple Developer Program ($99/yr). App Store Connect setup. Provisioning profiles + certificates (or use EAS to handle). App review (1-7 days, often picky about edge cases).',
+            why: 'Required to ship to iOS users. Plan 1-2 weeks buffer for first review.',
+            links: [
+              L('docs', 'App Store Connect', 'https://developer.apple.com/app-store-connect/'),
+              L('docs', 'EAS Submit', 'https://docs.expo.dev/submit/introduction/'),
+              L('tutorial', 'iOS App Review Tips', 'https://developer.apple.com/app-store/review/guidelines/')
+            ]},
+          { id: 'mob-android-store', name: 'Google Play Store Submission', t: 'req',
+            desc: 'Google Play Console ($25 one-time). App bundles (.aab). Internal/closed/open testing tracks. Less strict review than Apple but still rejects malware/policy violations.',
+            why: 'Required to ship to Android users. Generally faster than iOS review.',
+            links: [
+              L('docs', 'Google Play Console', 'https://play.google.com/console/'),
+              L('docs', 'Android App Bundles', 'https://developer.android.com/guide/app-bundle')
+            ]},
+          { id: 'mob-ota', name: 'OTA (Over-The-Air) Updates', t: 'rec',
+            desc: 'Expo Updates / EAS Update lets you ship JS-only changes without an App Store review. Native code changes still require a full submission.',
+            why: 'Bug fixes go live in minutes instead of a week of Apple review.',
+            links: [
+              L('docs', 'EAS Update', 'https://docs.expo.dev/eas-update/introduction/'),
+              L('docs', 'CodePush (Microsoft)', 'https://learn.microsoft.com/en-us/appcenter/distribution/codepush/')
+            ]}
+        ]
+      }
+    ],
+    exit: [
+      'Ship one fully working RN/Expo app to iOS TestFlight + Google Play internal testing',
+      'Integrate at least one native feature (camera, location, push notifications, or biometric auth)',
+      'Set up Sentry crash reporting + PostHog analytics in production',
+      'Use TanStack Query for all server state (same patterns as web)',
+      'Implement offline-first state for at least one critical user flow'
+    ],
+    pitfalls: [
+      'Building bare React Native instead of Expo when starting out (Expo handles 95% of pain)',
+      'Ignoring Apple Sign In requirement (mandatory if you offer any third-party login)',
+      'Skipping mobile UX patterns and shipping a wrapped website',
+      'Not testing on a real device — simulators lie about performance, touch, sensors',
+      'Forgetting to handle app states (background, killed) for push notifications',
+      'Submitting to iOS App Store without reading App Review Guidelines first — instant rejection'
+    ]
+  },
+  {
+    id: 10, title: 'Data Science / ML Research (Elective)', weeks: 'after Stage 6+', duration: '12-20 weeks · ~360-600 hrs',
+    desc: 'OPTIONAL — only if you want ML/research roles, data scientist positions, or to fine-tune models yourself. The application engineering side of Full Stack + AI (Stages 5-6) is enough for most product-engineer jobs. This stage is for those going deeper.',
+    branches: [
+      {
+        name: 'DS Foundations',
+        topics: [
+          { id: 'ds-numpy-pandas', name: 'NumPy + Pandas', t: 'req',
+            desc: 'NumPy arrays (the foundation underneath every DS tool). Pandas DataFrames for tabular data. Vectorization vs loops (100x speedups).',
+            why: 'Every ML pipeline reads data via Pandas, computes via NumPy. Non-negotiable.',
+            links: [
+              L('docs', 'NumPy Docs', 'https://numpy.org/doc/stable/'),
+              L('docs', 'Pandas Docs', 'https://pandas.pydata.org/docs/'),
+              L('book', 'Python for Data Analysis (Wes McKinney, free)', 'https://wesmckinney.com/book/'),
+              L('practice', 'Kaggle — Pandas Course', 'https://www.kaggle.com/learn/pandas')
+            ]},
+          { id: 'ds-jupyter', name: 'Jupyter Notebooks + JupyterLab', t: 'req',
+            desc: 'Interactive Python with cell-by-cell execution. Markdown cells for notes. The DS standard. Marimo is the modern alternative (no hidden state).',
+            why: 'Notebooks are how DS work is produced + shared. Marimo is rising fast for production-grade notebook code.',
+            links: [
+              L('docs', 'Jupyter Docs', 'https://jupyter.org/'),
+              L('docs', 'JupyterLab', 'https://jupyterlab.readthedocs.io/'),
+              L('docs', 'Marimo (reactive notebooks)', 'https://marimo.io/')
+            ]},
+          { id: 'ds-eda', name: 'Exploratory Data Analysis (EDA)', t: 'req',
+            desc: 'First 30 minutes with any new dataset: shape, dtypes, missing values, distributions, correlations, outliers. Pandas profiling / Sweetviz / DataPrep auto-generate this.',
+            why: 'Models built without EDA fail. Bad data is the #1 cause of ML pipeline failures.',
+            links: [
+              L('tutorial', 'EDA Step-by-Step', 'https://www.kaggle.com/code/imoore/intro-to-exploratory-data-analysis-eda-in-python'),
+              L('docs', 'pandas-profiling / ydata-profiling', 'https://docs.profiling.ydata.ai/'),
+              L('docs', 'Sweetviz', 'https://github.com/fbdesignpro/sweetviz')
+            ]},
+          { id: 'ds-stats-for-ml', name: 'Statistics for ML', t: 'req',
+            desc: 'Distributions (normal, uniform, exponential, poisson). Hypothesis testing (t-test, chi-square). Correlation vs causation. P-values + their misuse. Bayes\' theorem applied.',
+            why: 'You can\'t evaluate models or interpret data without stats. Most "ML failures" are stat failures.',
+            links: [
+              L('course', 'Statistics for Machine Learning (StatQuest)', 'https://www.youtube.com/c/joshstarmer'),
+              L('book', 'Practical Statistics for Data Scientists', 'https://www.oreilly.com/library/view/practical-statistics-for/9781492072935/'),
+              L('practice', 'Brilliant — Probability & Statistics', 'https://brilliant.org/courses/probability-fundamentals/')
+            ]}
+        ]
+      },
+      {
+        name: 'Visualization',
+        topics: [
+          { id: 'ds-matplotlib-seaborn', name: 'Matplotlib + Seaborn', t: 'req',
+            desc: 'Matplotlib for low-level full control. Seaborn for statistical plots with sane defaults. Practical recipes: line, scatter, histogram, heatmap, box.',
+            why: 'The de facto visualization stack in DS. Used in nearly every notebook on Kaggle / arXiv.',
+            links: [
+              L('docs', 'Matplotlib Cheatsheet', 'https://matplotlib.org/cheatsheets/'),
+              L('docs', 'Seaborn Tutorial', 'https://seaborn.pydata.org/tutorial.html'),
+              L('practice', 'Kaggle Data Visualization', 'https://www.kaggle.com/learn/data-visualization')
+            ]},
+          { id: 'ds-plotly', name: 'Plotly (Interactive Charts)', t: 'rec',
+            desc: 'Browser-renderable interactive charts. Hover tooltips, zoom, pan. Great for dashboards + reports.',
+            why: 'When you need to share findings with non-DS stakeholders, interactivity > static images.',
+            links: [
+              L('docs', 'Plotly Python', 'https://plotly.com/python/'),
+              L('docs', 'Plotly Express (high-level API)', 'https://plotly.com/python/plotly-express/')
+            ]}
+        ]
+      },
+      {
+        name: 'Classical ML',
+        topics: [
+          { id: 'ds-sklearn', name: 'scikit-learn', t: 'req',
+            desc: 'The default classical-ML library. Consistent API: model.fit(X, y), model.predict(X), model.score(X, y). Pipelines for repeatable preprocessing + modeling.',
+            why: 'You build 80% of ML solutions with scikit-learn before reaching for deep learning.',
+            links: [
+              L('docs', 'scikit-learn User Guide', 'https://scikit-learn.org/stable/user_guide.html'),
+              L('practice', 'Kaggle Intro to ML', 'https://www.kaggle.com/learn/intro-to-machine-learning'),
+              L('book', 'Hands-On ML (Aurélien Géron)', 'https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/')
+            ]},
+          { id: 'ds-train-val-test', name: 'Train / Validation / Test Splits', t: 'req',
+            desc: 'Train (60-80%) = fit. Validation (10-20%) = hyperparameter tuning. Test (10-20%) = final evaluation, NEVER touched during training. K-fold cross-validation for small datasets.',
+            why: 'Data leakage between splits is the #1 cause of "great in training, fails in production". Catch it early.',
+            links: [
+              L('tutorial', 'Train Test Split (sklearn)', 'https://scikit-learn.org/stable/modules/cross_validation.html'),
+              L('video', 'Cross-Validation (StatQuest)', 'https://www.youtube.com/watch?v=fSytzGwwBVw')
+            ]},
+          { id: 'ds-regression', name: 'Linear + Logistic Regression', t: 'req',
+            desc: 'Linear for continuous outputs. Logistic for binary classification. The "first model you try" baseline. Surprisingly hard to beat on tabular data.',
+            why: 'Almost every prediction problem starts here. Beats neural nets on small/tabular data + interpretable.',
+            links: [
+              L('video', 'Linear Regression (StatQuest)', 'https://www.youtube.com/watch?v=nk2CQITm_eo'),
+              L('video', 'Logistic Regression (StatQuest)', 'https://www.youtube.com/watch?v=yIYKR4sgzI8'),
+              L('tutorial', 'sklearn Linear Models', 'https://scikit-learn.org/stable/modules/linear_model.html')
+            ]},
+          { id: 'ds-trees', name: 'Decision Trees + Random Forests + XGBoost', t: 'req',
+            desc: 'Trees split on features to make predictions. Random forests = many trees averaged. XGBoost / LightGBM / CatBoost = gradient-boosted trees, often state-of-the-art on tabular.',
+            why: 'XGBoost wins most tabular Kaggle competitions. Production-ready, fast, interpretable enough.',
+            links: [
+              L('video', 'Decision Trees (StatQuest)', 'https://www.youtube.com/watch?v=7VeUPuFGJHk'),
+              L('docs', 'XGBoost Docs', 'https://xgboost.readthedocs.io/'),
+              L('tutorial', 'LightGBM vs XGBoost vs CatBoost', 'https://neptune.ai/blog/xgboost-lightgbm-catboost')
+            ]},
+          { id: 'ds-clustering', name: 'Clustering (K-Means / DBSCAN)', t: 'rec',
+            desc: 'K-Means partitions data into K clusters by similarity (you pick K). DBSCAN finds density-based clusters of any shape (no K needed).',
+            why: 'Unsupervised — find structure in unlabeled data. Customer segmentation, anomaly detection.',
+            links: [
+              L('video', 'K-Means (StatQuest)', 'https://www.youtube.com/watch?v=4b5d3muPQmA'),
+              L('docs', 'sklearn Clustering', 'https://scikit-learn.org/stable/modules/clustering.html')
+            ]},
+          { id: 'ds-features', name: 'Feature Engineering', t: 'req',
+            desc: 'Transform raw data into features models can use. Scaling, one-hot encoding, target encoding, datetime decomposition, interactions, binning, log transforms.',
+            why: 'Feature engineering often beats model selection. The differentiator on tabular ML.',
+            links: [
+              L('tutorial', 'Kaggle Feature Engineering', 'https://www.kaggle.com/learn/feature-engineering'),
+              L('book', 'Feature Engineering for Machine Learning', 'https://www.oreilly.com/library/view/feature-engineering-for/9781491953235/')
+            ]},
+          { id: 'ds-metrics', name: 'Model Evaluation Metrics', t: 'req',
+            desc: 'Classification: accuracy, precision, recall, F1, ROC-AUC, confusion matrix. Regression: MAE, MSE, RMSE, R². Pick by business cost of FP vs FN.',
+            why: 'Accuracy is a trap on imbalanced data. Choose metrics that match the business cost of being wrong.',
+            links: [
+              L('tutorial', 'Choosing the Right Metric (sklearn)', 'https://scikit-learn.org/stable/modules/model_evaluation.html'),
+              L('video', 'Precision vs Recall (StatQuest)', 'https://www.youtube.com/watch?v=4jRBRDbJemM')
+            ]}
+        ]
+      },
+      {
+        name: 'Deep Learning',
+        topics: [
+          { id: 'ds-pytorch', name: 'PyTorch Fundamentals', t: 'req',
+            desc: 'Tensors (GPU-accelerated NumPy). Autograd (auto-differentiation). Modules (nn.Module). Training loop (forward, loss, backward, step). The 2026 default DL framework.',
+            why: 'Research code is overwhelmingly PyTorch. TF/Keras still in some production but losing ground.',
+            links: [
+              L('course', 'PyTorch Tutorials (official)', 'https://pytorch.org/tutorials/'),
+              L('course', 'PyTorch in 24 Hours (Aladdin Persson)', 'https://www.youtube.com/c/AladdinPersson'),
+              L('book', 'Deep Learning with PyTorch (free)', 'https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf')
+            ]},
+          { id: 'ds-nn-basics', name: 'Neural Networks Basics', t: 'req',
+            desc: 'Neurons, layers, activation functions (ReLU/sigmoid/tanh). Forward pass, loss function, backpropagation. Why deep networks work.',
+            why: 'The mental model behind every deep learning result, including LLMs.',
+            links: [
+              L('video', '3Blue1Brown — Neural Networks (visual)', 'https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi'),
+              L('course', 'fast.ai Practical Deep Learning', 'https://course.fast.ai/'),
+              L('book', 'Neural Networks and Deep Learning (Nielsen, free)', 'http://neuralnetworksanddeeplearning.com/')
+            ]},
+          { id: 'ds-cnn', name: 'CNNs (Convolutional Networks)', t: 'rec',
+            desc: 'Conv layers + pooling for images. Receptive fields. Classics: ResNet, EfficientNet, ConvNeXt. Vision Transformers are replacing them in 2024+ but CNNs still ship.',
+            why: 'Image classification, segmentation, detection. Even in the Transformer era, CNN backbones are everywhere.',
+            links: [
+              L('course', 'CS231n (Stanford)', 'http://cs231n.stanford.edu/'),
+              L('tutorial', 'A Walk Through CNN (Otavio Good)', 'https://www.youtube.com/watch?v=Oqm9vsf_hvU')
+            ]},
+          { id: 'ds-transformers', name: 'Transformers + Attention', t: 'req',
+            desc: 'Self-attention mechanism. Encoder (BERT), decoder (GPT/Claude), encoder-decoder (T5). The architecture under ChatGPT, Claude, Gemini.',
+            why: 'Understanding what is actually happening inside the LLMs you use daily.',
+            links: [
+              L('tutorial', 'The Illustrated Transformer (Jay Alammar)', 'https://jalammar.github.io/illustrated-transformer/'),
+              L('video', '3Blue1Brown — Attention', 'https://www.youtube.com/watch?v=eMlx5fFNoYc'),
+              L('paper', 'Attention Is All You Need (original Transformer paper)', 'https://arxiv.org/abs/1706.03762')
+            ]}
+        ]
+      },
+      {
+        name: 'Production ML / LLM Engineering',
+        topics: [
+          { id: 'ds-hf', name: 'HuggingFace Ecosystem', t: 'req',
+            desc: 'transformers (model loading), datasets (data loading), peft (parameter-efficient fine-tuning), accelerate (multi-GPU). The standard interface to open models.',
+            why: 'Where all open-source LLM work happens. Mistral, Llama, Qwen, etc. all distributed through Hugging Face.',
+            links: [
+              L('docs', 'Hugging Face Hub', 'https://huggingface.co/docs/hub/'),
+              L('course', 'Hugging Face NLP Course', 'https://huggingface.co/learn/nlp-course'),
+              L('course', 'Hugging Face Deep RL Course', 'https://huggingface.co/learn/deep-rl-course')
+            ]},
+          { id: 'ds-finetune', name: 'Fine-Tuning Open Models', t: 'rec',
+            desc: 'LoRA / QLoRA for efficient fine-tuning. Unsloth for 2x speed. Datasets format. When to fine-tune vs use RAG vs prompt engineering (usually: RAG > prompt eng > fine-tune).',
+            why: 'For domain-specific tasks where prompt engineering hits a ceiling. Rarely the first option.',
+            links: [
+              L('docs', 'PEFT (LoRA / QLoRA)', 'https://huggingface.co/docs/peft/'),
+              L('docs', 'Unsloth', 'https://github.com/unslothai/unsloth'),
+              L('tutorial', 'When to Fine-Tune (Eugene Yan)', 'https://eugeneyan.com/writing/llm-patterns/')
+            ]},
+          { id: 'ds-mlops', name: 'MLOps Basics', t: 'rec',
+            desc: 'Model versioning (MLflow, Weights & Biases). Data versioning (DVC). Experiment tracking. Model serving (FastAPI + ONNX, or TorchServe).',
+            why: 'Reproducibility + deployability. A trained model with no tracking is a research artifact, not a product.',
+            links: [
+              L('docs', 'Weights & Biases', 'https://wandb.ai/'),
+              L('docs', 'MLflow', 'https://mlflow.org/'),
+              L('book', 'Designing Machine Learning Systems (Chip Huyen)', 'https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/')
+            ]},
+          { id: 'ds-evals', name: 'LLM Evaluation', t: 'req',
+            desc: 'Held-out test sets. LLM-as-judge (use a stronger model to score). Custom metrics (factual accuracy, hallucination rate, format compliance). promptfoo / Inspect for automation.',
+            why: 'You cannot improve what you cannot measure. Most "this prompt works" claims fail rigorous eval.',
+            links: [
+              L('tutorial', 'Anthropic — Evals', 'https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests'),
+              L('docs', 'promptfoo', 'https://promptfoo.dev/'),
+              L('docs', 'Inspect (UK AI Safety)', 'https://inspect.ai-safety-institute.org.uk/')
+            ]}
+        ]
+      },
+      {
+        name: 'Research Track (Optional)',
+        topics: [
+          { id: 'ds-papers', name: 'Reading ML Papers', t: 'rec',
+            desc: 'Three-pass method: (1) abstract + figs (15min), (2) full paper sceptically (1hr), (3) replication-level deep dive (4hr+). Read 1 paper/week minimum.',
+            why: 'The field moves too fast for textbooks. Papers ARE the current state.',
+            links: [
+              L('tutorial', 'How to Read a Paper (Keshav)', 'https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf'),
+              L('docs', 'arXiv Sanity (Karpathy)', 'https://arxiv-sanity-lite.com/'),
+              L('docs', 'AlphaXiv (commentary)', 'https://www.alphaxiv.org/')
+            ]},
+          { id: 'ds-kaggle', name: 'Kaggle Competitions', t: 'rec',
+            desc: 'Apply what you learn against real datasets + leaderboards. Start with Titanic / House Prices, progress to active competitions. Read winning solutions afterward.',
+            why: 'The fastest path from theory to working ML. Resume signal that beats most "DS bootcamp certificate" claims.',
+            links: [
+              L('docs', 'Kaggle Learn', 'https://www.kaggle.com/learn'),
+              L('docs', 'Kaggle Competitions', 'https://www.kaggle.com/competitions')
+            ]},
+          { id: 'ds-reproduce', name: 'Reproducing Paper Results', t: 'opt',
+            desc: 'Take a paper, implement from scratch, get within 5-10% of the reported metrics. The single most valuable research-track resume project.',
+            why: 'Proves you can actually do research-engineering, not just read about it.',
+            links: [
+              L('tutorial', 'Papers With Code', 'https://paperswithcode.com/'),
+              L('tutorial', 'How to Reproduce a Paper (Karpathy thread)', 'https://karpathy.github.io/2019/04/25/recipe/')
+            ]}
+        ]
+      }
+    ],
+    exit: [
+      'Ship one classical ML project end-to-end (problem framing → EDA → model → eval → write-up)',
+      'Train one neural network from scratch in PyTorch (image classifier or text classifier)',
+      'Place top 50% on at least one Kaggle competition or replicate one published result',
+      'Build a LoRA fine-tune on an open model + serve it behind an HTTP API',
+      'Write a 1-2 page report explaining your methodology — make it portfolio-readable'
+    ],
+    pitfalls: [
+      'Jumping to deep learning before mastering classical ML (XGBoost beats neural nets on small tabular)',
+      'Modeling before doing EDA — wasted weeks chasing artifacts in dirty data',
+      'Accuracy on imbalanced data (95% accuracy on 95% negatives = useless model)',
+      'Data leakage between train/test (model "works" in eval, fails in production)',
+      'Fine-tuning when prompt engineering or RAG would solve it for $0',
+      'Skipping evaluation — "looks good" is not a metric',
+      'No reproducibility (no seeds, no env, no versioning) — papers in dust, not science'
+    ]
   }
 ];
 
@@ -10069,6 +10646,13 @@ const STAGE_HOURS = {
   6: 300,   // 10 weeks × 30 hrs
   7: 480,   // 16 weeks × 30 hrs (mid of new 14-20 wk range; was 8 wk but Production Eng scope didn't fit)
   8: 120,   // 4 weeks × 30 hrs (job hunt)
+  9: 0,     // ELECTIVE — Mobile Dev — not counted toward core TOTAL
+  10: 0,    // ELECTIVE — DS/ML Research — not counted toward core TOTAL
+};
+// Elective hours, surfaced separately so opt-in users see realistic timelines:
+const ELECTIVE_HOURS = {
+  9:  300,  // ~10 weeks (Mobile Dev)
+  10: 480,  // ~16 weeks (DS/ML Research)
 };
 const TOTAL_HOURS = Object.values(STAGE_HOURS).reduce((a, b) => a + b, 0);
 
@@ -13796,6 +14380,235 @@ const AI_INSTRUCTOR_MODELS = [
   { id: 'claude-opus-4-7', label: 'Claude Opus 4.7 — most capable, pricey', pricing: { in: 15.00, out: 75.00 } }
 ];
 
+/* ============================================================
+   DEFINITIONS QUIZ — multiple-choice recall over TERMS
+   ============================================================ */
+
+// Add high-score state to accountability namespace if missing
+if (!state.accountability.defQuizBests) state.accountability.defQuizBests = {};
+
+function defQuizCategories() {
+  // Build categories: per stage, per tier, plus "all-required"
+  const cats = [];
+  // Per stage
+  DATA.forEach(stage => {
+    const stageTerms = Object.entries(TERMS)
+      .filter(([k]) => k.startsWith(`${stage.id}:`))
+      .flatMap(([, list]) => list);
+    if (stageTerms.length >= 4) {
+      cats.push({
+        id: `stage-${stage.id}`,
+        label: `Stage ${stage.id}: ${stage.title}`,
+        terms: stageTerms,
+        count: stageTerms.length,
+      });
+    }
+  });
+  // All required across all stages
+  const allReq = Object.values(TERMS).flat().filter(t => t.t === 'req');
+  if (allReq.length >= 4) cats.unshift({ id: 'all-req', label: 'All Required Terms (across all stages)', terms: allReq, count: allReq.length });
+  // All recommended
+  const allRec = Object.values(TERMS).flat().filter(t => t.t === 'rec');
+  if (allRec.length >= 4) cats.push({ id: 'all-rec', label: 'All Recommended Terms (across all stages)', terms: allRec, count: allRec.length });
+  // Acronyms only
+  const acronyms = Object.entries(GLOSSARY).map(([name, def]) => ({ name, def, t: 'req' }));
+  if (acronyms.length >= 4) cats.push({ id: 'acronyms', label: 'Acronyms (RAG, MCP, CORS, etc.)', terms: acronyms, count: acronyms.length });
+  return cats;
+}
+
+let __defQuizState = null;
+
+function openDefQuiz() {
+  const cats = defQuizCategories();
+  const cardsHtml = cats.map(c => {
+    const best = state.accountability.defQuizBests[c.id];
+    const bestStr = best ? `Best: ${best.score}/${best.total} (${Math.round(best.score / best.total * 100)}%)` : 'Not attempted yet';
+    return `<button class="defq-cat-btn" onclick="startDefQuiz('${c.id}')">
+      <div>${escapeHtml(c.label)}</div>
+      <div class="defq-cat-meta">${c.count} terms available</div>
+      <div class="defq-cat-best">${bestStr}</div>
+    </button>`;
+  }).join('');
+  const html = `
+    <div class="defq-setup">
+      <h3>📝 Pick a category to drill</h3>
+      <p>Each round shows you 10 definitions and 4 possible terms. Choose the one that matches. Wrong answers are saved so you can review them at the end.</p>
+      <div class="defq-controls">
+        <label>Questions per round:</label>
+        <input type="number" id="defqRoundLen" min="3" max="50" value="10" />
+        <label style="margin-left: 12px;"><input type="checkbox" id="defqHard" /> Hard mode (no helper hints, time-tracked)</label>
+      </div>
+      <div class="defq-cat-grid">${cardsHtml}</div>
+    </div>
+  `;
+  showPracticeModal('📝 Definitions Quiz', html);
+}
+
+function startDefQuiz(catId) {
+  const cats = defQuizCategories();
+  const cat = cats.find(c => c.id === catId);
+  if (!cat) return;
+  const len = Math.max(3, Math.min(50, parseInt(document.getElementById('defqRoundLen')?.value || '10', 10) || 10));
+  const hard = document.getElementById('defqHard')?.checked || false;
+  // Shuffle and pick `len` terms
+  const pool = [...cat.terms];
+  // Fisher-Yates
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const questions = pool.slice(0, Math.min(len, pool.length));
+  // Build distractor pool: all OTHER terms in the same category
+  __defQuizState = {
+    catId,
+    catLabel: cat.label,
+    catTerms: cat.terms,
+    questions,
+    idx: 0,
+    score: 0,
+    missed: [],
+    hard,
+    startedAt: Date.now(),
+  };
+  renderDefQuizQuestion();
+}
+
+function renderDefQuizQuestion() {
+  const s = __defQuizState;
+  if (!s) return;
+  if (s.idx >= s.questions.length) {
+    renderDefQuizResult();
+    return;
+  }
+  const q = s.questions[s.idx];
+  // Pick 3 distractors at random from same category, not the same as q.name
+  const distractorPool = s.catTerms.filter(t => t.name !== q.name);
+  const distractors = [];
+  while (distractors.length < 3 && distractorPool.length > 0) {
+    const i = Math.floor(Math.random() * distractorPool.length);
+    distractors.push(distractorPool.splice(i, 1)[0]);
+  }
+  // Shuffle 4 choices
+  const choices = [q, ...distractors];
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choices[i], choices[j]] = [choices[j], choices[i]];
+  }
+  s.currentChoices = choices;
+  s.currentAnswer = q;
+
+  const pct = (s.idx / s.questions.length) * 100;
+  const html = `
+    <div class="defq-game">
+      <div class="defq-progress">
+        <span>Question <strong>${s.idx + 1}</strong> of ${s.questions.length} · ${escapeHtml(s.catLabel)}</span>
+        <span>Score: <strong>${s.score}</strong></span>
+      </div>
+      <div class="defq-progress-bar"><div class="fill" style="width: ${pct}%"></div></div>
+      <div class="defq-defcard">
+        <div class="defq-prompt">Which term matches this definition?</div>
+        <div class="defq-def">${escapeHtml(q.def)}</div>
+      </div>
+      <div class="defq-choices" id="defqChoices">
+        ${choices.map((c, i) => `<button type="button" onclick="answerDefQuiz(${i})">${escapeHtml(c.name)}</button>`).join('')}
+      </div>
+      <div class="defq-feedback" id="defqFeedback"></div>
+      <div class="defq-actions">
+        <button class="secondary" onclick="quitDefQuiz()">Quit</button>
+        <button id="defqNextBtn" onclick="nextDefQuiz()" disabled>Next →</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('📝 Definitions Quiz', html);
+}
+
+function answerDefQuiz(choiceIdx) {
+  const s = __defQuizState;
+  if (!s) return;
+  const choice = s.currentChoices[choiceIdx];
+  const correct = choice.name === s.currentAnswer.name;
+  const buttons = document.querySelectorAll('#defqChoices button');
+  buttons.forEach((b, i) => {
+    b.disabled = true;
+    const c = s.currentChoices[i];
+    if (c.name === s.currentAnswer.name) {
+      b.classList.add(i === choiceIdx ? 'correct' : 'was-correct');
+    } else if (i === choiceIdx) {
+      b.classList.add('wrong');
+    }
+  });
+  const fb = document.getElementById('defqFeedback');
+  if (correct) {
+    s.score++;
+    fb.className = 'defq-feedback correct';
+    fb.textContent = `✓ Correct — ${s.currentAnswer.name} is exactly that.`;
+  } else {
+    s.missed.push({ ...s.currentAnswer, chosen: choice.name });
+    fb.className = 'defq-feedback wrong';
+    fb.innerHTML = `✗ The correct answer was <strong>${escapeHtml(s.currentAnswer.name)}</strong>. <em>${escapeHtml(s.currentAnswer.def)}</em>`;
+  }
+  const next = document.getElementById('defqNextBtn');
+  if (next) {
+    next.disabled = false;
+    next.focus();
+  }
+}
+
+function nextDefQuiz() {
+  if (!__defQuizState) return;
+  __defQuizState.idx++;
+  renderDefQuizQuestion();
+}
+
+function quitDefQuiz() {
+  if (!__defQuizState) return;
+  if (confirm('Quit this quiz? Your score will not be saved.')) {
+    __defQuizState = null;
+    openDefQuiz();
+  }
+}
+
+function renderDefQuizResult() {
+  const s = __defQuizState;
+  if (!s) return;
+  const total = s.questions.length;
+  const pct = total > 0 ? Math.round((s.score / total) * 100) : 0;
+  const passing = pct >= 70;
+  // Save high score
+  const prev = state.accountability.defQuizBests[s.catId];
+  const isPB = !prev || s.score > prev.score || (s.score === prev.score && total > prev.total);
+  if (isPB) {
+    state.accountability.defQuizBests[s.catId] = { score: s.score, total, at: new Date().toISOString() };
+    save();
+  }
+  const elapsed = Math.round((Date.now() - s.startedAt) / 1000);
+  const grade = pct >= 90 ? 'A — mastery' : pct >= 80 ? 'B — strong' : pct >= 70 ? 'C — passing' : pct >= 50 ? 'D — needs review' : 'F — review the basics';
+  const missedHtml = s.missed.length > 0
+    ? `<h4 style="font-family: 'Kalam', cursive; margin-top: 18px; font-size: 16px;">Review (you missed ${s.missed.length})</h4>
+       <div class="defq-missed">
+         ${s.missed.map(m => `<div class="defq-missed-entry">
+           <strong>${escapeHtml(m.name)}</strong> — ${escapeHtml(m.def)}
+           <br><em style="color: var(--text-mute);">You picked: ${escapeHtml(m.chosen)}</em>
+         </div>`).join('')}
+       </div>`
+    : `<p style="font-family: 'Patrick Hand', cursive; color: var(--text); margin-top: 12px;">No misses. Clean sweep.</p>`;
+  const html = `
+    <div class="defq-result ${passing ? 'passing' : 'failing'}">
+      <div class="score">${s.score}/${total}</div>
+      <div class="label">${pct}% · ${elapsed}s</div>
+      <div class="grade">${grade}${isPB ? ' · 🏆 New best!' : ''}</div>
+      ${missedHtml}
+      <div class="defq-actions" style="margin-top: 18px;">
+        <button class="secondary" onclick="openDefQuiz()">All categories</button>
+        <button onclick="startDefQuiz('${s.catId}')">Retry this category</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('📝 Quiz Result', html);
+  __defQuizState = null;
+}
+
+
 function aiBuildSystemPrompt() {
   const p = state.profile || {};
   const stageProgress = DATA.map(s => {
@@ -16059,7 +16872,7 @@ function refreshFlashcardsButton(stageId, topicId) {
    ============================================================ */
 
 // Per-stage hue (HSL). Stable, consistent with the page palette.
-const STAGE_HUES = [40, 200, 260, 320, 0, 30, 280, 220, 160]; // 9 stages
+const STAGE_HUES = [40, 200, 260, 320, 0, 30, 280, 220, 160, 100, 340]; // 11 stages (9 core + Mobile + DS/ML)
 
 function buildSkillGraphLayout(filter) {
   const bandHeight = 220;        // height per stage band
