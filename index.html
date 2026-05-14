@@ -170,9 +170,11 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
   margin: 0 0 18px 0; letter-spacing: -0.5px;
 }
 .intro-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
 }
-@media (max-width: 968px) { .intro-grid { grid-template-columns: 1fr; } }
+@media (min-width: 1180px) { .intro-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px) { .intro-grid { grid-template-columns: 1fr; } }
 .intro-card {
   border: 2px solid var(--border); border-radius: 10px; padding: 14px 16px;
   background: var(--bg-card);
@@ -182,6 +184,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 .intro-card.bad { border-color: #ef4444; }
 :root[data-theme="dark"] .intro-card.bad { border-color: #f87171; }
 .intro-card.meta { border-color: var(--accent); }
+.intro-card.warn { border-color: #f59e0b; background: linear-gradient(135deg, var(--bg-card), rgba(254,243,199,0.35)); }
+:root[data-theme="dark"] .intro-card.warn { background: linear-gradient(135deg, var(--bg-card), rgba(66,32,6,0.5)); }
+.intro-card.warn h3 { background: #fef3c7; color: #78350f; }
+:root[data-theme="dark"] .intro-card.warn h3 { background: #422006; color: #fde68a; }
 .intro-jump-row {
   display: flex; gap: 10px; justify-content: space-between; align-items: center;
   margin-bottom: 8px; flex-wrap: wrap;
@@ -210,6 +216,59 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 }
 .whats-new-item strong { font-family: 'Kalam', cursive; font-weight: 700; }
 .whats-new-item .date { font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; color: var(--text-mute); display: block; margin-bottom: 2px; }
+
+/* ---- FIRST-VISIT TOUR ---- */
+.tour-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; padding: 16px;
+}
+.tour-overlay.open { display: flex; }
+.tour-card {
+  background: var(--bg-card); border: 3px solid var(--border); border-radius: 14px;
+  max-width: 580px; width: 100%; max-height: 88vh;
+  display: grid; grid-template-rows: auto 1fr auto;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
+}
+.tour-head {
+  padding: 14px 18px; border-bottom: 2px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tour-head h3 { font-family: 'Architects Daughter', cursive; font-size: 22px; color: var(--text); }
+.tour-head .step-counter { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); }
+.tour-body { padding: 18px 22px; overflow-y: auto; }
+.tour-body h4 { font-family: 'Kalam', cursive; font-weight: 700; font-size: 18px; color: var(--text); margin-bottom: 8px; }
+.tour-body p { font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.55; color: var(--text); margin-bottom: 8px; }
+.tour-body ul { margin: 4px 0 10px 22px; }
+.tour-body li { font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5; color: var(--text); margin-bottom: 5px; }
+.tour-body strong { font-family: 'Kalam', cursive; font-weight: 700; }
+.tour-body kbd {
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 12px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 4px;
+  padding: 1px 6px;
+}
+.tour-progress {
+  display: flex; gap: 4px; padding: 0 18px 6px;
+}
+.tour-progress .dot {
+  flex: 1; height: 5px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 3px;
+}
+.tour-progress .dot.done { background: var(--node-stage); }
+.tour-progress .dot.current { background: var(--accent); }
+.tour-foot {
+  padding: 12px 18px; border-top: 2px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
+.tour-foot button {
+  padding: 6px 14px; border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; cursor: pointer;
+  background: var(--bg-card); color: var(--text);
+}
+.tour-foot button.primary { background: var(--node-stage); }
+.tour-foot button.secondary { background: var(--bg-card); }
+.tour-foot button:disabled { opacity: 0.4; cursor: not-allowed; }
+.tour-skip { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); text-decoration: underline; cursor: pointer; background: none; border: none; }
+
 .intro-callout {
   margin-top: 14px; padding: 14px 18px; border: 3px solid #f59e0b; border-radius: 10px;
   background: #fef3c7; color: #1a1a1a;
@@ -2511,6 +2570,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
+          <button onclick="closeMoreMenu(); openTour()">👋 First-visit Tour</button>
         </div>
       </div>
       <button class="btn" onclick="openSettings()" id="settingsBtn" title="Settings">
@@ -2523,6 +2583,25 @@ abbr.glossary-term:hover::after {
       </button>
     </div>
   </header>
+
+  <!-- FIRST-VISIT TOUR OVERLAY -->
+  <div class="tour-overlay" id="tourOverlay" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-hidden="true">
+    <div class="tour-card">
+      <div class="tour-head">
+        <h3 id="tourTitle">👋 Welcome to your roadmap</h3>
+        <span class="step-counter" id="tourStepCounter">Step 1 of 6</span>
+      </div>
+      <div class="tour-body" id="tourBody"></div>
+      <div class="tour-progress" id="tourProgress"></div>
+      <div class="tour-foot">
+        <button class="tour-skip" onclick="closeTour()" type="button">Skip tour</button>
+        <div style="display: flex; gap: 6px;">
+          <button class="secondary" id="tourBackBtn" onclick="tourStep(-1)" type="button">← Back</button>
+          <button class="primary" id="tourNextBtn" onclick="tourStep(1)" type="button">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- INTRODUCTION -->
   <div class="intro-section" id="intro">
@@ -2569,14 +2648,15 @@ abbr.glossary-term:hover::after {
           <li><strong>Honest about timelines</strong> — 16-25 months ideal, 24-36 realistic for most</li>
         </ul>
       </div>
-    </div>
-    <div class="intro-callout">
-      <strong>⚠ If you do nothing else from this roadmap, do these three things:</strong>
-      <ol>
-        <li><strong>Find a senior mentor</strong> (paid or unpaid) before you finish Stage 4 — self-taught learners plateau without senior eyes on their code. Codementor / MentorCruise / open-source maintainers / Discord communities all work.</li>
-        <li><strong>Start a public GitHub presence in Stage 2-3</strong> — clean repos, real READMEs. Don't wait until Stage 8.</li>
-        <li><strong>Practice DSA 2-3 problems/week from Stage 2 onward</strong> — not a Stage 1 sprint that you forget by interview time.</li>
-      </ol>
+      <div class="intro-card warn">
+        <h3>⚠ If you do nothing else</h3>
+        <ul>
+          <li><strong>Find a senior mentor</strong> before Stage 4 — Codementor, MentorCruise, OSS maintainers, or Discord. Self-taught learners plateau without senior eyes on their code.</li>
+          <li><strong>Start a public GitHub presence in Stage 2-3</strong> — clean repos, real READMEs. Don't wait until Stage 8.</li>
+          <li><strong>Practice DSA 2-3 problems/week from Stage 2 onward</strong> — not a Stage 1 sprint you forget by interview time.</li>
+          <li><strong>Open 🎓 AI Instructor early</strong> — uses your own Anthropic key, gives you a tutor that knows your roadmap state.</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -10940,16 +11020,21 @@ function toggleHowto() {
   try { localStorage.setItem(HOWTO_KEY, open ? '0' : '1'); } catch(e) {}
 }
 function initHowto() {
-  const seen = localStorage.getItem(HOWTO_KEY) === '1';
+  const explicitlySeen = localStorage.getItem(HOWTO_KEY) === '1';
+  const isReturning = !!state.profile;  // profile exists = they've onboarded = returning visit
   const el = document.getElementById('howto');
   const t = document.getElementById('howtoToggle');
-  // First visit: expanded. After they explicitly hide it, stays hidden.
-  if (!seen) {
-    el.classList.add('open');
-    t.textContent = 'Hide ▲';
-  } else {
+  // Default behavior:
+  // - First-ever visit (no profile, no explicit-seen): expanded for discovery
+  // - Returning visit (profile exists): collapsed by default to reduce clutter
+  // - User has explicitly hidden it before: stays hidden
+  const shouldCollapse = explicitlySeen || isReturning;
+  if (shouldCollapse) {
     el.classList.remove('open');
     t.textContent = 'Show ▼';
+  } else {
+    el.classList.add('open');
+    t.textContent = 'Hide ▲';
   }
 }
 
@@ -15799,6 +15884,145 @@ const WHATS_NEW = [
   ]},
 ];
 
+/* ============================================================
+   FIRST-VISIT TOUR — 6-step walkthrough of the most useful tools.
+   Shown automatically once on first visit (when no profile yet);
+   can be re-opened any time via the More menu.
+   ============================================================ */
+const TOUR_KEY = 'roadmap-tour-seen';
+
+const TOUR_STEPS = [
+  {
+    title: '👋 Welcome to your roadmap',
+    body: `<p>You've found a single-file app that teaches you to be a Full Stack + AI Engineer.</p>
+<p>It's <strong>not just content</strong> — it ships with an AI tutor, a bootcamp scheduler, accountability tracking, a 853-entry glossary, 11 step-by-step build guides, and more. This 30-second tour shows you where things are.</p>
+<p><em>You can re-open this tour any time from the ⋯ More menu.</em></p>`
+  },
+  {
+    title: '📚 What\'s in the roadmap',
+    body: `<ul>
+<li><strong>11 stages</strong> (9 core + 2 electives: Mobile, DS/ML)</li>
+<li><strong>267 topics</strong> across 58 branches</li>
+<li><strong>638 curated learning links</strong></li>
+<li><strong>853 glossary entries</strong> — every key term defined</li>
+<li><strong>134 tests</strong> verifying the app works on every push</li>
+</ul>
+<p>Click any topic node to open its modal — you'll see what it is, why it matters, key terms, resources, and practice challenges.</p>`
+  },
+  {
+    title: '🎓 The 5 most-used tools (in the ⋯ More menu)',
+    body: `<ul>
+<li><strong>🎓 AI Instructor</strong> — chat with Claude as your tutor (BYO Anthropic API key, stored only in your browser)</li>
+<li><strong>🏫 Bootcamp</strong> — get a 12-84 week structured curriculum with weekly topics + practice + project</li>
+<li><strong>📊 Accountability</strong> — daily hour commitment, weekly check-ins, streak counter</li>
+<li><strong>📝 Definitions Quiz</strong> — multiple-choice drill over the 853-entry glossary by category</li>
+<li><strong>🔨 Builds</strong> — 11 full step-by-step project guides with copy-paste code</li>
+</ul>`
+  },
+  {
+    title: '🎯 Recommended first 30 minutes',
+    body: `<p>If you want a fast start (in order):</p>
+<ol>
+<li><strong>Complete onboarding</strong> (the modal that appeared on your first load — or click the ⚙ settings → "Reset onboarding" if you skipped)</li>
+<li><strong>Open 📊 Accountability</strong> from More menu → set a daily hour commitment (e.g. 3 hrs/day)</li>
+<li><strong>Open 🏫 Bootcamp</strong> → pick a duration (16-24 weeks is realistic) → get your weekly curriculum</li>
+<li><strong>Open Stage 0</strong> → start the workstation setup. ~3 days of work.</li>
+<li><strong>Bookmark the URL</strong> on every device. Progress saves locally per browser — use Backup/Restore to sync.</li>
+</ol>`
+  },
+  {
+    title: '🛠 Pro tips',
+    body: `<ul>
+<li><strong>Press <kbd>?</kbd></strong> any time to see keyboard shortcuts</li>
+<li><strong>Press <kbd>0</kbd>-<kbd>9</kbd></strong> to jump between stages</li>
+<li><strong>Press <kbd>Ctrl/Cmd + F</kbd></strong> for browser-native topic search</li>
+<li><strong>Click "↓ Skip to roadmap"</strong> at the top of the intro to jump past the docs</li>
+<li><strong>Click "✨ What's new"</strong> to see what features were added recently</li>
+<li>Every topic modal has a "🔗 Copy link" button — share specific topics directly</li>
+<li>Your data is in localStorage. <strong>Use Backup / Restore</strong> to move it between devices.</li>
+</ul>`
+  },
+  {
+    title: '🎉 You\'re ready',
+    body: `<p>That's the tour. The roadmap will keep evolving — check the <strong>✨ What's new</strong> pill above the intro periodically.</p>
+<p>One last thing: this is a <strong>marathon, not a sprint</strong>. The realistic timeline is 24-36 months for most self-taught learners. Pace yourself. Use the Accountability tracker. Find a mentor.</p>
+<p><em>Now go build things.</em></p>`
+  }
+];
+
+let __tourStep = 0;
+
+function openTour() {
+  __tourStep = 0;
+  renderTourStep();
+  const overlay = document.getElementById('tourOverlay');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
+}
+
+function closeTour() {
+  const overlay = document.getElementById('tourOverlay');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function tourStep(delta) {
+  __tourStep = Math.max(0, Math.min(TOUR_STEPS.length - 1, __tourStep + delta));
+  renderTourStep();
+}
+
+function renderTourStep() {
+  const step = TOUR_STEPS[__tourStep];
+  if (!step) return;
+  document.getElementById('tourTitle').textContent = step.title;
+  document.getElementById('tourBody').innerHTML = step.body;
+  document.getElementById('tourStepCounter').textContent = `Step ${__tourStep + 1} of ${TOUR_STEPS.length}`;
+  // Back button disabled on first step
+  document.getElementById('tourBackBtn').disabled = __tourStep === 0;
+  // Next button becomes "Done" on last step
+  const nextBtn = document.getElementById('tourNextBtn');
+  if (__tourStep === TOUR_STEPS.length - 1) {
+    nextBtn.textContent = 'Done ✓';
+    nextBtn.onclick = () => closeTour();
+  } else {
+    nextBtn.textContent = 'Next →';
+    nextBtn.onclick = () => tourStep(1);
+  }
+  // Progress dots
+  const progressEl = document.getElementById('tourProgress');
+  if (progressEl) {
+    progressEl.innerHTML = TOUR_STEPS.map((_, i) => {
+      const cls = i < __tourStep ? 'done' : (i === __tourStep ? 'current' : '');
+      return `<div class="dot ${cls}"></div>`;
+    }).join('');
+  }
+}
+
+function maybeShowFirstVisitTour() {
+  // Auto-show tour ONLY when:
+  //   (a) the user just COMPLETED onboarding (not skipped) — signal of high engagement
+  //   (b) no profile existed at page load (truly first visit)
+  //   (c) no tour-seen flag
+  // Users who skip onboarding can still open the tour from More menu.
+  const tourSeen = (() => { try { return localStorage.getItem(TOUR_KEY) === '1'; } catch (e) { return false; } })();
+  if (tourSeen) return;
+  if (state.profile) return;  // already had profile = returning user
+  const onb = document.getElementById('onbOverlay');
+  if (!onb || !onb.classList.contains('open')) return;
+  // Wait for onboarding to close — but only fire tour if it closed via COMPLETION, not skip
+  const obs = new MutationObserver(() => {
+    if (!onb.classList.contains('open')) {
+      obs.disconnect();
+      if (state.profile && !state.profile.skipped) {
+        // User completed onboarding — show the tour
+        setTimeout(openTour, 400);
+      }
+    }
+  });
+  obs.observe(onb, { attributes: true, attributeFilter: ['class'] });
+}
+
 function openWhatsNew() {
   const itemsHtml = WHATS_NEW.map(g => `
     <div style="margin-bottom: 16px;">
@@ -18455,7 +18679,11 @@ document.addEventListener('keydown', e => {
    ============================================================ */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    // Close any open modal — order: difficulty prompt → onboarding → practice modal → topic modal
+    // Close any open modal — order: tour → difficulty prompt → onboarding → practice modal → topic modal
+    if (document.getElementById('tourOverlay')?.classList.contains('open')) {
+      closeTour();
+      return;
+    }
     if (document.getElementById('diffPrompt')?.classList.contains('open')) {
       closeDifficultyPrompt();
       return;
@@ -18471,7 +18699,12 @@ document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toUpperCase();
   if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (/^[0-8]$/.test(e.key)) { scrollToStage(parseInt(e.key)); return; }
+  // Tour navigation with arrow keys
+  if (document.getElementById('tourOverlay')?.classList.contains('open')) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); tourStep(1); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); tourStep(-1); return; }
+  }
+  if (/^[0-9]$/.test(e.key)) { scrollToStage(parseInt(e.key)); return; }
   if (e.key === '?' || (e.key === '/' && e.shiftKey)) { showShortcutHelp(); e.preventDefault(); return; }
   if (e.key === '/') { e.preventDefault(); document.getElementById('searchBox')?.focus(); return; }
 });
@@ -18664,6 +18897,8 @@ checkOnboarding();
 if (!document.getElementById('onbOverlay').classList.contains('open')) {
   applyHashRouting();
 }
+// First-visit tour — shows after onboarding completes/skips, once per browser
+maybeShowFirstVisitTour();
 
 // Attach note autosave once the textarea exists in the DOM
 (function wireNoteAutosave() {
