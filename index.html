@@ -1267,6 +1267,74 @@ abbr.glossary-term:hover::after {
   font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
 }
 
+/* ---- Per-topic KEY TERMS (Stage 1 of content expansion) ---- */
+.terms-section h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.terms-count { font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 13px; color: var(--text-mute); }
+.terms-controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.terms-filter {
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  cursor: pointer;
+}
+.terms-filter.active { background: var(--node-stage); }
+.terms-grid { display: grid; gap: 10px; }
+.term-card {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 12px;
+  padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg-card);
+}
+.term-card.req { border-left-width: 6px; border-left-color: #f59e0b; }
+.term-card.rec { border-left-width: 6px; border-left-color: #a78bfa; }
+.term-card .term-name {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px; color: var(--text);
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.term-card .term-badge {
+  font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 11px;
+  padding: 1px 8px; border-radius: 999px; border: 2px solid var(--border);
+  text-transform: lowercase; letter-spacing: 0.04em;
+}
+.term-card.req .term-badge { background: #fde68a; color: #1a1a1a; }
+.term-card.rec .term-badge { background: #ddd6fe; color: #1a1a1a; }
+.term-card .term-def {
+  font-family: 'Patrick Hand', cursive; font-size: 14.5px; color: var(--text);
+  line-height: 1.5; grid-column: 1 / -1;
+}
+.term-card .term-also {
+  font-family: 'Patrick Hand', cursive; font-size: 12.5px; color: var(--text-mute);
+  grid-column: 1 / -1;
+}
+.term-card[hidden] { display: none; }
+
+/* Global glossary improvements — letter index + origin badges */
+.glossary-letter-index {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; margin-bottom: 8px;
+  border: 2px solid var(--border); border-radius: 8px; background: var(--bg-card);
+  position: sticky; top: 0; z-index: 2;
+}
+.glossary-letter-index button {
+  min-width: 28px; padding: 2px 6px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 4px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; color: var(--text);
+  cursor: pointer;
+}
+.glossary-letter-index button:hover { background: var(--node-stage); }
+.glossary-letter-index button.empty { opacity: 0.35; cursor: default; }
+.glossary-letter-anchor {
+  scroll-margin-top: 60px;
+  font-family: 'Architects Daughter', cursive; font-size: 22px; color: var(--text);
+  margin: 10px 0 4px; border-bottom: 2px solid var(--border); padding-bottom: 2px;
+}
+.glossary-entry .origin {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute);
+  margin-top: 4px;
+}
+.glossary-entry .origin a {
+  color: var(--accent); text-decoration: underline;
+}
+
 /* ---- #24 DIFFICULTY rating ---- */
 .diff-section { margin-top: 4px; }
 .diff-stars { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -6749,6 +6817,15 @@ abbr.glossary-term:hover::after {
         <h3>why it matters</h3>
         <div class="why"><p id="mWhy">—</p></div>
       </div>
+      <div class="modal-section terms-section" id="mTermsSection" hidden>
+        <h3>key terms <span class="terms-count" id="mTermsCount"></span></h3>
+        <div class="terms-controls">
+          <button type="button" class="terms-filter active" data-tf="all" onclick="filterTopicTerms('all')">All</button>
+          <button type="button" class="terms-filter" data-tf="req" onclick="filterTopicTerms('req')">Required</button>
+          <button type="button" class="terms-filter" data-tf="rec" onclick="filterTopicTerms('rec')">Recommended</button>
+        </div>
+        <div class="terms-grid" id="mTerms"></div>
+      </div>
       <div class="modal-section">
         <h3>resources</h3>
         <div class="modal-resources" id="mResources"></div>
@@ -9828,6 +9905,7 @@ function openModal(stageId, topicId) {
   tag.className = 'tag ' + topic.t;
   document.getElementById('mDesc').textContent = topic.desc || '—';
   document.getElementById('mWhy').textContent = topic.why || '—';
+  renderTopicTerms(stageId, topicId);
   const links = topic.links || [];
   const classified = classifyResources(links);
   const noteHtml = links.length > 1 ? `
@@ -10951,6 +11029,490 @@ const GLOSSARY = {
 // Sort by length DESC so longer terms (e.g., "WSL2") match before shorter ones ("WSL")
 const GLOSSARY_KEYS = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 
+/* ------------------------------------------------------------
+   TERMS — per-topic key terms (concepts, not acronyms).
+   Keyed by `${stageId}:${topicId}`. Each entry: { name, def, t, also? }.
+   t = 'req' (must learn) | 'rec' (nice to know).
+   These appear in the topic modal AND merge into the global Glossary.
+   Acronyms still live in GLOSSARY above (auto-wrapped in body text).
+   ------------------------------------------------------------ */
+const TERMS = {
+  /* === STAGE 0 — Environment Setup === */
+  '0:terminal': [
+    { name: 'Shell', def: 'The program that reads and runs commands you type. PowerShell, Bash, Zsh are shells. The terminal app is the window; the shell is what runs inside.', t: 'req' },
+    { name: 'PowerShell', def: 'Windows\'s modern object-oriented shell. Commands are called cmdlets in Verb-Noun form (Get-ChildItem, Set-Location). Default on Windows 11.', t: 'req' },
+    { name: 'Bash', def: 'The classic Unix shell (Bourne Again Shell). Used inside WSL2, Linux servers, macOS, and Git Bash. Almost every tutorial assumes Bash.', t: 'req' },
+    { name: 'Profile / .bashrc / $PROFILE', def: 'The startup file your shell runs on launch. Where you set aliases, environment variables, and prompt customisations.', t: 'rec' },
+    { name: 'PATH', def: 'An ordered list of directories the shell searches when you type a command. If `python` isn\'t found, PATH is the first place to check.', t: 'req' },
+    { name: 'Environment variable', def: 'A named value (API_KEY, NODE_ENV) the shell injects into every process it launches. Set with $env:NAME on PowerShell, export NAME=value on Bash.', t: 'req' }
+  ],
+  '0:git': [
+    { name: 'Repository (repo)', def: 'A project folder tracked by Git. Contains a hidden .git directory holding the entire history.', t: 'req' },
+    { name: 'Commit', def: 'A snapshot of your repo at a moment in time, identified by a SHA-1 hash. Commits form a chain — each points to its parent.', t: 'req' },
+    { name: 'Remote', def: 'A copy of the repo hosted elsewhere (e.g. on GitHub). `origin` is the default name for the remote you cloned from.', t: 'req' },
+    { name: 'SSH key', def: 'A cryptographic key pair (public + private) used to authenticate without passwords. Generated by `ssh-keygen`.', t: 'req' },
+    { name: 'Personal Access Token (PAT)', def: 'GitHub\'s password-equivalent for HTTPS auth. Required since 2021 because plain passwords were disabled.', t: 'rec' },
+    { name: 'Fork', def: 'Your own server-side copy of someone else\'s repo on GitHub. Used to contribute via pull requests.', t: 'rec' }
+  ],
+  '0:vscode': [
+    { name: 'Extension', def: 'A plugin that adds language support, debuggers, formatters, etc. Installed from the Marketplace.', t: 'req' },
+    { name: 'Command Palette', def: 'The keyboard-driven menu (Ctrl/Cmd+Shift+P) for running any VS Code action. Faster than mouse.', t: 'req' },
+    { name: 'settings.json', def: 'Your user preferences in JSON. Lives in your home dir. Editor settings, keybindings, language overrides.', t: 'req' },
+    { name: 'workspace', def: 'A .code-workspace file or folder context with project-specific settings, recommended extensions, and debug configs.', t: 'rec' },
+    { name: 'Language server', def: 'A background process that powers autocomplete, error squiggles, hover info, refactors — independent of the editor.', t: 'rec' }
+  ],
+  '0:node': [
+    { name: 'Runtime', def: 'The program that actually executes your code. Node.js is a JavaScript runtime built on V8 (Chrome\'s JS engine).', t: 'req' },
+    { name: 'LTS', def: 'Long-Term Support — the version of Node maintained for ~30 months. Always pick LTS for projects, not the latest.', t: 'req' },
+    { name: 'package.json', def: 'The manifest file at the root of every Node project. Lists dependencies, scripts, project metadata.', t: 'req' },
+    { name: 'node_modules', def: 'The local install folder for your project\'s dependencies. Gitignored. Can be massive (>1GB).', t: 'req' },
+    { name: 'pnpm', def: 'A fast alternative to npm. Uses a global content-addressable store so deps aren\'t duplicated across projects.', t: 'rec' },
+    { name: 'lockfile', def: 'package-lock.json or pnpm-lock.yaml. Pins exact versions of every transitive dep so installs are reproducible.', t: 'req' }
+  ],
+  '0:python': [
+    { name: 'Interpreter', def: 'The program (python.exe) that reads and runs Python source files. Python is interpreted, not compiled to native code.', t: 'req' },
+    { name: 'Virtual environment (venv)', def: 'An isolated Python install per project, so libraries don\'t collide. Created with `python -m venv .venv` or `uv venv`.', t: 'req' },
+    { name: 'pip', def: 'Python\'s default package installer. Reads PyPI. Slower than uv but universal.', t: 'req' },
+    { name: 'uv', def: 'A modern Rust-based replacement for pip + venv + pip-tools. 10-100x faster. Becoming the default in 2025+.', t: 'rec' },
+    { name: 'pyproject.toml', def: 'The modern Python project manifest (replaces setup.py). Lists deps, build settings, tool configs.', t: 'req' },
+    { name: 'requirements.txt', def: 'Older format — a flat list of `package==version` lines. Still common in tutorials and Docker images.', t: 'rec' }
+  ],
+  '0:wsl': [
+    { name: 'WSL2', def: 'Windows Subsystem for Linux v2. Runs a real Linux kernel inside a lightweight VM with near-native performance.', t: 'req' },
+    { name: 'Distribution (distro)', def: 'A Linux variant — Ubuntu, Debian, Alpine, etc. You install one or more into WSL.', t: 'req' },
+    { name: 'Filesystem boundary', def: 'Cross-OS file access is 10-100x slower than same-OS. Keep your code under /home/user (Linux side), not /mnt/c.', t: 'rec' }
+  ],
+
+  /* === STAGE 1 — Programming Fundamentals === */
+  '1:cs-hardware': [
+    { name: 'CPU', def: 'Central Processing Unit — the chip that executes instructions one at a time (or a few at a time per core).', t: 'req' },
+    { name: 'RAM', def: 'Random Access Memory — volatile working memory. Fast, expensive, wiped on power-off. Typically 8-64 GB on a laptop.', t: 'req' },
+    { name: 'Storage (disk)', def: 'Persistent storage — SSD or HDD. Slower than RAM but survives reboots. Where your files and OS live.', t: 'req' },
+    { name: 'Binary', def: 'Base-2 number system using only 0 and 1. Everything in a computer is ultimately binary (text, images, code).', t: 'req' },
+    { name: 'Instruction', def: 'A single primitive operation the CPU can do — add two numbers, load from memory, jump to address. Your code compiles down to these.', t: 'rec' },
+    { name: 'Bit / Byte', def: 'A bit is one binary digit. A byte is 8 bits (256 possible values). Sizes scale: KB, MB, GB, TB.', t: 'req' }
+  ],
+  '1:cs-internet': [
+    { name: 'Packet', def: 'A small chunk of data with a header (source/destination address) and payload. The internet only moves packets, never streams.', t: 'req' },
+    { name: 'IP address', def: 'A number identifying a device on the network. IPv4 like 192.168.1.10, IPv6 like 2001:db8::1.', t: 'req' },
+    { name: 'DNS', def: 'Domain Name System — translates human names (google.com) to IP addresses. The phonebook of the internet.', t: 'req' },
+    { name: 'TCP', def: 'Transmission Control Protocol — guarantees ordered, reliable delivery. Used by HTTP, SSH, most things.', t: 'req' },
+    { name: 'UDP', def: 'User Datagram Protocol — fire-and-forget, no guarantees. Used by DNS, video calls, games.', t: 'rec' },
+    { name: 'Port', def: 'A number (0-65535) identifying a specific service on a machine. HTTP=80, HTTPS=443, SSH=22.', t: 'req' },
+    { name: 'HTTP', def: 'Hypertext Transfer Protocol — the request/response language of the web. Browsers speak HTTP to servers.', t: 'req' }
+  ],
+  '1:cs-memory': [
+    { name: 'Cache', def: 'A small, fast memory between the CPU and RAM. L1 is fastest+smallest, L3 is largest+slowest. Misses cost ~100x.', t: 'rec' },
+    { name: 'Cache miss', def: 'When the CPU needs data not in any cache and must fetch from RAM. A common reason loops are unexpectedly slow.', t: 'rec' },
+    { name: 'Locality of reference', def: 'The principle that programs tend to access nearby memory together. Caches exploit this. Random-access patterns kill performance.', t: 'rec' },
+    { name: 'Latency', def: 'Time to complete one operation. RAM ~100ns, SSD ~100µs, network ~1-100ms. Knowing orders of magnitude shapes design.', t: 'req' }
+  ],
+  '1:cs-concurrency': [
+    { name: 'Thread', def: 'A single sequential flow of execution. A process can have many threads sharing memory. OS-managed, expensive to create.', t: 'req' },
+    { name: 'Process', def: 'A running program with its own memory space. Isolation is stronger than threads, communication is more expensive.', t: 'req' },
+    { name: 'Async / await', def: 'A pattern where a function pauses ("awaits") an I/O operation without blocking the thread. One thread can handle thousands of concurrent operations.', t: 'req' },
+    { name: 'Event loop', def: 'A single-threaded scheduler (in Node, browsers, Python asyncio) that picks the next ready callback to run. Foundation of async I/O.', t: 'req' },
+    { name: 'CPU-bound', def: 'A task whose speed is limited by computation. Use threads/processes/parallelism to scale.', t: 'rec' },
+    { name: 'I/O-bound', def: 'A task whose speed is limited by network/disk waiting. Use async to scale — threads are wasteful here.', t: 'rec' },
+    { name: 'Race condition', def: 'A bug where the outcome depends on the unpredictable order of concurrent operations. Notoriously hard to reproduce.', t: 'rec' }
+  ],
+  '1:cs-os': [
+    { name: 'Process ID (PID)', def: 'A unique number the OS gives each running process. Used by tools like ps, kill, top.', t: 'req' },
+    { name: 'File descriptor (fd)', def: 'An integer the OS hands back when you open a file or socket. 0=stdin, 1=stdout, 2=stderr.', t: 'rec' },
+    { name: 'Signal', def: 'An interrupt sent to a process — SIGTERM (please stop), SIGKILL (stop now), SIGHUP (config reload).', t: 'rec' },
+    { name: 'Exit code', def: 'A 0-255 number a process returns. 0 = success, anything else = error. Used by shell scripts to check failure.', t: 'req' },
+    { name: 'stdin / stdout / stderr', def: 'Three default streams every process has. Pipe stdout to another process\'s stdin to chain commands.', t: 'req' }
+  ],
+  '1:cs-protocols': [
+    { name: 'WebSocket', def: 'A persistent bidirectional TCP connection between browser and server, upgraded from HTTP. Used for chat, live data, gameplay.', t: 'rec' },
+    { name: 'gRPC', def: 'A high-performance RPC framework over HTTP/2 using Protocol Buffers. Common in microservices and mobile-server comms.', t: 'rec' },
+    { name: 'MQTT', def: 'A lightweight publish/subscribe messaging protocol used in IoT and sensor networks.', t: 'rec' },
+    { name: 'Server-Sent Events (SSE)', def: 'One-way streaming from server to browser over HTTP. Simpler than WebSockets when you only need push, not duplex.', t: 'rec' }
+  ],
+  '1:py-syntax': [
+    { name: 'Variable', def: 'A name bound to a value. In Python, names point to objects; assignment never copies.', t: 'req' },
+    { name: 'Data type', def: 'What kind of value something is — int, float, str, bool, list, dict, None. Python figures it out dynamically.', t: 'req' },
+    { name: 'f-string', def: 'A formatted string literal: f"Hello, {name}!". Modern way to interpolate values; faster and more readable than %-format or .format().', t: 'req' },
+    { name: 'Conditional (if/elif/else)', def: 'Branches the program based on truthy/falsy expressions. Indentation determines what belongs inside.', t: 'req' },
+    { name: 'Loop (for / while)', def: '`for` iterates over a sequence (list, range, generator). `while` runs until a condition is false.', t: 'req' },
+    { name: 'Truthy / Falsy', def: 'Non-bool values that act like True or False in conditions. Empty containers, 0, None, "" are falsy. Everything else is truthy.', t: 'req' },
+    { name: 'None', def: 'Python\'s null value — the absence of a value. Compare with `is None`, never `== None`.', t: 'req' }
+  ],
+  '1:py-funcs': [
+    { name: 'Function definition', def: '`def name(params):` — Python\'s syntax to declare a reusable block of code. Body is indented.', t: 'req' },
+    { name: 'Parameter vs argument', def: 'Parameter = the name in the function signature. Argument = the actual value passed at the call site.', t: 'req' },
+    { name: 'Default argument', def: 'A parameter with a fallback value: `def fn(x=10):`. Caller may omit it. Avoid mutable defaults (`[]`, `{}`) — they\'re shared across calls.', t: 'req' },
+    { name: 'Return value', def: 'What a function gives back to the caller. Functions without an explicit return return None.', t: 'req' },
+    { name: '*args / **kwargs', def: 'Variable-length positional / keyword arguments. `def fn(*nums, **opts):` lets a function take any number of inputs.', t: 'rec' },
+    { name: 'Lambda', def: 'An anonymous one-expression function: `lambda x: x*2`. Used for short callbacks like sort keys.', t: 'rec' },
+    { name: 'Type hint', def: 'Optional annotations like `def fn(name: str) -> int:`. Tools (mypy, IDEs) use them; runtime ignores them.', t: 'rec' }
+  ],
+  '1:py-collections': [
+    { name: 'List', def: 'An ordered, mutable sequence: `[1, 2, 3]`. Append, slice, sort. Most common Python collection.', t: 'req' },
+    { name: 'Tuple', def: 'An ordered, immutable sequence: `(1, 2, 3)`. Hashable (can be dict keys), faster than lists.', t: 'req' },
+    { name: 'Dictionary (dict)', def: 'A mapping of unique keys to values: `{"name": "Ada"}`. Average O(1) lookup. Insertion-ordered since 3.7.', t: 'req' },
+    { name: 'Set', def: 'An unordered collection of unique elements: `{1, 2, 3}`. O(1) membership tests. Use for deduplication.', t: 'req' },
+    { name: 'Mutability', def: 'Whether you can change an object in place. Lists/dicts/sets are mutable; tuples/strings/frozensets aren\'t.', t: 'req' },
+    { name: 'Slicing', def: '`seq[start:stop:step]` — extracts a sub-sequence. Works on lists, tuples, strings. Indices are half-open: `[2:5]` includes 2, excludes 5.', t: 'req' }
+  ],
+  '1:py-files': [
+    { name: 'open() / context manager', def: 'Always open files with `with open(...) as f:`. The context manager auto-closes the file even on errors.', t: 'req' },
+    { name: 'Read mode (r/rb/w/wb/a)', def: 'r = read text, w = overwrite, a = append, b suffix = binary. Choose carefully or you\'ll lose data.', t: 'req' },
+    { name: 'Exception', def: 'A runtime error object. Raise with `raise ValueError(...)`, catch with `try / except`.', t: 'req' },
+    { name: 'try / except / finally', def: 'Exception handling block. `finally` always runs (even on exception), used for cleanup.', t: 'req' },
+    { name: 'Custom exception', def: 'A subclass of Exception you define for your domain. Lets callers catch your errors specifically.', t: 'rec' },
+    { name: 'pathlib.Path', def: 'Modern OO file paths: `Path("data") / "users.json"`. Replaces os.path with cleaner cross-platform code.', t: 'rec' }
+  ],
+  '1:py-modules': [
+    { name: 'Module', def: 'A single .py file. Importing it runs the file once and exposes its names.', t: 'req' },
+    { name: 'Package', def: 'A folder of modules with an __init__.py file. Importable as one name.', t: 'req' },
+    { name: 'import', def: '`import X` loads module X. `from X import Y` pulls just Y. `from X import *` pulls everything (avoid).', t: 'req' },
+    { name: '__name__ == "__main__"', def: 'A guard that\'s True only when the file is run directly, not imported. Lets a file be both a script and a library.', t: 'rec' },
+    { name: 'Virtual environment', def: 'An isolated Python install per project. Created by `python -m venv .venv` or `uv venv`.', t: 'req' },
+    { name: 'PyPI', def: 'The Python Package Index — the official public registry of Python packages. `pip install requests` fetches from here.', t: 'rec' }
+  ],
+  '1:py-oop': [
+    { name: 'Class', def: 'A blueprint for objects: `class Dog: ...`. Defines attributes and methods shared by all instances.', t: 'req' },
+    { name: 'Instance', def: 'A concrete object created from a class: `d = Dog("Rex")`.', t: 'req' },
+    { name: '__init__', def: 'The constructor — called when you instantiate the class. Sets initial attributes via `self.x = ...`.', t: 'req' },
+    { name: 'self', def: 'The first parameter of every instance method — refers to the instance itself. Not a keyword, just convention.', t: 'req' },
+    { name: 'Inheritance', def: '`class Cat(Animal):` — a class taking on attributes/methods of another. Use sparingly; favor composition.', t: 'rec' },
+    { name: 'Dunder method', def: 'Double-underscore methods (`__add__`, `__eq__`, `__repr__`) that hook into Python\'s syntax. Make objects behave like built-ins.', t: 'rec' },
+    { name: 'dataclass', def: '`@dataclass` decorator auto-generates __init__/__repr__/__eq__ from type-hinted fields. The modern way to make value classes.', t: 'rec' }
+  ],
+  '1:py-comp': [
+    { name: 'List comprehension', def: '`[x*2 for x in nums if x > 0]` — a concise, fast way to build a list from another iterable.', t: 'req' },
+    { name: 'Dict / set comprehension', def: 'Same syntax with `{}`: `{k: v for k, v in pairs}` builds a dict; `{x for x in seq}` builds a set.', t: 'rec' },
+    { name: 'Generator', def: 'A function with `yield` that produces values lazily. Memory-efficient for huge sequences.', t: 'rec' },
+    { name: 'Iterator protocol', def: 'Any object with `__iter__` and `__next__` methods. Underlies `for` loops, generators, comprehensions.', t: 'rec' },
+    { name: 'enumerate / zip', def: '`enumerate(seq)` gives (index, item) pairs. `zip(a, b)` walks two iterables together. Use instead of manual index counters.', t: 'req' }
+  ],
+  '1:js-basics': [
+    { name: 'let', def: 'Block-scoped, reassignable variable. Use by default in modern JS.', t: 'req' },
+    { name: 'const', def: 'Block-scoped, cannot be reassigned. Note: object/array contents are still mutable; only the binding is locked.', t: 'req' },
+    { name: 'var', def: 'Legacy function-scoped variable. Hoisted in confusing ways. Don\'t use in new code.', t: 'req' },
+    { name: 'Primitive types', def: 'number, string, boolean, null, undefined, bigint, symbol. Everything else is an object.', t: 'req' },
+    { name: '== vs ===', def: '`==` does type coercion (`0 == "0"` is true). `===` does not. Always use `===` unless you know exactly why.', t: 'req' },
+    { name: 'Hoisting', def: 'JS lifts `var` declarations and function declarations to the top of their scope. Source of subtle bugs.', t: 'rec' },
+    { name: 'Arrow function', def: '`(x) => x * 2` — concise function syntax. No own `this`, no `arguments`. Great for callbacks.', t: 'req' },
+    { name: 'Template literal', def: '`` `Hello, ${name}!` `` — backtick strings with interpolation and multi-line support.', t: 'req' }
+  ],
+  '1:js-arrays': [
+    { name: 'Array', def: 'A built-in resizable list. `[1, 2, 3]`. Methods: push, pop, slice, map, filter, reduce, find.', t: 'req' },
+    { name: 'map', def: '`arr.map(fn)` — returns a new array with `fn` applied to each item. Never mutates the original.', t: 'req' },
+    { name: 'filter', def: '`arr.filter(fn)` — returns a new array of items where `fn` returned truthy.', t: 'req' },
+    { name: 'reduce', def: '`arr.reduce(fn, initial)` — collapses the array to a single value by folding. Powerful but easy to misuse.', t: 'req' },
+    { name: 'Spread operator', def: '`[...arr, newItem]` or `{...obj, key: value}` — copies and extends. Replaces concat / Object.assign in most cases.', t: 'req' },
+    { name: 'Destructuring', def: '`const { name, age } = user;` or `const [a, b] = arr;` — extract values into named variables.', t: 'req' },
+    { name: 'Object shorthand', def: '`{ name, age }` is short for `{ name: name, age: age }` when the key matches the variable.', t: 'rec' }
+  ],
+  '1:js-async': [
+    { name: 'Promise', def: 'An object representing a future value — pending, fulfilled, or rejected. Returned by every async API.', t: 'req' },
+    { name: 'async function', def: 'A function declared with `async`. Always returns a Promise. Inside, `await` pauses for a Promise.', t: 'req' },
+    { name: 'await', def: 'Pauses an async function until a Promise resolves. Only legal inside `async` functions (or top-level modules).', t: 'req' },
+    { name: 'then / catch / finally', def: 'Promise methods to chain handlers. Use them when you can\'t use async/await (e.g. in non-async callbacks).', t: 'rec' },
+    { name: 'Promise.all', def: '`Promise.all([a, b, c])` resolves when all input promises resolve, or rejects when any rejects. Use to parallelize.', t: 'req' },
+    { name: 'Microtask queue', def: 'A higher-priority queue than the macrotask (setTimeout) queue. Resolved promises drain here before the next macrotask.', t: 'rec' },
+    { name: 'try / catch with await', def: '`try { await fn(); } catch (e) {}` — the async equivalent of synchronous try/catch.', t: 'req' }
+  ],
+  '1:js-modules': [
+    { name: 'ES Modules (ESM)', def: 'The standard JS module system. `import` / `export`. Static, statically analyzable, the modern default.', t: 'req' },
+    { name: 'CommonJS (CJS)', def: 'Node\'s legacy module system: `require()` / `module.exports`. Still common in older packages.', t: 'req' },
+    { name: 'Default export', def: '`export default x` — one main export per module. Imported without braces: `import X from "./mod.js"`.', t: 'req' },
+    { name: 'Named export', def: '`export const foo = ...` — multiple per module. Imported with braces: `import { foo } from "./mod.js"`.', t: 'req' },
+    { name: 'Module resolution', def: 'How `import "x"` finds a file — node_modules lookup, baseUrl, paths in tsconfig. Trips up beginners often.', t: 'rec' },
+    { name: 'Tree shaking', def: 'A bundler optimization that strips exports nothing imports. Only works with ESM (CJS is too dynamic).', t: 'rec' }
+  ],
+  '1:js-closures': [
+    { name: 'Lexical scope', def: 'Variables resolve based on where the code is *written*, not where it\'s called from. JS is lexically scoped.', t: 'req' },
+    { name: 'Closure', def: 'A function that captures variables from the scope where it was defined. Powers React hooks, event handlers, currying.', t: 'req' },
+    { name: 'this', def: 'The receiver of a method call. Determined dynamically — depends on how the function is called, not where it\'s defined. Arrow functions skip this entirely.', t: 'req' },
+    { name: 'bind / call / apply', def: 'Methods to explicitly set `this`. `fn.bind(ctx)` returns a new function with `this` locked.', t: 'rec' },
+    { name: 'IIFE', def: 'Immediately Invoked Function Expression: `(() => { ... })()`. Old pre-module pattern for isolated scope.', t: 'rec' }
+  ],
+  '1:cli': [
+    { name: 'Working directory (cwd)', def: 'The folder your shell is currently "in". Shown in your prompt. Changed with `cd`.', t: 'req' },
+    { name: 'cd / ls / pwd', def: 'Change directory / list contents / print working directory. The three most-used commands in any shell.', t: 'req' },
+    { name: 'Pipe (|)', def: 'Connects stdout of one command to stdin of the next: `ls | grep .py`. Foundational Unix pattern.', t: 'req' },
+    { name: 'Redirection (>, >>, <)', def: '`>` overwrites a file with stdout, `>>` appends, `<` feeds a file to stdin.', t: 'req' },
+    { name: 'Glob (* ? [])', def: 'Wildcard expansion done by the shell: `*.py` matches all .py files in cwd. Different from regex.', t: 'rec' },
+    { name: 'Tab completion', def: 'Press Tab to auto-complete file/command names. Trains your fingers and prevents typos.', t: 'req' }
+  ],
+  '1:git-basics': [
+    { name: 'Working tree', def: 'The files in your repo folder as they exist on disk right now. What you\'re actively editing.', t: 'req' },
+    { name: 'Staging area (index)', def: 'A pre-commit holding area. `git add` moves changes here; `git commit` makes them permanent.', t: 'req' },
+    { name: 'HEAD', def: 'A pointer to the current commit, usually via the current branch. `HEAD~1` means "one commit before HEAD".', t: 'req' },
+    { name: 'Branch', def: 'A movable pointer to a commit. The default is usually `main` (formerly `master`).', t: 'req' },
+    { name: 'Remote tracking branch', def: '`origin/main` — your local snapshot of where `main` was on the remote at last fetch.', t: 'rec' },
+    { name: 'Diff', def: 'A line-by-line description of differences between two versions of files. Output of `git diff`.', t: 'req' },
+    { name: '.gitignore', def: 'A file listing patterns Git should ignore (node_modules, .env, build artifacts). Committed.', t: 'req' }
+  ],
+  '1:git-branches': [
+    { name: 'Branch', def: 'A movable label pointing at a commit. Cheap to create and switch between in Git.', t: 'req' },
+    { name: 'Merge', def: 'Combine two branches\' histories. Produces a merge commit (by default) preserving both lines of work.', t: 'req' },
+    { name: 'Fast-forward', def: 'A merge where the target branch can simply advance to the source\'s tip with no merge commit. Possible when no divergent commits.', t: 'rec' },
+    { name: 'Merge conflict', def: 'When Git can\'t automatically reconcile two branches\' changes to the same line. You resolve manually.', t: 'req' },
+    { name: 'git switch / checkout', def: '`switch` moves your working tree to a branch (modern). `checkout` is the older multi-purpose command.', t: 'req' },
+    { name: 'Detached HEAD', def: 'When HEAD points at a commit instead of a branch. Risky — new commits aren\'t reachable from any branch.', t: 'rec' }
+  ],
+  '1:git-rebase': [
+    { name: 'Rebase', def: 'Replay your branch\'s commits on top of another branch\'s tip. Result is a linear history without merge commits.', t: 'req' },
+    { name: 'Interactive rebase (-i)', def: 'A guided rebase that lets you reorder, squash, edit, or drop commits.', t: 'rec' },
+    { name: 'Squash', def: 'Collapse multiple commits into one during rebase. Used to clean up messy WIP commits before merging.', t: 'rec' },
+    { name: 'Force push (with-lease)', def: 'After a rebase, your local history diverges from origin. `--force-with-lease` is the safe variant — fails if someone else pushed.', t: 'rec' },
+    { name: 'Reflog', def: 'Git\'s local history of every HEAD movement. Recover "lost" commits with `git reflog`.', t: 'rec' }
+  ],
+  '1:git-workflow': [
+    { name: 'Conventional Commits', def: 'A commit message convention: `feat: add login`, `fix: handle null`, `chore: bump deps`. Enables automatic changelogs and version bumps.', t: 'req' },
+    { name: 'Pull Request (PR)', def: 'A proposal to merge a branch. Reviewed, commented, approved, then merged. Where most code review happens.', t: 'req' },
+    { name: 'GitHub Flow', def: 'A simple branching model: branch off main, push, open PR, merge. Used by most product teams.', t: 'req' },
+    { name: 'GitFlow', def: 'A more complex model with develop/release/hotfix branches. Heavy; mostly obsolete for SaaS.', t: 'rec' },
+    { name: 'Atomic commit', def: 'A commit doing one logical thing — easier to review, revert, cherry-pick. The opposite of "WIP" mega-commits.', t: 'req' }
+  ],
+  '1:code-review-skills': [
+    { name: 'Conventional Comments', def: 'A format for PR review feedback: `praise:`, `nitpick:`, `suggestion:`, `issue:`. Sets tone and severity explicitly.', t: 'rec' },
+    { name: 'Nit (nitpick)', def: 'A minor stylistic comment. Marking it as a nit signals "don\'t block on this".', t: 'rec' },
+    { name: 'LGTM', def: '"Looks good to me." A common approval shorthand. Often spelled out as Approve in modern reviews.', t: 'rec' },
+    { name: 'Bikeshedding', def: 'Time wasted debating trivial decisions (button color, variable names) while ignoring the actual change. Avoid.', t: 'rec' },
+    { name: 'Blocking vs non-blocking comment', def: 'Blocking = "must fix before merge". Non-blocking = "consider for later". Be explicit which kind you\'re leaving.', t: 'rec' }
+  ],
+  '1:tech-writing': [
+    { name: 'README', def: 'The project\'s front door. Should answer: what is this, why use it, how to install, how to run, how to contribute.', t: 'req' },
+    { name: 'ADR (Architecture Decision Record)', def: 'A short doc capturing one architectural choice, alternatives, and rationale. Future-you (and team) will thank you.', t: 'rec' },
+    { name: 'Runbook', def: 'A document telling on-call engineers exactly how to handle a given alert or incident. Step-by-step, low-thinking.', t: 'rec' },
+    { name: 'Active voice', def: 'Prefer "The cache stores tokens" over "Tokens are stored by the cache." Shorter, clearer.', t: 'rec' }
+  ],
+  '1:dsa-bigo': [
+    { name: 'Big O notation', def: 'An upper bound on how runtime/memory grows with input size n. Describes worst-case asymptotic behavior.', t: 'req' },
+    { name: 'O(1) — constant', def: 'Runtime doesn\'t depend on n. Hash lookups, array indexing, stack push/pop.', t: 'req' },
+    { name: 'O(log n) — logarithmic', def: 'Halving the problem each step. Binary search, balanced tree ops.', t: 'req' },
+    { name: 'O(n) — linear', def: 'Touch each element once. Single loop through an array.', t: 'req' },
+    { name: 'O(n log n)', def: 'The best comparison-based sort (mergesort, heapsort). Many "divide-and-conquer" algorithms.', t: 'req' },
+    { name: 'O(n²) — quadratic', def: 'Nested loop over the same input. Naive sorts. Generally too slow for n > 10⁴.', t: 'req' },
+    { name: 'O(2ⁿ) / O(n!)', def: 'Exponential / factorial — combinatorial explosion. Brute-force subset/permutation problems. Usually need DP or pruning.', t: 'rec' },
+    { name: 'Space complexity', def: 'How much extra memory an algorithm uses, also in Big O. In-place algorithms are O(1) space.', t: 'rec' }
+  ],
+  '1:dsa-arrays': [
+    { name: 'Two pointers', def: 'A pattern using two indices into the same array (often start and end, or slow and fast). Solves many "find pair" problems in O(n).', t: 'req' },
+    { name: 'Sliding window', def: 'A pattern maintaining a contiguous range that grows/shrinks. Solves substring and subarray-sum problems in O(n).', t: 'req' },
+    { name: 'Prefix sum', def: 'A precomputed array where pre[i] = sum(arr[0..i]). Lets you answer range-sum queries in O(1).', t: 'rec' },
+    { name: 'In-place', def: 'Modifying the input array directly without allocating new arrays. O(1) extra space.', t: 'rec' }
+  ],
+  '1:dsa-hash': [
+    { name: 'Hash table / hashmap', def: 'A data structure mapping keys to values with average O(1) lookup. Python dict, JS Map/Object, Java HashMap.', t: 'req' },
+    { name: 'Hash collision', def: 'When two different keys produce the same hash bucket. Handled via chaining (linked list per bucket) or open addressing.', t: 'rec' },
+    { name: 'Load factor', def: 'Ratio of entries to buckets. When it exceeds a threshold, the table grows and rehashes.', t: 'rec' },
+    { name: 'Counter / frequency map', def: 'A pattern: a dict from item to count, built in one pass. Underlies anagram, top-K, dedup problems.', t: 'req' }
+  ],
+  '1:dsa-recursion': [
+    { name: 'Base case', def: 'The recursive function\'s stopping condition. Missing it = infinite recursion = stack overflow.', t: 'req' },
+    { name: 'Recursive case', def: 'The branch that calls the function on a smaller subproblem.', t: 'req' },
+    { name: 'Call stack', def: 'A memory structure tracking active function calls. Each recursion deepens the stack; too deep = StackOverflowError.', t: 'req' },
+    { name: 'Backtracking', def: 'A recursion pattern that explores all candidates, undoing choices that fail constraints. Used for puzzles, permutations, N-queens.', t: 'req' },
+    { name: 'Tail call', def: 'A recursive call as the function\'s last action. Some languages optimize it into a loop; JS/Python do not.', t: 'rec' }
+  ],
+  '1:dsa-sort': [
+    { name: 'Mergesort', def: 'O(n log n) divide-and-conquer sort. Stable, predictable, but needs O(n) extra space.', t: 'rec' },
+    { name: 'Quicksort', def: 'O(n log n) average, O(n²) worst. Picks a pivot and partitions. In-place but not stable.', t: 'rec' },
+    { name: 'Binary search', def: 'O(log n) lookup in a sorted array. Repeatedly halves the search range. Bug-prone — always trace edge cases.', t: 'req' },
+    { name: 'Stable sort', def: 'A sort where equal elements keep their original order. Important when sorting by multiple keys.', t: 'rec' }
+  ],
+  '1:dsa-trees': [
+    { name: 'Binary tree', def: 'A tree where each node has at most two children. Building block for BSTs, heaps, tries.', t: 'req' },
+    { name: 'Binary Search Tree (BST)', def: 'A binary tree where left subtree < node < right subtree. O(log n) ops if balanced, O(n) if degenerate.', t: 'rec' },
+    { name: 'BFS (Breadth-First Search)', def: 'Visit all nodes at depth k before depth k+1. Uses a queue. Shortest path in unweighted graphs.', t: 'req' },
+    { name: 'DFS (Depth-First Search)', def: 'Visit a path fully before backtracking. Uses a stack (or recursion). Finds cycles, topological order.', t: 'req' },
+    { name: 'Tree traversal', def: 'Pre-order (node, left, right), in-order (left, node, right), post-order (left, right, node). In-order on a BST gives sorted output.', t: 'rec' },
+    { name: 'Graph', def: 'Nodes (vertices) connected by edges. Directed or undirected, weighted or not. Represented as adjacency list or matrix.', t: 'req' }
+  ],
+  '1:dsa-dp': [
+    { name: 'Memoization', def: 'Top-down DP: cache results of recursive calls keyed by inputs. Trades memory for time.', t: 'rec' },
+    { name: 'Tabulation', def: 'Bottom-up DP: build a table iteratively from base cases. Often more memory-efficient than memoization.', t: 'rec' },
+    { name: 'Optimal substructure', def: 'A problem has it when the optimal solution combines optimal solutions to subproblems. Required for DP.', t: 'rec' },
+    { name: 'Overlapping subproblems', def: 'The same subproblem is asked many times. DP exploits this with caching. Without it, plain recursion suffices.', t: 'rec' }
+  ],
+
+  /* === STAGE 2 — Web Fundamentals (HTML/CSS/Browser JS/Web) === */
+  '2:html-structure': [
+    { name: 'DOCTYPE', def: '`<!DOCTYPE html>` — the first line of every HTML page. Tells the browser to use standards mode instead of quirks mode.', t: 'req' },
+    { name: 'Element', def: 'A piece of structure marked by tags: `<p>...</p>`. Has a name, attributes, and content.', t: 'req' },
+    { name: 'Attribute', def: 'A name/value pair on an element: `<a href="...">`. Provides metadata or behavior.', t: 'req' },
+    { name: 'Semantic HTML', def: 'Using meaningful tags (header, nav, main, article, footer) instead of nondescript divs. Improves accessibility and SEO.', t: 'req' },
+    { name: 'Block vs inline', def: 'Block elements (div, p, h1) take full width and stack vertically. Inline elements (span, a, em) flow within text.', t: 'req' },
+    { name: 'Void element', def: 'An element with no closing tag: `<img>`, `<br>`, `<input>`. They have no content.', t: 'rec' },
+    { name: 'meta tags', def: '`<meta>` elements in `<head>` controlling viewport, charset, description, social cards. Critical for mobile and SEO.', t: 'req' }
+  ],
+  '2:html-forms': [
+    { name: 'form element', def: '`<form action="..." method="post">` — wraps inputs and groups them for submission.', t: 'req' },
+    { name: 'input types', def: 'text, email, password, number, date, file, checkbox, radio, etc. Each gets type-appropriate UI and validation for free.', t: 'req' },
+    { name: 'label', def: '`<label for="email">` ties text to an input. Click the label, focus the input. Critical for accessibility.', t: 'req' },
+    { name: 'name vs id', def: '`name` is what gets submitted to the server. `id` is the unique DOM identifier. They\'re not the same.', t: 'req' },
+    { name: 'required / pattern / min / max', def: 'Built-in HTML5 validation attributes. The browser blocks submission and shows error UI for free.', t: 'req' },
+    { name: 'FormData', def: 'A JS object that captures form fields for fetch uploads — handles files and multipart encoding automatically.', t: 'rec' },
+    { name: 'CSRF token', def: 'A unique per-session token a form must echo back, proving the request originated from your page. Server-side defense.', t: 'rec' }
+  ],
+  '2:html-a11y': [
+    { name: 'Alt text', def: 'The `alt` attribute on `<img>`. Read by screen readers; also shown when images fail to load. Decorative images use `alt=""`.', t: 'req' },
+    { name: 'ARIA', def: 'Accessible Rich Internet Applications — a set of attributes (role, aria-label, aria-hidden) for custom widgets. "No ARIA is better than bad ARIA."', t: 'req' },
+    { name: 'role', def: 'Tells assistive tech what an element *is* when the HTML tag doesn\'t say it (e.g. `role="dialog"` on a div modal).', t: 'rec' },
+    { name: 'Landmark', def: 'A region of the page assistive tech can jump to: header, nav, main, aside, footer. Use semantic HTML to get them free.', t: 'req' },
+    { name: 'Focus order', def: 'The sequence Tab moves through interactive elements. Should match visual order. Avoid `tabindex > 0`.', t: 'req' },
+    { name: 'Skip link', def: 'A hidden "Skip to main content" link, the first focusable thing on the page. Lets keyboard users bypass repeated navs.', t: 'rec' },
+    { name: 'WCAG', def: 'Web Content Accessibility Guidelines — the standard. AA conformance is the legal/industry baseline.', t: 'req' },
+    { name: 'Contrast ratio', def: 'Foreground vs background brightness, computed by WCAG. Normal text needs ≥4.5:1, large text ≥3:1.', t: 'req' }
+  ],
+  '2:css-box': [
+    { name: 'Box model', def: 'Every element is a box: content → padding → border → margin. Total width = sum of all four (unless box-sizing changes that).', t: 'req' },
+    { name: 'box-sizing: border-box', def: 'Makes width/height include padding and border. Add `* { box-sizing: border-box; }` once and forget the math forever.', t: 'req' },
+    { name: 'Selector', def: 'The pattern picking elements to style: `.btn`, `nav > a`, `[disabled]`, `:hover`. Learn the main families.', t: 'req' },
+    { name: 'Specificity', def: 'How CSS resolves conflicts. inline > id > class > tag. The most specific selector wins.', t: 'req' },
+    { name: 'Cascade', def: 'The order CSS rules apply: origin (user/author), specificity, source order. Where the "C" in CSS comes from.', t: 'req' },
+    { name: 'Inheritance', def: 'Some properties (color, font) flow from parent to child. Others (margin, border) don\'t. Reset with `inherit`/`initial`/`unset`.', t: 'rec' },
+    { name: 'Margin collapse', def: 'Vertical margins between adjacent block elements merge into the larger of the two. A classic CSS surprise.', t: 'rec' }
+  ],
+  '2:css-flex': [
+    { name: 'Flex container', def: 'An element with `display: flex`. Its direct children become flex items.', t: 'req' },
+    { name: 'Main axis vs cross axis', def: 'Main is the direction items flow (default: horizontal). Cross is perpendicular. justify-content acts on main; align-items on cross.', t: 'req' },
+    { name: 'flex-direction', def: 'row | column | row-reverse | column-reverse. Sets the main axis direction.', t: 'req' },
+    { name: 'justify-content', def: 'Aligns items along the main axis: start, end, center, space-between, space-around, space-evenly.', t: 'req' },
+    { name: 'align-items', def: 'Aligns items along the cross axis: stretch (default), start, end, center, baseline.', t: 'req' },
+    { name: 'flex-grow / shrink / basis', def: 'How items grow, shrink, and start sizing. Shorthand: `flex: 1 1 0` makes equal-width children.', t: 'req' },
+    { name: 'gap', def: 'Space between flex (or grid) items without margin hacks. Works in modern browsers.', t: 'req' }
+  ],
+  '2:css-grid': [
+    { name: 'Grid container', def: 'An element with `display: grid`. Children are placed into cells defined by templates.', t: 'req' },
+    { name: 'grid-template-columns / rows', def: 'Defines explicit tracks: `1fr 2fr`, `repeat(3, 1fr)`, `100px auto`.', t: 'req' },
+    { name: 'fr unit', def: 'A fraction of the leftover space. `1fr 2fr` means split remaining space in 1:2 ratio.', t: 'req' },
+    { name: 'grid-template-areas', def: 'Named regions for visual layout: `"header header" "nav main"`. Easy to read at a glance.', t: 'rec' },
+    { name: 'auto-fit / auto-fill', def: '`repeat(auto-fit, minmax(200px, 1fr))` — the responsive-card-grid one-liner.', t: 'rec' },
+    { name: 'Implicit vs explicit grid', def: 'Explicit = what you declared. Implicit = rows/columns added automatically when items overflow.', t: 'rec' }
+  ],
+  '2:css-responsive': [
+    { name: 'Media query', def: '`@media (min-width: 768px) { ... }` — applies rules when viewport conditions match.', t: 'req' },
+    { name: 'Breakpoint', def: 'A viewport width where the layout changes. Common ones: 480, 768, 1024, 1280px. Pick based on content, not devices.', t: 'req' },
+    { name: 'Mobile-first', def: 'Write the small-screen styles first; use `min-width` media queries to *add* desktop styles. Cleaner override chain.', t: 'req' },
+    { name: 'Viewport meta', def: '`<meta name="viewport" content="width=device-width, initial-scale=1">` — required for responsive sites to work on phones.', t: 'req' },
+    { name: 'rem vs em vs px', def: 'rem = relative to root font-size. em = relative to parent\'s font-size. px = absolute. Use rem for typography, px for borders.', t: 'rec' },
+    { name: 'Container query', def: '`@container (min-width: 400px)` — styles based on the *parent* size, not the viewport. Newer alternative to media queries for components.', t: 'rec' }
+  ],
+  '2:css-vars': [
+    { name: 'CSS custom property', def: '`--brand-color: #2563eb;` defined on `:root` or any element. Used with `var(--brand-color)`. Cascading and overrideable.', t: 'req' },
+    { name: ':root', def: 'The pseudo-class matching the root `<html>` element. Where you usually declare global custom properties.', t: 'rec' },
+    { name: 'color-mix()', def: '`color-mix(in oklch, var(--brand) 40%, white)` — blends two colors. Modern alternative to preprocessor functions.', t: 'rec' },
+    { name: ':has()', def: 'A parent selector — `nav:has(> .active)` matches a nav whose direct child has the .active class. Newly stable across browsers.', t: 'rec' },
+    { name: 'logical properties', def: 'block-/inline-size, margin-block, padding-inline. Replace top/left with semantic equivalents that flip in RTL languages.', t: 'rec' }
+  ],
+  '2:css-anim': [
+    { name: 'transition', def: 'Smoothly interpolate a property between two states: `transition: opacity 0.2s`. Triggered by a class change or :hover.', t: 'req' },
+    { name: '@keyframes', def: 'Defines an animation sequence with named percentage stops. Applied via the `animation` shorthand.', t: 'req' },
+    { name: 'animation shorthand', def: '`animation: spin 1s linear infinite` = name, duration, easing, iteration count. Easier to remember than the long form.', t: 'rec' },
+    { name: 'transform', def: 'translate/rotate/scale without triggering layout. The only fast property to animate alongside opacity.', t: 'req' },
+    { name: 'will-change', def: 'Hints to the browser which properties will animate. Use sparingly — overuse hurts performance.', t: 'rec' },
+    { name: 'View Transitions API', def: '`document.startViewTransition()` — animate between DOM states with one line. Modern, replaces complex FLIP code.', t: 'rec' }
+  ],
+  '2:dom': [
+    { name: 'DOM', def: 'Document Object Model — the browser\'s tree representation of the HTML, exposed to JS as `document`.', t: 'req' },
+    { name: 'querySelector', def: '`document.querySelector(".btn")` returns the first matching element. `querySelectorAll` returns a NodeList.', t: 'req' },
+    { name: 'addEventListener', def: 'Subscribe to DOM events: `btn.addEventListener("click", fn)`. Pair with removeEventListener for cleanup.', t: 'req' },
+    { name: 'createElement / appendChild', def: 'Imperatively build DOM nodes from JS. Underlies how frameworks like React produce HTML.', t: 'req' },
+    { name: 'innerHTML vs textContent', def: 'innerHTML parses HTML (XSS risk if untrusted). textContent sets plain text safely. Default to textContent.', t: 'req' },
+    { name: 'dataset', def: '`el.dataset.userId` reads `data-user-id="..."`. Cleaner than getAttribute for custom data.', t: 'rec' }
+  ],
+  '2:events': [
+    { name: 'Event object', def: 'Passed to every handler — has `.target`, `.currentTarget`, `.preventDefault()`, `.stopPropagation()`.', t: 'req' },
+    { name: 'Bubbling', def: 'After firing on the target, events travel up the DOM tree to ancestors. Most events bubble.', t: 'req' },
+    { name: 'Capturing', def: 'The opposite of bubbling — events travel down first. Enable with `addEventListener(..., true)`.', t: 'rec' },
+    { name: 'Event delegation', def: 'Attach one listener to a parent and read `event.target` to handle many children. Saves memory, works with dynamic content.', t: 'req' },
+    { name: 'preventDefault', def: '`event.preventDefault()` cancels the browser\'s default behavior — form submission, link navigation, etc.', t: 'req' },
+    { name: 'passive listener', def: '`{ passive: true }` promises you won\'t call preventDefault — lets the browser optimize scroll/touch handlers.', t: 'rec' }
+  ],
+  '2:fetch': [
+    { name: 'fetch()', def: 'The modern browser HTTP client. Returns a Promise<Response>. Replaces XMLHttpRequest.', t: 'req' },
+    { name: 'Response', def: 'The result of a fetch. Methods: `.json()`, `.text()`, `.blob()`. Has `.ok`, `.status`, `.headers`.', t: 'req' },
+    { name: 'Headers', def: 'Metadata on requests/responses: Content-Type, Authorization, Cache-Control. Build with `new Headers()` or a plain object.', t: 'req' },
+    { name: 'AbortController', def: '`new AbortController()` lets you cancel a fetch in flight. Crucial for stale-request handling in SPAs.', t: 'rec' },
+    { name: 'CORS error', def: '"Access-Control-Allow-Origin" missing from the response. Fixed on the *server*, not the client. Most-Googled JS error.', t: 'req' },
+    { name: 'JSON.parse / JSON.stringify', def: 'Convert between JSON text and JS objects. Both throw on malformed input — wrap in try/catch.', t: 'req' }
+  ],
+  '2:storage': [
+    { name: 'localStorage', def: 'A key/value string store, ~5-10MB per origin. Persists indefinitely. Synchronous API.', t: 'req' },
+    { name: 'sessionStorage', def: 'Same API as localStorage, but scoped to the tab. Cleared on tab close.', t: 'req' },
+    { name: 'IndexedDB', def: 'A browser-native NoSQL database for larger / structured data. Async, complex API. Use a wrapper like Dexie.', t: 'rec' },
+    { name: 'Cookie', def: 'Small key-value pairs sent on every request to the origin. Used for auth sessions. Limited to ~4KB.', t: 'req' },
+    { name: 'HttpOnly / Secure / SameSite', def: 'Cookie flags. HttpOnly hides from JS (XSS-safe). Secure = HTTPS only. SameSite blocks cross-site sends (CSRF-safe).', t: 'req' },
+    { name: 'Cache Storage API', def: 'Programmatic HTTP cache used by service workers. Underlies PWA offline.', t: 'rec' }
+  ],
+  '2:http': [
+    { name: 'HTTP method', def: 'GET (read), POST (create), PUT (replace), PATCH (partial update), DELETE. Should match the action\'s semantics.', t: 'req' },
+    { name: 'Status code', def: '2xx success, 3xx redirect, 4xx client error, 5xx server error. Know 200, 201, 301, 304, 400, 401, 403, 404, 500, 503.', t: 'req' },
+    { name: 'Idempotent', def: 'A method is idempotent if calling it N times has the same effect as once. GET/PUT/DELETE are; POST isn\'t.', t: 'rec' },
+    { name: 'Header', def: 'Metadata in HTTP request/response. Examples: Authorization, Content-Type, Cache-Control, Set-Cookie.', t: 'req' },
+    { name: 'Request / response body', def: 'The optional payload. Usually JSON for APIs, HTML for pages, binary for files. Encoded per Content-Type.', t: 'req' },
+    { name: 'HTTPS', def: 'HTTP over TLS. Encrypts requests + responses. Required for service workers, geolocation, camera, clipboard APIs.', t: 'req' },
+    { name: 'Caching headers', def: 'Cache-Control, ETag, Last-Modified. Govern when browsers reuse responses vs refetch.', t: 'rec' }
+  ],
+  '2:rest': [
+    { name: 'Resource', def: 'A noun your API exposes: /users, /orders, /comments. Operated on with HTTP methods.', t: 'req' },
+    { name: 'Endpoint', def: 'A specific URL + method combo: `POST /users`. The unit a client calls.', t: 'req' },
+    { name: 'Query parameter', def: '`?status=active&limit=20` — filters, pagination, sort. After the `?` in the URL.', t: 'req' },
+    { name: 'Path parameter', def: '`/users/:id` — identifies a specific resource. Required, ordered.', t: 'req' },
+    { name: 'Versioning', def: 'Encode API version in URL (/v1/users) or header. Lets you evolve without breaking clients.', t: 'rec' },
+    { name: 'HATEOAS', def: 'Hypermedia As The Engine Of Application State — responses link to related actions. Rarely used in practice; APIs are usually JSON-only.', t: 'rec' }
+  ],
+  '2:cors': [
+    { name: 'Origin', def: 'The scheme + host + port of a URL. https://api.x.com:443 and https://x.com are different origins.', t: 'req' },
+    { name: 'Same-origin policy', def: 'A browser security rule blocking JS on one origin from reading responses from another. CORS is the opt-in to relax this.', t: 'req' },
+    { name: 'Preflight (OPTIONS)', def: 'For "complex" cross-origin requests, the browser first asks the server with an OPTIONS request before doing the real one.', t: 'rec' },
+    { name: 'Access-Control-Allow-Origin', def: 'The header the *server* sets to allow specific origins. Without it, the browser blocks JS from reading the response.', t: 'req' },
+    { name: 'Credentials', def: 'Cookies / auth headers. Sending them cross-origin needs both client (`credentials: "include"`) and server (`Access-Control-Allow-Credentials`) opt-in.', t: 'rec' }
+  ]
+};
+
+// Cached arrays for performance
+const TERMS_KEYS = Object.keys(TERMS);
+
+function getTopicTerms(stageId, topicId) {
+  return TERMS[`${stageId}:${topicId}`] || [];
+}
+
+function renderTopicTerms(stageId, topicId) {
+  const section = document.getElementById('mTermsSection');
+  const list = document.getElementById('mTerms');
+  const count = document.getElementById('mTermsCount');
+  if (!section || !list) return;
+  const terms = getTopicTerms(stageId, topicId);
+  if (!terms.length) {
+    section.hidden = true;
+    list.innerHTML = '';
+    if (count) count.textContent = '';
+    return;
+  }
+  section.hidden = false;
+  const reqCount = terms.filter(t => t.t === 'req').length;
+  const recCount = terms.filter(t => t.t === 'rec').length;
+  if (count) count.textContent = `${terms.length} terms · ${reqCount} required · ${recCount} recommended`;
+  // Reset filter to 'all'
+  document.querySelectorAll('.terms-filter').forEach(b => b.classList.toggle('active', b.dataset.tf === 'all'));
+  list.innerHTML = terms.map(term => `
+    <div class="term-card ${term.t}" data-t="${term.t}">
+      <div class="term-name">
+        ${escapeHtml(term.name)}
+        <span class="term-badge">${term.t === 'req' ? 'required' : 'recommended'}</span>
+      </div>
+      <div class="term-def">${escapeHtml(term.def)}</div>
+      ${term.also ? `<div class="term-also">also: ${escapeHtml(term.also)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function filterTopicTerms(filter) {
+  document.querySelectorAll('.terms-filter').forEach(b => b.classList.toggle('active', b.dataset.tf === filter));
+  document.querySelectorAll('#mTerms .term-card').forEach(card => {
+    const show = filter === 'all' || card.dataset.t === filter;
+    card.hidden = !show;
+  });
+}
+
 function buildGlossaryRegex() {
   const escaped = GLOSSARY_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   // Use word boundaries that respect punctuation and hyphens
@@ -11015,26 +11577,102 @@ function scanGlossary() {
   }
 }
 
-function openGlossary() {
-  let html = `<p class="practice-intro">${GLOSSARY_KEYS.length} terms used in this roadmap. Hover any underlined acronym in the page to see its definition inline.</p>
-    <div class="glossary-search-row"><input type="search" id="glossarySearch" placeholder="Search terms or definitions..." oninput="filterGlossary()" /></div>
-    <div class="glossary-list" id="glossaryList">`;
-  const sorted = [...GLOSSARY_KEYS].sort();
-  sorted.forEach(k => {
-    html += `<div class="glossary-entry" data-term="${escapeHtml(k.toLowerCase())}" data-def="${escapeHtml(GLOSSARY[k].toLowerCase())}">
-      <div class="term">${escapeHtml(k)}</div>
-      <div class="def">${escapeHtml(GLOSSARY[k])}</div>
-    </div>`;
+/* Build a flat A-Z list merging GLOSSARY (acronyms, no origin) and TERMS (concepts, with origin). */
+function buildMergedGlossary() {
+  const out = [];
+  // Acronyms from GLOSSARY — global, no origin
+  Object.keys(GLOSSARY).forEach(k => {
+    out.push({ name: k, def: GLOSSARY[k], origin: null, src: 'acronym' });
   });
-  html += '</div>';
+  // Per-topic terms from TERMS — track origin
+  TERMS_KEYS.forEach(key => {
+    const [stageIdStr, topicId] = key.split(':');
+    const stageId = parseInt(stageIdStr, 10);
+    const stage = DATA.find(s => s.id === stageId);
+    if (!stage) return;
+    const topic = stage.branches.flatMap(b => b.topics).find(t => t.id === topicId);
+    if (!topic) return;
+    TERMS[key].forEach(term => {
+      out.push({
+        name: term.name,
+        def: term.def,
+        origin: { stageId, topicId, stageTitle: stage.title, topicName: topic.name, t: term.t },
+        src: 'concept'
+      });
+    });
+  });
+  // De-dup: if a TERM and an ACRONYM share the same name (case-insensitive), keep the concept (has origin)
+  const seen = new Map();
+  out.forEach(entry => {
+    const key = entry.name.toLowerCase();
+    const existing = seen.get(key);
+    if (!existing || (existing.src === 'acronym' && entry.src === 'concept')) {
+      seen.set(key, entry);
+    }
+  });
+  return [...seen.values()].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+}
+
+function openGlossary() {
+  const entries = buildMergedGlossary();
+  // Bucket by first letter (digits → '#', anything else → uppercase letter)
+  const buckets = {};
+  entries.forEach(e => {
+    const first = e.name[0].toUpperCase();
+    const letter = /[A-Z]/.test(first) ? first : '#';
+    (buckets[letter] = buckets[letter] || []).push(e);
+  });
+  const allLetters = ['#', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+  // Build letter index
+  let indexHtml = '<div class="glossary-letter-index" role="navigation" aria-label="Jump to letter">';
+  allLetters.forEach(L => {
+    const has = !!buckets[L];
+    indexHtml += has
+      ? `<button onclick="document.getElementById('gx-${L}')?.scrollIntoView({behavior:'smooth',block:'start'})" aria-label="Jump to ${L}">${L}</button>`
+      : `<button class="empty" disabled aria-disabled="true">${L}</button>`;
+  });
+  indexHtml += '</div>';
+  // Entries
+  let listHtml = '<div class="glossary-list" id="glossaryList">';
+  allLetters.forEach(L => {
+    if (!buckets[L]) return;
+    listHtml += `<h4 class="glossary-letter-anchor" id="gx-${L}">${L}</h4>`;
+    buckets[L].forEach(e => {
+      const originHtml = e.origin
+        ? `<div class="origin">from <a href="#stage-${e.origin.stageId}/${e.origin.topicId}" onclick="closePracticeModal();openModal(${e.origin.stageId}, '${e.origin.topicId}');return false;">${escapeHtml(e.origin.stageTitle)} / ${escapeHtml(e.origin.topicName)}</a> · <em>${e.origin.t === 'req' ? 'required' : 'recommended'}</em></div>`
+        : `<div class="origin">acronym · used throughout the roadmap</div>`;
+      listHtml += `<div class="glossary-entry" data-term="${escapeHtml(e.name.toLowerCase())}" data-def="${escapeHtml(e.def.toLowerCase())}" data-origin="${e.origin ? `${e.origin.stageId}:${e.origin.topicId}` : ''}">
+        <div class="term">${escapeHtml(e.name)}</div>
+        <div class="def">${escapeHtml(e.def)}</div>
+        ${originHtml}
+      </div>`;
+    });
+  });
+  listHtml += '</div>';
+  const html = `<p class="practice-intro">${entries.length} terms across the roadmap. Search, filter, or jump by letter. Click any "from" link to open the topic.</p>
+    <div class="glossary-search-row"><input type="search" id="glossarySearch" placeholder="Search terms or definitions..." oninput="filterGlossary()" autofocus /></div>
+    ${indexHtml}
+    ${listHtml}`;
   showPracticeModal('📚 Glossary', html);
 }
 
 function filterGlossary() {
   const q = (document.getElementById('glossarySearch')?.value || '').toLowerCase().trim();
+  // Hide/show entries
+  const lettersWithVisible = new Set();
   document.querySelectorAll('.glossary-entry').forEach(el => {
     const matches = !q || el.dataset.term.includes(q) || el.dataset.def.includes(q);
     el.style.display = matches ? '' : 'none';
+    if (matches) {
+      const term = el.querySelector('.term')?.textContent || '';
+      const first = (term[0] || '').toUpperCase();
+      lettersWithVisible.add(/[A-Z]/.test(first) ? first : '#');
+    }
+  });
+  // Hide letter headings whose entries are all filtered out
+  document.querySelectorAll('.glossary-letter-anchor').forEach(h => {
+    const letter = h.id.replace('gx-', '');
+    h.style.display = (!q || lettersWithVisible.has(letter)) ? '' : 'none';
   });
 }
 
