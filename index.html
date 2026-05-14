@@ -1317,6 +1317,65 @@ abbr.glossary-term:hover::after {
 }
 .term-card[hidden] { display: none; }
 
+/* ---- Per-topic PRACTICE links (Stage 2 of content expansion) ---- */
+.practices-section h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.practices-count { font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 13px; color: var(--text-mute); }
+.practices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.practice-card {
+  display: grid; grid-template-rows: auto 1fr auto; gap: 4px;
+  padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg-card); text-decoration: none; color: var(--text);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.practice-card:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+.practice-card .p-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.practice-card .p-name { font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; flex: 1; min-width: 0; }
+.practice-card .p-type {
+  font-family: 'Patrick Hand', cursive; font-size: 11px;
+  padding: 1px 8px; border-radius: 999px; border: 2px solid var(--border);
+}
+.practice-card.t-game .p-type { background: #fef3c7; color: #1a1a1a; }
+.practice-card.t-challenge .p-type { background: #fee2e2; color: #1a1a1a; }
+.practice-card.t-platform .p-type { background: #dbeafe; color: #1a1a1a; }
+.practice-card.t-project .p-type { background: #d1fae5; color: #1a1a1a; }
+.practice-card.t-tutorial .p-type { background: #ede9fe; color: #1a1a1a; }
+.practice-card.t-quiz .p-type { background: #ffedd5; color: #1a1a1a; }
+.practice-card .p-desc { font-family: 'Patrick Hand', cursive; font-size: 13.5px; color: var(--text); line-height: 1.4; }
+.practice-card .p-foot { display: flex; gap: 6px; align-items: center; }
+.practice-card .p-diff {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 10.5px; letter-spacing: 0.04em;
+  padding: 1px 7px; border: 1.5px solid var(--border); border-radius: 4px;
+  text-transform: uppercase;
+}
+.practice-card .p-diff.beginner { background: #d1fae5; color: #064e3b; }
+.practice-card .p-diff.intermediate { background: #fef3c7; color: #78350f; }
+.practice-card .p-diff.advanced { background: #fee2e2; color: #7f1d1d; }
+.practice-card .p-url { font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute); margin-left: auto; }
+
+/* Global Practice Hub */
+.phub-intro { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
+.phub-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.phub-filter-row input[type="search"] {
+  flex: 1; min-width: 180px; padding: 6px 10px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.phub-skill-pill {
+  display: inline-flex; padding: 3px 11px; border: 2px solid var(--border); border-radius: 999px;
+  background: var(--bg-card); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+  cursor: pointer; user-select: none;
+}
+.phub-skill-pill.active { background: var(--node-stage); }
+.phub-section { margin-bottom: 16px; }
+.phub-section[hidden] { display: none; }
+.phub-section-head {
+  display: flex; align-items: baseline; gap: 8px;
+  font-family: 'Architects Daughter', cursive; font-size: 18px; color: var(--text);
+  border-bottom: 2px solid var(--border); padding-bottom: 4px; margin-bottom: 8px;
+}
+.phub-section-count { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400; }
+
 /* Global glossary improvements — letter index + origin badges */
 .glossary-letter-index {
   display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; margin-bottom: 8px;
@@ -1919,6 +1978,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openPortfolio()">📁 My Portfolio</button>
           <button onclick="closeMoreMenu(); openCostTracker()">💰 AI Spend</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
+          <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
           <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
@@ -6997,6 +7057,10 @@ abbr.glossary-term:hover::after {
         <h3>resources</h3>
         <div class="modal-resources" id="mResources"></div>
       </div>
+      <div class="modal-section practices-section" id="mPracticesSection" hidden>
+        <h3>🎮 practice <span class="practices-count" id="mPracticesCount"></span></h3>
+        <div class="practices-grid" id="mPractices"></div>
+      </div>
       <div class="modal-section diff-section">
         <h3>my difficulty</h3>
         <div class="diff-stars" id="mDiffStars">
@@ -10206,6 +10270,7 @@ function openModal(stageId, topicId) {
   document.getElementById('mDesc').textContent = topic.desc || '—';
   document.getElementById('mWhy').textContent = topic.why || '—';
   renderTopicTerms(stageId, topicId);
+  renderTopicPractices(stageId, topicId);
   const links = topic.links || [];
   const classified = classifyResources(links);
   const noteHtml = links.length > 1 ? `
@@ -11787,6 +11852,199 @@ const TERMS = {
     { name: 'Preflight (OPTIONS)', def: 'For "complex" cross-origin requests, the browser first asks the server with an OPTIONS request before doing the real one.', t: 'rec' },
     { name: 'Access-Control-Allow-Origin', def: 'The header the *server* sets to allow specific origins. Without it, the browser blocks JS from reading the response.', t: 'req' },
     { name: 'Credentials', def: 'Cookies / auth headers. Sending them cross-origin needs both client (`credentials: "include"`) and server (`Access-Control-Allow-Credentials`) opt-in.', t: 'rec' }
+  ],
+
+  /* === STAGE 3 — Frontend (TypeScript / React / Next.js) === */
+  '3:ts-basics': [
+    { name: 'Type annotation', def: '`let name: string` — explicitly declare a variable\'s type. TS will reject mismatched assignments at compile time.', t: 'req' },
+    { name: 'Type inference', def: 'TS guesses the type from context: `const x = 5` is `number`. Lean on inference; over-annotation is noise.', t: 'req' },
+    { name: 'interface vs type', def: 'Both describe object shapes. `interface` is open (can be extended/merged later); `type` is closed. Use `type` for unions, `interface` for object contracts.', t: 'req' },
+    { name: 'Union type', def: '`string | number` — a value can be either. Narrow with `typeof` or `in` before using.', t: 'req' },
+    { name: 'Generic', def: '`function box<T>(x: T): T` — type parameter passed at call site. Lets you write functions that work over many types without losing type info.', t: 'req' },
+    { name: 'any vs unknown', def: '`any` opts out of checks (use sparingly). `unknown` is type-safe — you must narrow before using it. Prefer unknown.', t: 'req' },
+    { name: 'strict mode', def: 'tsconfig flag enabling strictNullChecks, noImplicitAny, etc. Always-on in serious projects. Catches whole classes of bugs.', t: 'rec' }
+  ],
+  '3:ts-utility': [
+    { name: 'Partial<T>', def: 'Makes every property of T optional. Useful for "patch" arguments to update functions.', t: 'req' },
+    { name: 'Pick<T, K> / Omit<T, K>', def: 'Pick selected keys / Omit selected keys to derive a new type from an existing one.', t: 'req' },
+    { name: 'Record<K, V>', def: 'Object type with keys K and values V — e.g. `Record<string, number>` is "string-to-number map".', t: 'req' },
+    { name: 'Returntype<F>', def: 'Extract the return type of a function. Common pattern: `type User = ReturnType<typeof getUser>`.', t: 'rec' },
+    { name: 'Awaited<T>', def: 'Unwrap a Promise type. `Awaited<Promise<string>>` is `string`.', t: 'rec' },
+    { name: 'Discriminated union', def: 'A union of object types with a shared "tag" field. Narrows via `switch` on the tag.', t: 'rec' }
+  ],
+  '3:react-comp': [
+    { name: 'Component', def: 'A function returning JSX. The atomic unit of a React app. Lowercase = HTML tag, Uppercase = component.', t: 'req' },
+    { name: 'JSX', def: 'HTML-like syntax compiled to JS function calls. `<div>x</div>` becomes `React.createElement("div", null, "x")`.', t: 'req' },
+    { name: 'Props', def: 'Arguments passed to a component: `<Btn label="Save" />`. Read-only — never mutate them.', t: 'req' },
+    { name: 'Children', def: 'The `children` prop containing what\'s nested inside the JSX tag. `<Card>hello</Card>` puts "hello" in `props.children`.', t: 'req' },
+    { name: 'Fragment', def: '`<>...</>` — group elements without adding a wrapper DOM node.', t: 'req' },
+    { name: 'Conditional rendering', def: '`{cond && <X/>}` or `{cond ? <Y/> : <Z/>}`. The two patterns covering 95% of branching UI.', t: 'req' },
+    { name: 'Key prop', def: 'Required for items in a list. React uses it to track which item is which across re-renders. Use stable IDs, NOT array index.', t: 'req' }
+  ],
+  '3:react-state': [
+    { name: 'useState', def: 'Adds a piece of state to a function component: `const [count, setCount] = useState(0)`. Calling setCount triggers a re-render.', t: 'req' },
+    { name: 'Re-render', def: 'When state changes, React calls the component function again to compute new JSX. Side effects (DOM, network) belong in useEffect, not in render.', t: 'req' },
+    { name: 'State updater function', def: '`setCount(c => c + 1)` — pass a function when the new state depends on the previous one. Avoids stale-closure bugs.', t: 'req' },
+    { name: 'useReducer', def: 'Alternative to useState for complex state transitions. You dispatch actions, a reducer function returns the new state. Like a mini-Redux per component.', t: 'rec' },
+    { name: 'Immutability', def: 'Always create new objects/arrays in state setters: `setItems([...items, newItem])`. React uses reference equality to skip re-renders.', t: 'req' },
+    { name: 'Derived state', def: 'Don\'t copy props into state — compute on the fly. State should be only what you can\'t derive.', t: 'rec' }
+  ],
+  '3:react-effect': [
+    { name: 'useEffect', def: 'Runs side effects (fetch, subscribe, timer) after render. Pass a dependency array — effect re-runs only when deps change.', t: 'req' },
+    { name: 'Cleanup function', def: 'Return a function from useEffect — React calls it before the next effect run or on unmount. Where you cancel subscriptions, clear timers, abort fetches.', t: 'req' },
+    { name: 'Dependency array', def: 'Second arg to useEffect. Empty `[]` = run once on mount. `[x]` = re-run when x changes. Missing it = run every render (almost never what you want).', t: 'req' },
+    { name: 'StrictMode double-invoke', def: 'In dev, React intentionally calls effects twice to catch missing cleanup. Production runs them once. Not a bug — write idempotent effects.', t: 'rec' },
+    { name: 'When NOT to use useEffect', def: 'Don\'t use it for: computing derived values, syncing state to other state, fetching that should be on Server Components. Most "I need useEffect" cases have a better answer.', t: 'rec' }
+  ],
+  '3:react-context': [
+    { name: 'Context', def: 'A way to share state across the tree without prop-drilling. `createContext()` + `<Provider value={...}>` + `useContext()`.', t: 'req' },
+    { name: 'Provider', def: 'Wraps a subtree with a context value. Re-renders ALL consumers when the value changes — be careful with large objects.', t: 'req' },
+    { name: 'Custom hook', def: 'A function starting with `use` that calls other hooks. Encapsulates reusable stateful logic. The escape valve for code reuse in React.', t: 'req' },
+    { name: 'Prop drilling', def: 'Passing props through many intermediate components that don\'t need them. Context, Zustand, or composition fix this.', t: 'rec' }
+  ],
+  '3:react-forms': [
+    { name: 'Controlled vs uncontrolled', def: 'Controlled: React owns the input value (`value={x} onChange={e => setX(e.target.value)}`). Uncontrolled: DOM owns it; read via ref. RHF uses uncontrolled under the hood for performance.', t: 'req' },
+    { name: 'Schema validation', def: 'Define a shape (Zod schema) and validate input against it. The same schema validates client + server, single source of truth.', t: 'req' },
+    { name: 'register vs control', def: 'RHF: `register` for plain inputs (text, number). `control` for components that don\'t use native events (date pickers, custom selects).', t: 'rec' },
+    { name: 'resolver', def: 'The bridge between RHF and a validation library. `useForm({ resolver: zodResolver(schema) })`.', t: 'req' }
+  ],
+  '3:tanstack-query': [
+    { name: 'Query', def: 'A useQuery() call that fetches data and caches it by a unique key. Returns `{ data, isLoading, error, refetch }`.', t: 'req' },
+    { name: 'Query key', def: 'A unique array identifying the query: `["user", id]`. TanStack uses it to cache and to invalidate.', t: 'req' },
+    { name: 'Stale time', def: 'How long data is considered "fresh" — within this window, no refetch on mount/focus. Default is 0 (refetch eagerly).', t: 'req' },
+    { name: 'Mutation', def: 'A useMutation() call for writes (POST/PUT/DELETE). Doesn\'t cache automatically; pair with invalidateQueries to refresh affected queries.', t: 'req' },
+    { name: 'invalidateQueries', def: 'Mark cached queries stale by key prefix — triggers refetch. Call after a mutation succeeds to refresh the UI.', t: 'req' },
+    { name: 'Optimistic update', def: 'Update the cache before the network responds, then roll back on error. Makes mutations feel instant.', t: 'rec' },
+    { name: 'QueryClientProvider', def: 'Wraps your app with a single QueryClient instance. All queries share its cache.', t: 'req' }
+  ],
+  '3:react-state-libs': [
+    { name: 'Global state', def: 'State shared across components without passing props — theme, auth user, cart. Context works but re-renders consumers aggressively.', t: 'req' },
+    { name: 'Zustand store', def: 'A function returning state + setters: `create((set) => ({ count: 0, inc: () => set(s => ({ count: s.count + 1 })) }))`. No provider, no boilerplate.', t: 'req' },
+    { name: 'Selector', def: 'Pass a function to subscribe to a slice: `useStore(s => s.count)` — only re-renders when that slice changes.', t: 'rec' },
+    { name: 'Atom (Jotai)', def: 'A primitive unit of state. Components subscribe to specific atoms. Compose with derived atoms.', t: 'rec' },
+    { name: 'When to reach for a library', def: 'Use Context for static or rarely-changing values (theme, locale). Use Zustand/Jotai for frequently-changing shared state.', t: 'rec' }
+  ],
+  '3:next-routing': [
+    { name: 'app/ directory', def: 'Next.js 13+ routing. Each folder is a route, page.tsx is the leaf. Layouts, loading, error boundaries are first-class.', t: 'req' },
+    { name: 'layout.tsx', def: 'A persistent UI shell that wraps page.tsx and all nested routes. Doesn\'t re-render on navigation between sibling pages.', t: 'req' },
+    { name: 'page.tsx', def: 'The leaf component for a route. Whatever you export default becomes the page.', t: 'req' },
+    { name: 'Dynamic segments', def: '`app/posts/[id]/page.tsx` — `[id]` becomes a param accessible via the page\'s props or `useParams()`.', t: 'req' },
+    { name: 'Parallel routes', def: 'Render two routes side-by-side using `@named` folder names. Used for modals + page underneath.', t: 'rec' }
+  ],
+  '3:next-server': [
+    { name: 'Server Component', def: 'React component that renders only on the server. Default in app/. Can\'t use hooks, state, or browser APIs.', t: 'req' },
+    { name: 'Client Component', def: 'Opt-in with `"use client"` at the top of a file. Runs in the browser. Can use useState, useEffect, click handlers.', t: 'req' },
+    { name: 'Boundary', def: 'The line where a Client Component starts. Server Components above; everything below it runs client-side too.', t: 'req' },
+    { name: 'Serializable props', def: 'Server can only pass JSON-able props to Client Components. No functions, no Date objects, no class instances.', t: 'req' },
+    { name: 'When to use which', def: 'Default to Server. Switch to Client only when you need interactivity, browser APIs, or hooks.', t: 'rec' }
+  ],
+  '3:next-actions': [
+    { name: 'Server Action', def: 'A function with `"use server"` at the top — callable from a form action or onClick. Runs only on the server, no API endpoint needed.', t: 'req' },
+    { name: 'Form action', def: '`<form action={myServerAction}>` — submits the form to the server function. Works without JS (progressive enhancement).', t: 'req' },
+    { name: 'revalidatePath / revalidateTag', def: 'Tell Next.js to drop the cache for a path or tag — typically after a mutation. The Server Component re-renders with fresh data.', t: 'req' },
+    { name: 'useFormState / useFormStatus', def: 'React 19 hooks for tracking action state (pending, errors, return value) in Client Components.', t: 'rec' }
+  ],
+  '3:next-routes': [
+    { name: 'Route Handler', def: 'A file at `app/api/foo/route.ts` exporting GET/POST/etc. functions. Replaces /api/ pages from Pages Router.', t: 'req' },
+    { name: 'Request / Response', def: 'Route handlers use the Web Fetch Request/Response API — works on edge, node, and any modern runtime.', t: 'req' },
+    { name: 'Edge vs Node runtime', def: '`export const runtime = "edge"` runs at the CDN edge — faster cold start, but limited APIs. Default is Node.', t: 'rec' }
+  ],
+  '3:tailwind': [
+    { name: 'Utility class', def: 'A single-purpose class like `p-4` (padding 1rem) or `flex` (display: flex). Compose many to build any design.', t: 'req' },
+    { name: 'JIT compiler', def: 'Tailwind generates CSS for only the classes you actually use. Tiny bundle, infinite combinations.', t: 'req' },
+    { name: 'Variant', def: 'Prefix like `hover:`, `md:`, `dark:` — applies the class only under that condition. Stackable: `dark:md:hover:bg-blue-500`.', t: 'req' },
+    { name: '@apply', def: 'Group utilities into a custom CSS class: `.btn { @apply px-4 py-2 bg-blue-500; }`. Use sparingly — you lose Tailwind\'s advantages.', t: 'rec' },
+    { name: 'theme()', def: 'Reference Tailwind\'s design tokens in custom CSS: `color: theme(colors.gray.900)`.', t: 'rec' }
+  ],
+  '3:shadcn': [
+    { name: 'shadcn/ui', def: 'A component library that lives in YOUR repo. `npx shadcn-ui@latest add button` copies the component code in — you own and edit it.', t: 'req' },
+    { name: 'Radix UI', def: 'shadcn is built on Radix primitives — unstyled, fully accessible UI building blocks. You can use Radix directly for custom designs.', t: 'rec' },
+    { name: 'cva (class-variance-authority)', def: 'Library for managing className variants in components: size=sm|md|lg, variant=default|destructive. Used inside shadcn components.', t: 'rec' },
+    { name: 'tailwind-merge', def: 'Smartly merges conflicting Tailwind classes: `cn("p-4", "p-2")` → `"p-2"`. Used in every shadcn component.', t: 'rec' }
+  ],
+
+  /* === STAGE 5 — LLM Application Development === */
+  '5:prompt-system': [
+    { name: 'System prompt', def: 'A high-priority instruction that shapes the model\'s persona, rules, and output format for the whole conversation. Passed in the `system` field, not as a user message.', t: 'req' },
+    { name: 'User message', def: 'The actual question or task. The model answers user messages in the context of the system prompt.', t: 'req' },
+    { name: 'Assistant message', def: 'The model\'s response. In multi-turn conversations, prior assistant messages stay in the context window.', t: 'req' },
+    { name: 'Context window', def: 'The max tokens the model can see at once (Claude Sonnet 4: 200K-1M, GPT-5: 256K, Gemini 2: 2M). Includes system + user + assistant history.', t: 'req' },
+    { name: 'Token', def: 'The unit a model processes. ~4 chars or 0.75 words per token in English. Track these for cost.', t: 'req' },
+    { name: 'XML tags in prompts', def: 'Wrap input sections in `<context>...</context>` or `<instruction>...</instruction>` — Claude responds strongly to these. Improves parseable output.', t: 'rec' }
+  ],
+  '5:prompt-fewshot': [
+    { name: 'Few-shot prompting', def: 'Show 2-5 input→output examples before the real input. The model pattern-matches. Almost always beats describing the task in prose.', t: 'req' },
+    { name: 'Chain of thought (CoT)', def: 'Asking the model to "think step by step" before answering. Improves performance on reasoning tasks at the cost of more tokens.', t: 'req' },
+    { name: 'Zero-shot vs few-shot', def: 'Zero-shot: just describe the task. Few-shot: include examples. Few-shot usually wins for structured output, classification, or unusual formats.', t: 'rec' },
+    { name: 'Extended thinking', def: 'Claude\'s "thinking" mode where the model produces internal reasoning before its answer. Trade tokens for accuracy on hard problems.', t: 'rec' }
+  ],
+  '5:prompt-templates': [
+    { name: 'Prompt template', def: 'A string with `{placeholder}` slots filled in at runtime. The disciplined alternative to hardcoded string concatenation.', t: 'req' },
+    { name: 'Variable injection', def: 'Replacing `{user_query}` with the user\'s actual text. Always sanitize untrusted input here (XSS/prompt injection).', t: 'req' },
+    { name: 'Prompt library', def: 'A versioned collection of prompts (file-based or DB-backed). Same idea as a SQL migration system, applied to prompts.', t: 'rec' },
+    { name: 'A/B testing prompts', def: 'Serve two prompt variants to users, compare metrics. Critical when prompt changes can affect cost/quality dramatically.', t: 'rec' }
+  ],
+  '5:anthropic-api': [
+    { name: 'Messages API', def: 'Anthropic\'s endpoint for chat completions. Pass `model`, `system`, `messages`, get back a response with `content` blocks.', t: 'req' },
+    { name: 'Content block', def: 'Claude responses are arrays of typed blocks: `text`, `tool_use`, `image`, `thinking`. Each has its own shape.', t: 'req' },
+    { name: 'stop_reason', def: 'Why the model stopped: `end_turn` (normal), `max_tokens` (hit limit), `tool_use` (calling a tool), `stop_sequence` (hit a stop word).', t: 'req' },
+    { name: 'API key', def: 'Bearer token in the `x-api-key` header. NEVER expose this in client-side JS — always proxy through your own backend.', t: 'req' },
+    { name: 'beta header', def: '`anthropic-beta` opts into experimental features (prompt caching, extended outputs, etc.) before they\'re GA.', t: 'rec' }
+  ],
+  '5:openai-api': [
+    { name: 'Chat Completions', def: 'OpenAI\'s primary endpoint: `POST /v1/chat/completions`. Takes messages, returns choices.', t: 'req' },
+    { name: 'Responses API', def: 'OpenAI\'s newer endpoint that bundles tool use + multi-turn + structured outputs. Replaces Chat Completions for new apps.', t: 'rec' },
+    { name: 'temperature', def: 'Randomness knob: 0 = deterministic, 1 = creative, 2 = chaotic. Use 0 for classification/extraction, 0.7+ for ideation.', t: 'req' },
+    { name: 'max_tokens', def: 'Cap on the response length. Watch this — hitting it mid-sentence is a common bug.', t: 'req' }
+  ],
+  '5:other-providers': [
+    { name: 'Gemini Flash', def: 'Google\'s cheap fast model with 2M context. Great for long-doc classification and extraction at fractional Claude cost.', t: 'rec' },
+    { name: 'Groq', def: 'A hardware company that serves open Llama models at ~500 tokens/sec. The fastest LLM inference you can buy in 2026.', t: 'rec' },
+    { name: 'Mistral', def: 'European AI lab. EU-hosted, GDPR-friendly. Open-weight models available for local deployment.', t: 'rec' },
+    { name: 'Multi-provider routing', def: 'Sending different requests to different providers — cheap classification to Gemini Flash, complex reasoning to Claude. Saves 5-10x on cost.', t: 'rec' }
+  ],
+  '5:openrouter': [
+    { name: 'Unified API', def: 'OpenRouter exposes 100+ models behind the OpenAI-compatible API. Swap models by changing one string.', t: 'rec' },
+    { name: 'Credits', def: 'OpenRouter\'s pay-as-you-go balance. Top up $5, use it across any model. Removes signup friction across providers.', t: 'rec' },
+    { name: 'Fallback', def: 'Configure a model + backup. If the primary is rate-limited or down, OpenRouter automatically routes to the fallback.', t: 'rec' }
+  ],
+  '5:streaming': [
+    { name: 'Server-Sent Events (SSE)', def: 'A one-way streaming protocol over HTTP. Each chunk is a `data:` line. The default for LLM streaming.', t: 'req' },
+    { name: 'Delta', def: 'A streaming event carrying the next chunk of text (Claude: `content_block_delta`; OpenAI: `delta.content`). Concatenate them to build the full response.', t: 'req' },
+    { name: 'Partial JSON', def: 'When streaming structured output, you receive incomplete JSON until the end. Parse defensively or use a streaming JSON parser.', t: 'rec' },
+    { name: 'ReadableStream', def: 'The browser/Node API for consuming streams. `for await (const chunk of stream)` reads them async.', t: 'req' }
+  ],
+  '5:cost-tracking': [
+    { name: 'Input vs output token pricing', def: 'Output is 4-5x more expensive than input. Long outputs blow budgets fast — use max_tokens.', t: 'req' },
+    { name: 'Tier (rate limit)', def: 'API providers offer tiers (Tier 1, 2, 3...) with higher rate limits as you spend more. Plan around the lowest tier.', t: 'req' },
+    { name: 'Cost dashboard', def: 'A view of your daily/monthly spend. Build one or use the provider\'s — bills can balloon overnight.', t: 'req' },
+    { name: 'Token counter (tiktoken / count-tokens)', def: 'Estimate tokens BEFORE calling the API to predict cost. Useful for hard-capping per-request budgets.', t: 'rec' }
+  ],
+  '5:prompt-caching': [
+    { name: 'Prompt cache', def: 'Provider feature that caches frequently-reused prompt prefixes. Subsequent calls hit the cache at ~10% of normal input cost.', t: 'req' },
+    { name: 'cache_control', def: 'Anthropic header marking a section of the prompt as cacheable. The cache lives ~5 minutes.', t: 'req' },
+    { name: 'Cache hit rate', def: 'The % of input tokens served from cache. >50% on a high-volume prompt can cut bills by 60-80%.', t: 'req' },
+    { name: 'When NOT to cache', def: 'Don\'t cache short prompts (overhead > savings). Don\'t cache for one-off requests. Best for system prompts >1K tokens used repeatedly.', t: 'rec' }
+  ],
+  '5:tool-use': [
+    { name: 'Tool / Function', def: 'A capability you describe to the model via JSON schema. The model decides when to call it and supplies the arguments.', t: 'req' },
+    { name: 'Tool definition', def: 'A schema: `{ name, description, input_schema: { type: "object", properties: {...} } }`. The model uses this to know how to call.', t: 'req' },
+    { name: 'Tool call', def: 'The model\'s response when it wants to use a tool. You execute the call yourself and send the result back as a tool_result message.', t: 'req' },
+    { name: 'Parallel tool use', def: 'The model can call multiple tools in one turn. Modern providers support batching the requests.', t: 'rec' },
+    { name: 'Tool choice', def: 'Force the model to call a specific tool, auto-decide, or never call any. Use to constrain behavior.', t: 'rec' }
+  ],
+  '5:ai-sdk': [
+    { name: 'useChat hook', def: 'Vercel AI SDK React hook giving you `messages`, `input`, `handleSubmit`. Standard chat UI in ~10 lines.', t: 'req' },
+    { name: 'streamText / generateText', def: 'Server-side helpers wrapping any provider. `streamText` returns a stream you can pipe to a Response.', t: 'req' },
+    { name: 'streamUI', def: 'Server-rendered streaming React components from the LLM. Lets the model render UI components, not just text.', t: 'rec' },
+    { name: 'tool() helper', def: 'Defines a tool with a Zod schema + execute function — type-safe end-to-end.', t: 'rec' },
+    { name: 'Provider abstraction', def: 'Swap `openai("gpt-4")` for `anthropic("claude-3-5-sonnet")` in one line. The SDK hides provider differences.', t: 'rec' }
+  ],
+  '5:ollama': [
+    { name: 'Local model', def: 'An LLM running on your machine instead of a paid API. Free, private, slower, lower quality than cloud frontier models.', t: 'req' },
+    { name: 'Ollama', def: 'A CLI + server that runs GGUF-quantized models locally. `ollama run llama3` starts a chat in seconds.', t: 'req' },
+    { name: 'Quantization', def: 'Compressing model weights from 16-bit floats to 4-bit ints. Cuts VRAM by 4x with modest quality loss.', t: 'rec' },
+    { name: 'Model size vs VRAM', def: 'A 7B model in 4-bit takes ~5GB VRAM. A 70B model takes ~40GB. Match the model to your GPU.', t: 'rec' }
   ]
 };
 
@@ -11832,6 +12090,353 @@ function filterTopicTerms(filter) {
   document.querySelectorAll('#mTerms .term-card').forEach(card => {
     const show = filter === 'all' || card.dataset.t === filter;
     card.hidden = !show;
+  });
+}
+
+/* ------------------------------------------------------------
+   PRACTICES — per-topic practice links (games, challenges, projects).
+   Keyed by `${stageId}:${topicId}`. Each: { name, url, type, diff, desc? }.
+   type = 'game' | 'challenge' | 'platform' | 'project' | 'tutorial' | 'quiz'
+   diff = 'beginner' | 'intermediate' | 'advanced'
+   These render in topic modal AND in the global Practice Hub grouped by skill.
+   ------------------------------------------------------------ */
+const PRACTICES = {
+  /* === STAGE 0 — Environment Setup === */
+  '0:git': [
+    { name: 'Learn Git Branching', url: 'https://learngitbranching.js.org/', type: 'game', diff: 'beginner', desc: 'Interactive visual game teaching branching, merging, rebasing.' },
+    { name: 'Oh My Git!', url: 'https://ohmygit.org/', type: 'game', diff: 'beginner', desc: 'Card-based downloadable game that teaches Git fundamentals.' },
+    { name: 'Git Immersion', url: 'https://gitimmersion.com/', type: 'tutorial', diff: 'beginner', desc: 'A guided tour through Git fundamentals with hands-on exercises.' },
+    { name: 'GitHub Skills', url: 'https://skills.github.com/', type: 'tutorial', diff: 'beginner', desc: 'Official GitHub course series — PRs, code review, deployments.' }
+  ],
+  '0:terminal': [
+    { name: 'Terminus (CLI adventure game)', url: 'https://web.mit.edu/mprat/Public/web/Terminus/Web/main.html', type: 'game', diff: 'beginner', desc: 'Walk through a forest using Unix shell commands.' },
+    { name: 'Bandit (overthewire)', url: 'https://overthewire.org/wargames/bandit/', type: 'challenge', diff: 'intermediate', desc: 'CTF-style war game that teaches shell + SSH through puzzles.' },
+    { name: 'Command Challenge', url: 'https://cmdchallenge.com/', type: 'challenge', diff: 'beginner', desc: '60+ shell puzzles solved in your browser.' }
+  ],
+  '0:vscode': [
+    { name: 'VS Code Interactive Playground', url: 'https://code.visualstudio.com/learn', type: 'tutorial', diff: 'beginner', desc: 'Built-in tour: open it from Help → Interactive Playground.' },
+    { name: 'Keybindings Reference (PDF)', url: 'https://code.visualstudio.com/docs/getstarted/keybindings', type: 'tutorial', diff: 'beginner', desc: 'Master the shortcuts — 10x productivity multiplier.' }
+  ],
+
+  /* === STAGE 1 — Programming Fundamentals === */
+  '1:py-syntax': [
+    { name: 'Exercism Python Track', url: 'https://exercism.org/tracks/python', type: 'platform', diff: 'beginner', desc: '140+ small Python exercises with free mentor feedback.' },
+    { name: 'Hyperskill Python', url: 'https://hyperskill.org/tracks/2', type: 'platform', diff: 'beginner', desc: 'JetBrains project-based Python path.' },
+    { name: 'PyBites Code Challenges', url: 'https://codechalleng.es/', type: 'challenge', diff: 'intermediate', desc: 'Mini real-world Python problems.' },
+    { name: 'CheckiO Python', url: 'https://py.checkio.org/', type: 'game', diff: 'beginner', desc: 'Programming puzzles with story-based progression.' }
+  ],
+  '1:py-funcs': [
+    { name: 'Exercism Python — Function exercises', url: 'https://exercism.org/tracks/python/exercises', type: 'platform', diff: 'beginner', desc: 'Filter exercises by "functions" tag.' },
+    { name: 'Real Python — Function Exercises', url: 'https://realpython.com/quizzes/functions/', type: 'quiz', diff: 'beginner', desc: 'Quick quiz to test understanding of Python function semantics.' }
+  ],
+  '1:py-collections': [
+    { name: 'PyBites — List Comprehensions', url: 'https://pybit.es/articles/list-comprehensions-in-python/', type: 'tutorial', diff: 'beginner', desc: 'Hands-on practice converting loops to comprehensions.' },
+    { name: 'CodingBat Python — Lists', url: 'https://codingbat.com/python/List-1', type: 'challenge', diff: 'beginner', desc: 'Bite-sized list manipulation exercises.' },
+    { name: 'HackerRank Python — Collections', url: 'https://www.hackerrank.com/domains/python', type: 'platform', diff: 'intermediate', desc: 'Filter for the Collections section.' }
+  ],
+  '1:js-basics': [
+    { name: 'JavaScript30', url: 'https://javascript30.com/', type: 'project', diff: 'beginner', desc: '30 free vanilla JS mini-projects in 30 days. The canonical hands-on JS course.' },
+    { name: 'Edabit JavaScript', url: 'https://edabit.com/challenges/javascript', type: 'challenge', diff: 'beginner', desc: '10,000+ JS challenges, easy → expert.' },
+    { name: 'Exercism JavaScript Track', url: 'https://exercism.org/tracks/javascript', type: 'platform', diff: 'beginner', desc: 'Free guided exercises + mentor feedback.' },
+    { name: 'JS Quiz (Lydia Hallie)', url: 'https://bigfrontend.dev/quiz', type: 'quiz', diff: 'intermediate', desc: '300+ tricky JS questions to test your understanding.' }
+  ],
+  '1:js-arrays': [
+    { name: 'Codewars — JavaScript', url: 'https://www.codewars.com/?language=javascript', type: 'platform', diff: 'beginner', desc: 'Sort by 8 kyu for true beginners; arrays/strings are most of them.' },
+    { name: 'Array Method Quiz', url: 'https://www.quizful.net/quiz/take/45/array-methods-quiz', type: 'quiz', diff: 'beginner', desc: 'Test your map/filter/reduce knowledge.' },
+    { name: '30 Days of JavaScript Array Challenges', url: 'https://leetcode.com/studyplan/30-days-of-javascript/', type: 'challenge', diff: 'intermediate', desc: 'LeetCode\'s curated JS array problem set.' }
+  ],
+  '1:js-async': [
+    { name: 'JavaScript Async Quiz', url: 'https://eloquentjavascript.net/11_async.html', type: 'quiz', diff: 'intermediate', desc: 'End-of-chapter exercises in Eloquent JavaScript.' },
+    { name: 'Loupe (event loop visualizer)', url: 'https://latentflip.com/loupe', type: 'game', diff: 'beginner', desc: 'Paste async code and watch the call stack + event loop in action.' },
+    { name: 'Promise/A+ Test Suite', url: 'https://github.com/promises-aplus/promises-tests', type: 'challenge', diff: 'advanced', desc: 'Implement your own Promise that passes the spec — the ultimate async exercise.' }
+  ],
+  '1:dsa-bigo': [
+    { name: 'Big-O Cheatsheet (Interactive)', url: 'https://www.bigocheatsheet.com/', type: 'tutorial', diff: 'beginner', desc: 'Compare common algorithms by complexity at a glance.' },
+    { name: 'NeetCode — Big-O Quiz', url: 'https://neetcode.io/practice', type: 'quiz', diff: 'beginner', desc: 'Identify Big-O of given code snippets.' }
+  ],
+  '1:dsa-arrays': [
+    { name: 'NeetCode 150 — Arrays & Hashing', url: 'https://neetcode.io/roadmap', type: 'platform', diff: 'beginner', desc: 'The canonical interview list. Start here.' },
+    { name: 'LeetCode 75 (Top Interview Questions)', url: 'https://leetcode.com/studyplan/leetcode-75/', type: 'platform', diff: 'beginner', desc: 'LeetCode\'s curated starter list.' },
+    { name: 'Codewars — Arrays', url: 'https://www.codewars.com/kata/search/javascript?q=&r%5B%5D=-8&tags=Arrays', type: 'platform', diff: 'beginner', desc: 'Filtered to array-only katas, JS or Python.' }
+  ],
+  '1:dsa-hash': [
+    { name: 'NeetCode 150 — Hashing', url: 'https://neetcode.io/roadmap', type: 'platform', diff: 'beginner', desc: 'Most underused data structure — practice the patterns.' },
+    { name: 'AlgoExpert — Hash Tables', url: 'https://www.algoexpert.io/', type: 'platform', diff: 'intermediate', desc: 'Paid but high-quality problem set with video walkthroughs.' }
+  ],
+  '1:dsa-recursion': [
+    { name: 'NeetCode 150 — Backtracking', url: 'https://neetcode.io/roadmap', type: 'platform', diff: 'intermediate', desc: 'Backtracking IS recursion with constraints.' },
+    { name: 'Recursion Visualizer', url: 'https://recursion.vercel.app/', type: 'game', diff: 'beginner', desc: 'Paste recursive code and watch the call tree expand step-by-step.' }
+  ],
+  '1:dsa-sort': [
+    { name: 'VisuAlgo — Sorting', url: 'https://visualgo.net/en/sorting', type: 'game', diff: 'beginner', desc: 'Watch every sorting algorithm animate side-by-side.' },
+    { name: 'Sorting Algorithms Visualized', url: 'https://www.toptal.com/developers/sorting-algorithms', type: 'game', diff: 'beginner', desc: 'Multi-algorithm race visualization.' }
+  ],
+  '1:dsa-trees': [
+    { name: 'NeetCode — Trees', url: 'https://neetcode.io/roadmap', type: 'platform', diff: 'intermediate', desc: 'BFS, DFS, traversals — interview staples.' },
+    { name: 'Tree Visualizer', url: 'https://visualgo.net/en/bst', type: 'game', diff: 'beginner', desc: 'Insert/delete in BST/AVL/RB trees and watch the operations.' }
+  ],
+  '1:cli': [
+    { name: 'Bandit (overthewire)', url: 'https://overthewire.org/wargames/bandit/', type: 'challenge', diff: 'intermediate', desc: 'War game that teaches shell + SSH through CTF puzzles.' },
+    { name: 'Command Challenge', url: 'https://cmdchallenge.com/', type: 'challenge', diff: 'beginner', desc: '60+ shell puzzles solved in your browser.' },
+    { name: 'Vim Adventures', url: 'https://vim-adventures.com/', type: 'game', diff: 'beginner', desc: 'Learn vim by exploring a 2D adventure world.' }
+  ],
+  '1:read-docs': [
+    { name: 'MDN Treasure Hunt', url: 'https://developer.mozilla.org/en-US/', type: 'challenge', diff: 'beginner', desc: 'Pick 10 obscure APIs you\'ve never used (e.g. BroadcastChannel, MutationObserver). Use only the docs to write 5-line examples.' }
+  ],
+  '1:ask-help': [
+    { name: 'Stack Overflow — How to Ask', url: 'https://stackoverflow.com/help/how-to-ask', type: 'tutorial', diff: 'beginner', desc: 'Read this BEFORE posting your first question.' }
+  ],
+
+  /* === STAGE 2 — Web Fundamentals === */
+  '2:html-structure': [
+    { name: 'web.dev — Learn HTML', url: 'https://web.dev/learn/html', type: 'tutorial', diff: 'beginner', desc: 'Google\'s structured HTML5 course with quizzes.' },
+    { name: 'HTML Forms — Best Practices', url: 'https://github.com/sadanandpai/frontend-mini-challenges', type: 'project', diff: 'beginner', desc: 'Mini-challenges covering semantic HTML structure.' },
+    { name: 'Frontend Mentor — HTML/CSS challenges', url: 'https://www.frontendmentor.io/challenges?difficulties=1&types=free', type: 'project', diff: 'beginner', desc: 'Free real-design challenges with Figma files.' }
+  ],
+  '2:html-forms': [
+    { name: 'Frontend Mentor — Form challenges', url: 'https://www.frontendmentor.io/challenges?topics=accessibility%2Chtml-forms', type: 'project', diff: 'beginner', desc: 'Real form designs to clone with validation.' },
+    { name: 'web.dev — Learn Forms', url: 'https://web.dev/learn/forms', type: 'tutorial', diff: 'beginner', desc: 'Comprehensive course on building accessible forms.' }
+  ],
+  '2:html-a11y': [
+    { name: 'A11y Project Checklist', url: 'https://www.a11yproject.com/checklist/', type: 'tutorial', diff: 'beginner', desc: 'Audit any page against this checklist.' },
+    { name: 'WAVE Browser Extension', url: 'https://wave.webaim.org/extension/', type: 'tutorial', diff: 'beginner', desc: 'One-click WCAG audit. Install and run on your own site.' },
+    { name: 'WebAIM Contrast Checker', url: 'https://webaim.org/resources/contrastchecker/', type: 'tutorial', diff: 'beginner', desc: 'Verify any color combo meets WCAG AA.' },
+    { name: 'a11y bingo (game)', url: 'https://piccalil.li/blog/practical-accessibility-tips/', type: 'tutorial', diff: 'intermediate', desc: 'Practical a11y patterns to drill.' }
+  ],
+  '2:css-box': [
+    { name: 'CSS Diner', url: 'https://flukeout.github.io/', type: 'game', diff: 'beginner', desc: 'Master CSS selectors via a restaurant-themed game.' },
+    { name: 'CSS Battle', url: 'https://cssbattle.dev/', type: 'challenge', diff: 'intermediate', desc: 'Recreate target images in the fewest CSS characters possible.' },
+    { name: 'web.dev — Learn CSS', url: 'https://web.dev/learn/css', type: 'tutorial', diff: 'beginner', desc: 'Structured course with interactive demos for each chapter.' }
+  ],
+  '2:css-flex': [
+    { name: 'Flexbox Froggy', url: 'https://flexboxfroggy.com/', type: 'game', diff: 'beginner', desc: 'Help frogs cross the pond by writing flexbox. Most-loved CSS game.' },
+    { name: 'Flexbox Defense', url: 'http://www.flexboxdefense.com/', type: 'game', diff: 'beginner', desc: 'Tower defense game where towers are positioned with flex.' },
+    { name: 'Flexbox Zombies', url: 'https://geddski.teachable.com/p/flexbox-zombies', type: 'game', diff: 'beginner', desc: 'Story-driven flexbox course (free).' },
+    { name: 'Flexbox Patterns', url: 'https://www.flexboxpatterns.com/', type: 'tutorial', diff: 'intermediate', desc: 'Copy-paste recipes for common layouts.' }
+  ],
+  '2:css-grid': [
+    { name: 'Grid Garden', url: 'https://cssgridgarden.com/', type: 'game', diff: 'beginner', desc: 'Water your carrots by writing grid CSS.' },
+    { name: 'Grid Critters', url: 'https://gridcritters.com/', type: 'game', diff: 'beginner', desc: 'Story-driven grid course (free preview).' },
+    { name: 'CSS Tricks Grid Guide', url: 'https://css-tricks.com/snippets/css/complete-guide-grid/', type: 'tutorial', diff: 'beginner', desc: 'The complete reference — bookmark this one.' }
+  ],
+  '2:css-responsive': [
+    { name: 'Frontend Mentor — Responsive Challenges', url: 'https://www.frontendmentor.io/challenges', type: 'project', diff: 'beginner', desc: 'Every challenge ships mobile + desktop designs. Free tier has dozens.' },
+    { name: 'Can I use', url: 'https://caniuse.com/', type: 'tutorial', diff: 'beginner', desc: 'Check browser support before using any modern CSS feature.' }
+  ],
+  '2:css-vars': [
+    { name: 'CSS Variables Tutorial (MDN)', url: 'https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties', type: 'tutorial', diff: 'beginner', desc: 'Build a theme-switcher using only custom properties.' },
+    { name: 'CSS Battle', url: 'https://cssbattle.dev/', type: 'challenge', diff: 'intermediate', desc: 'Use modern CSS to recreate images minimally.' }
+  ],
+  '2:css-anim': [
+    { name: 'CSS Animation 101', url: 'https://github.com/cssanimation/css-animation-101', type: 'tutorial', diff: 'beginner', desc: 'Free 14-chapter book with exercises.' },
+    { name: 'Animista', url: 'https://animista.net/', type: 'tutorial', diff: 'beginner', desc: 'Pre-built animations you can copy-paste then customize.' },
+    { name: 'Cubic Bezier Playground', url: 'https://cubic-bezier.com/', type: 'game', diff: 'beginner', desc: 'Visually craft easing curves.' }
+  ],
+  '2:dom': [
+    { name: 'JavaScript30', url: 'https://javascript30.com/', type: 'project', diff: 'beginner', desc: '30 vanilla DOM projects — drum kit, clock, etc. The best way to learn the DOM.' },
+    { name: 'DOM Coding Challenges', url: 'https://www.scrimba.com/learn/learnvanillajs', type: 'tutorial', diff: 'beginner', desc: 'Free interactive course on Scrimba.' }
+  ],
+  '2:events': [
+    { name: 'Build a Drag & Drop Sort', url: 'https://javascript30.com/', type: 'project', diff: 'intermediate', desc: 'Day 14 of JS30 — drag-to-sort list with event delegation.' }
+  ],
+  '2:fetch': [
+    { name: 'Public APIs (huge list)', url: 'https://github.com/public-apis/public-apis', type: 'platform', diff: 'beginner', desc: '1500+ free APIs to practice fetch against.' },
+    { name: 'JSONPlaceholder', url: 'https://jsonplaceholder.typicode.com/', type: 'platform', diff: 'beginner', desc: 'Fake REST API with users/posts/comments for testing.' },
+    { name: 'Random User API', url: 'https://randomuser.me/', type: 'platform', diff: 'beginner', desc: 'Generate fake user data for UI mockups.' },
+    { name: 'PokéAPI', url: 'https://pokeapi.co/', type: 'platform', diff: 'beginner', desc: 'Free Pokémon REST API — a classic for fetch practice.' }
+  ],
+  '2:storage': [
+    { name: 'Build a Todo App with localStorage', url: 'https://github.com/florinpop17/app-ideas', type: 'project', diff: 'beginner', desc: 'See the "Persistent To-Do" tier-1 project.' }
+  ],
+  '2:http': [
+    { name: 'HTTP Cats (status codes)', url: 'https://http.cat/', type: 'tutorial', diff: 'beginner', desc: 'Memorize status codes via cat images. Yes, really.' },
+    { name: 'httpbin.org', url: 'https://httpbin.org/', type: 'platform', diff: 'beginner', desc: 'Echo server — every HTTP method/feature has a /endpoint to test against.' }
+  ],
+  '2:rest': [
+    { name: 'JSONPlaceholder', url: 'https://jsonplaceholder.typicode.com/', type: 'platform', diff: 'beginner', desc: 'CRUD against a fake REST API.' },
+    { name: 'Public APIs', url: 'https://github.com/public-apis/public-apis', type: 'platform', diff: 'beginner', desc: 'Build a small app against any of 1500+ free APIs.' }
+  ],
+  '2:cors': [
+    { name: 'CORS Anywhere', url: 'https://github.com/Rob--W/cors-anywhere', type: 'tutorial', diff: 'intermediate', desc: 'Run a CORS proxy locally to learn what the headers do.' }
+  ]
+};
+
+const PRACTICES_KEYS = Object.keys(PRACTICES);
+
+function getTopicPractices(stageId, topicId) {
+  return PRACTICES[`${stageId}:${topicId}`] || [];
+}
+
+function renderTopicPractices(stageId, topicId) {
+  const section = document.getElementById('mPracticesSection');
+  const list = document.getElementById('mPractices');
+  const count = document.getElementById('mPracticesCount');
+  if (!section || !list) return;
+  const practices = getTopicPractices(stageId, topicId);
+  if (!practices.length) {
+    section.hidden = true;
+    list.innerHTML = '';
+    if (count) count.textContent = '';
+    return;
+  }
+  section.hidden = false;
+  if (count) count.textContent = `${practices.length} ${practices.length === 1 ? 'option' : 'options'} · games, challenges, projects`;
+  list.innerHTML = practices.map(p => `
+    <a class="practice-card t-${p.type}" href="${p.url}" target="_blank" rel="noopener">
+      <div class="p-head">
+        <span class="p-name">${escapeHtml(p.name)}</span>
+        <span class="p-type">${escapeHtml(p.type)}</span>
+      </div>
+      <div class="p-desc">${escapeHtml(p.desc || '')}</div>
+      <div class="p-foot">
+        <span class="p-diff ${p.diff}">${escapeHtml(p.diff)}</span>
+        <span class="p-url">${escapeHtml(new URL(p.url).hostname.replace(/^www\./, ''))}</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+/* Global PRACTICE HUB — all platforms grouped by skill, plus all per-topic practices */
+const PRACTICE_HUB = {
+  'Algorithms & Interview Prep': [
+    { name: 'NeetCode 150', url: 'https://neetcode.io/roadmap', type: 'platform', diff: 'beginner', desc: 'Curated interview list with video solutions. The starting point.' },
+    { name: 'LeetCode 75', url: 'https://leetcode.com/studyplan/leetcode-75/', type: 'platform', diff: 'beginner', desc: 'LeetCode\'s own curated junior-interview problem set.' },
+    { name: 'AlgoExpert', url: 'https://www.algoexpert.io/', type: 'platform', diff: 'intermediate', desc: 'Paid, but high-quality with video walkthroughs.' },
+    { name: 'Codewars', url: 'https://www.codewars.com/', type: 'platform', diff: 'beginner', desc: '8 kyu → 1 kyu progression. Strong for quick daily practice.' },
+    { name: 'CodinGame', url: 'https://www.codingame.com/', type: 'game', diff: 'intermediate', desc: 'Algorithm problems framed as games. Great if LeetCode bores you.' },
+    { name: 'Advent of Code', url: 'https://adventofcode.com/', type: 'challenge', diff: 'intermediate', desc: 'Annual puzzle calendar. Best community for working through hard problems.' },
+    { name: 'Project Euler', url: 'https://projecteuler.net/', type: 'challenge', diff: 'advanced', desc: 'Math + algorithm puzzles. ~800 of them and counting.' }
+  ],
+  'Python': [
+    { name: 'Exercism Python', url: 'https://exercism.org/tracks/python', type: 'platform', diff: 'beginner', desc: '140+ Python exercises + free mentor feedback.' },
+    { name: 'PyBites', url: 'https://codechalleng.es/', type: 'challenge', diff: 'intermediate', desc: 'Real-world Python challenges, weekly themed bites.' },
+    { name: 'CheckiO', url: 'https://py.checkio.org/', type: 'game', diff: 'beginner', desc: 'Programming puzzles inside a story.' },
+    { name: 'HackerRank Python', url: 'https://www.hackerrank.com/domains/python', type: 'platform', diff: 'beginner', desc: 'Structured tracks with auto-graded submissions.' },
+    { name: 'CodingBat Python', url: 'https://codingbat.com/python', type: 'challenge', diff: 'beginner', desc: 'Bite-sized warm-up problems by topic.' }
+  ],
+  'JavaScript': [
+    { name: 'JavaScript30', url: 'https://javascript30.com/', type: 'project', diff: 'beginner', desc: '30 vanilla JS projects in 30 days. The canonical practical JS course.' },
+    { name: 'Codewars JS', url: 'https://www.codewars.com/?language=javascript', type: 'platform', diff: 'beginner', desc: 'Same Codewars, filtered to JS.' },
+    { name: 'Edabit', url: 'https://edabit.com/challenges/javascript', type: 'challenge', diff: 'beginner', desc: '10,000+ JS challenges by difficulty.' },
+    { name: 'BigFrontEnd Quiz', url: 'https://bigfrontend.dev/quiz', type: 'quiz', diff: 'intermediate', desc: '300+ tricky JS quiz questions.' },
+    { name: 'Eloquent JavaScript exercises', url: 'https://eloquentjavascript.net/', type: 'tutorial', diff: 'beginner', desc: 'Free book with end-of-chapter exercises that teach JS deeply.' }
+  ],
+  'HTML / CSS / Frontend': [
+    { name: 'Frontend Mentor', url: 'https://www.frontendmentor.io/challenges', type: 'project', diff: 'beginner', desc: 'Free real-design challenges with Figma files — the best portfolio builder.' },
+    { name: 'Flexbox Froggy', url: 'https://flexboxfroggy.com/', type: 'game', diff: 'beginner', desc: 'Frog-themed flexbox game. 24 levels.' },
+    { name: 'Grid Garden', url: 'https://cssgridgarden.com/', type: 'game', diff: 'beginner', desc: 'CSS Grid via carrot watering. 28 levels.' },
+    { name: 'CSS Diner', url: 'https://flukeout.github.io/', type: 'game', diff: 'beginner', desc: 'Master CSS selectors via a restaurant game.' },
+    { name: 'CSS Battle', url: 'https://cssbattle.dev/', type: 'challenge', diff: 'intermediate', desc: 'Recreate target images in the fewest characters.' },
+    { name: 'Codrops Demos', url: 'https://tympanus.net/codrops/', type: 'tutorial', diff: 'intermediate', desc: 'Build cutting-edge CSS effects from tutorials.' },
+    { name: 'web.dev Learn', url: 'https://web.dev/learn/', type: 'tutorial', diff: 'beginner', desc: 'Google\'s free structured courses: HTML, CSS, Forms, Accessibility, PWAs.' }
+  ],
+  'React / Frontend Frameworks': [
+    { name: 'React Tutorial — Tic Tac Toe', url: 'https://react.dev/learn/tutorial-tic-tac-toe', type: 'tutorial', diff: 'beginner', desc: 'Official React intro project.' },
+    { name: 'Frontend Mentor (React tier)', url: 'https://www.frontendmentor.io/challenges?difficulties=2', type: 'project', diff: 'intermediate', desc: 'Tier 2+ designs requiring components + state.' },
+    { name: 'BuildUI', url: 'https://buildui.com/', type: 'tutorial', diff: 'intermediate', desc: 'Free walkthroughs building real React + Next.js patterns.' },
+    { name: 'Full Stack Open (React + Node)', url: 'https://fullstackopen.com/', type: 'tutorial', diff: 'intermediate', desc: 'Free U. of Helsinki course. ~150 hrs of guided React + Node.' }
+  ],
+  'Backend / Databases': [
+    { name: 'SQLBolt', url: 'https://sqlbolt.com/', type: 'tutorial', diff: 'beginner', desc: 'Interactive SQL lessons with browser-based queries.' },
+    { name: 'SQLZoo', url: 'https://sqlzoo.net/', type: 'platform', diff: 'beginner', desc: 'Tutorial + interview-style SQL problems.' },
+    { name: 'PostgreSQL Exercises (PgExercises)', url: 'https://pgexercises.com/', type: 'challenge', diff: 'intermediate', desc: 'Realistic Postgres-specific exercises.' },
+    { name: 'Mode Analytics — SQL Tutorial', url: 'https://mode.com/sql-tutorial/', type: 'tutorial', diff: 'beginner', desc: 'Free interactive SQL course on real data.' },
+    { name: 'CodeWars SQL', url: 'https://www.codewars.com/?language=sql', type: 'platform', diff: 'intermediate', desc: 'Daily SQL katas.' }
+  ],
+  'Git & Tooling': [
+    { name: 'Learn Git Branching', url: 'https://learngitbranching.js.org/', type: 'game', diff: 'beginner', desc: 'Interactive visual game for branching/merging/rebasing.' },
+    { name: 'Oh My Git!', url: 'https://ohmygit.org/', type: 'game', diff: 'beginner', desc: 'Downloadable card-based Git game.' },
+    { name: 'Bandit (overthewire)', url: 'https://overthewire.org/wargames/bandit/', type: 'challenge', diff: 'intermediate', desc: 'War game teaching Linux shell + SSH via CTF puzzles.' },
+    { name: 'Vim Adventures', url: 'https://vim-adventures.com/', type: 'game', diff: 'beginner', desc: 'Master vim by exploring a 2D world.' }
+  ],
+  'Regex': [
+    { name: 'RegexOne', url: 'https://regexone.com/', type: 'tutorial', diff: 'beginner', desc: 'Interactive lesson series, free.' },
+    { name: 'Regex Crossword', url: 'https://regexcrossword.com/', type: 'game', diff: 'intermediate', desc: 'Crossword puzzles where the clues are regexes.' },
+    { name: 'Regexr', url: 'https://regexr.com/', type: 'tutorial', diff: 'beginner', desc: 'Build, test, and explain regexes interactively.' }
+  ],
+  'AI / LLM Engineering': [
+    { name: 'Anthropic Prompt Tutorial', url: 'https://github.com/anthropics/prompt-eng-interactive-tutorial', type: 'tutorial', diff: 'beginner', desc: 'Free Anthropic interactive course on prompt engineering.' },
+    { name: 'OpenAI Cookbook', url: 'https://cookbook.openai.com/', type: 'tutorial', diff: 'beginner', desc: 'Recipes for common LLM patterns.' },
+    { name: 'ChatGPT Prompt Eng (DeepLearning.AI)', url: 'https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/', type: 'tutorial', diff: 'beginner', desc: 'Free Andrew Ng + Isa Fulford course (~1 hr).' },
+    { name: 'Gemini Cookbook (Google)', url: 'https://github.com/google-gemini/cookbook', type: 'tutorial', diff: 'beginner', desc: 'Recipes for Gemini API patterns.' },
+    { name: 'Hugging Face MCP Course', url: 'https://huggingface.co/learn/mcp-course', type: 'tutorial', diff: 'intermediate', desc: 'Free official MCP course.' },
+    { name: 'LangChain Academy', url: 'https://academy.langchain.com/', type: 'tutorial', diff: 'intermediate', desc: 'Free LangGraph + agent courses.' }
+  ],
+  'Project Ideas / Portfolio': [
+    { name: 'florinpop17/app-ideas (101 ideas)', url: 'https://github.com/florinpop17/app-ideas', type: 'project', diff: 'beginner', desc: 'Tiered project ideas with acceptance criteria.' },
+    { name: 'practical-tutorials/project-based-learning', url: 'https://github.com/practical-tutorials/project-based-learning', type: 'tutorial', diff: 'beginner', desc: 'Curated "build X from scratch" tutorials across stacks.' },
+    { name: 'Frontend Mentor', url: 'https://www.frontendmentor.io/challenges', type: 'project', diff: 'beginner', desc: 'Real designs to clone. The portfolio-builder.' },
+    { name: 'GoodFirstIssue', url: 'https://goodfirstissue.dev/', type: 'platform', diff: 'beginner', desc: 'Beginner-friendly issues across open-source projects.' },
+    { name: 'First Contributions (tutorial)', url: 'https://firstcontributions.github.io/', type: 'tutorial', diff: 'beginner', desc: 'Step-by-step guide to your first PR on a real repo.' }
+  ],
+  'Capture-the-Flag / Security': [
+    { name: 'HackTheBox', url: 'https://www.hackthebox.com/', type: 'platform', diff: 'intermediate', desc: 'Practical security CTFs ranging easy → insane.' },
+    { name: 'TryHackMe', url: 'https://tryhackme.com/', type: 'tutorial', diff: 'beginner', desc: 'Guided security learning paths.' },
+    { name: 'OverTheWire Wargames', url: 'https://overthewire.org/wargames/', type: 'challenge', diff: 'beginner', desc: 'Beginner-friendly progression from Bandit → Natas → Krypton.' }
+  ]
+};
+
+function openPracticeHub() {
+  const skills = Object.keys(PRACTICE_HUB);
+  const skillPills = skills.map(s => `<button type="button" class="phub-skill-pill active" data-skill="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join('');
+  const sectionsHtml = skills.map(skill => {
+    const items = PRACTICE_HUB[skill];
+    return `<div class="phub-section" data-skill="${escapeHtml(skill)}">
+      <div class="phub-section-head">${escapeHtml(skill)} <span class="phub-section-count">${items.length} ${items.length === 1 ? 'resource' : 'resources'}</span></div>
+      <div class="practices-grid">
+        ${items.map(p => `<a class="practice-card t-${p.type}" href="${p.url}" target="_blank" rel="noopener">
+          <div class="p-head"><span class="p-name">${escapeHtml(p.name)}</span><span class="p-type">${escapeHtml(p.type)}</span></div>
+          <div class="p-desc">${escapeHtml(p.desc || '')}</div>
+          <div class="p-foot"><span class="p-diff ${p.diff}">${escapeHtml(p.diff)}</span><span class="p-url">${escapeHtml(new URL(p.url).hostname.replace(/^www\./, ''))}</span></div>
+        </a>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  const total = skills.reduce((s, k) => s + PRACTICE_HUB[k].length, 0);
+  const html = `
+    <p class="phub-intro">${total} curated practice resources across ${skills.length} skills. Click any skill to toggle visibility. Search filters by name or description.</p>
+    <div class="phub-filter-row">
+      <input type="search" id="phubSearch" placeholder="Search resources..." />
+      <button type="button" class="phub-skill-pill" onclick="togglePhubAll(false)">Hide all</button>
+      <button type="button" class="phub-skill-pill" onclick="togglePhubAll(true)">Show all</button>
+    </div>
+    <div class="phub-filter-row" id="phubSkillPills">${skillPills}</div>
+    <div id="phubSections">${sectionsHtml}</div>
+  `;
+  showPracticeModal('🎮 Practice Hub', html);
+  // Wire skill pills
+  setTimeout(() => {
+    document.querySelectorAll('#phubSkillPills .phub-skill-pill[data-skill]').forEach(p => {
+      p.addEventListener('click', () => {
+        const skill = p.dataset.skill;
+        const section = document.querySelector(`.phub-section[data-skill="${CSS.escape(skill)}"]`);
+        const on = !p.classList.contains('active');
+        p.classList.toggle('active', on);
+        if (section) section.hidden = !on;
+      });
+    });
+    const search = document.getElementById('phubSearch');
+    search?.addEventListener('input', debounce(() => filterPracticeHub(search.value.trim()), 150));
+  }, 30);
+}
+
+function togglePhubAll(on) {
+  document.querySelectorAll('#phubSkillPills .phub-skill-pill[data-skill]').forEach(p => p.classList.toggle('active', on));
+  document.querySelectorAll('.phub-section').forEach(s => s.hidden = !on);
+}
+
+function filterPracticeHub(q) {
+  const query = q.toLowerCase();
+  document.querySelectorAll('.phub-section').forEach(section => {
+    let visibleInSection = 0;
+    section.querySelectorAll('.practice-card').forEach(card => {
+      const text = (card.querySelector('.p-name')?.textContent + ' ' + card.querySelector('.p-desc')?.textContent).toLowerCase();
+      const match = !query || text.includes(query);
+      card.style.display = match ? '' : 'none';
+      if (match) visibleInSection++;
+    });
+    // Hide entire section if nothing matches
+    if (query) section.hidden = visibleInSection === 0;
   });
 }
 
