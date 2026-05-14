@@ -1627,6 +1627,15 @@ abbr.glossary-term:hover::after {
 :root[data-theme="dark"] .fc-grades button.g4,
 :root[data-theme="dark"] .fc-grades button.g5 { background: #14532d; color: #d1fae5; }
 .fc-grade-label { font-family: 'Architects Daughter', cursive; font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 4px; }
+.fc-grade-label kbd { padding: 1px 5px; border: 1.5px solid var(--border); border-radius: 3px; font-family: monospace; font-size: 10px; background: var(--bg-card); }
+.fc-skip-row { text-align: center; margin-top: 10px; }
+.fc-skip-btn {
+  background: var(--bg-card); color: var(--text); border: 2px solid var(--border);
+  border-radius: 7px; padding: 6px 16px; cursor: pointer;
+  font-family: 'Patrick Hand', cursive; font-size: 13px;
+  box-shadow: 2px 2px 0 var(--border);
+}
+.fc-skip-btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--border); }
 .fc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; background: var(--bg); border: 2px dashed var(--border); border-radius: 8px; }
 .fc-stats .stat { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-dim); text-align: center; }
 .fc-stats .stat strong { display: block; font-family: 'Kalam', cursive; font-size: 17px; color: var(--text); }
@@ -12471,15 +12480,18 @@ function renderFlashcards() {
       </div>
       ${__fcFlipped ? `
         <div class="fc-grades">
-          <button class="g0" onclick="gradeFlashcard(0)">0</button>
-          <button class="g1" onclick="gradeFlashcard(1)">1</button>
-          <button class="g2" onclick="gradeFlashcard(2)">2</button>
-          <button class="g3" onclick="gradeFlashcard(3)">3</button>
-          <button class="g4" onclick="gradeFlashcard(4)">4</button>
-          <button class="g5" onclick="gradeFlashcard(5)">5</button>
+          <button class="g0" onclick="gradeFlashcard(0)" title="Grade 0 — didn't know at all (keys: 0)">0</button>
+          <button class="g1" onclick="gradeFlashcard(1)" title="Grade 1 — wrong (keys: 1)">1</button>
+          <button class="g2" onclick="gradeFlashcard(2)" title="Grade 2 — wrong, but close (keys: 2)">2</button>
+          <button class="g3" onclick="gradeFlashcard(3)" title="Grade 3 — hard, got it (keys: 3)">3</button>
+          <button class="g4" onclick="gradeFlashcard(4)" title="Grade 4 — ok (keys: 4)">4</button>
+          <button class="g5" onclick="gradeFlashcard(5)" title="Grade 5 — easy (keys: 5)">5</button>
         </div>
         <div class="fc-grade-label">0-2: didn't know → re-show tomorrow · 3: hard · 4: ok · 5: easy → longer interval</div>
-      ` : `<div class="fc-grade-label">Tap card to flip when you've answered (out loud or in your head).</div>`}
+        <div class="fc-skip-row">
+          <button class="fc-skip-btn" onclick="skipFlashcard()" title="Skip this card without rating (keyboard: Enter or →). Card stays due, just shows the next one.">⏭ Skip → next card</button>
+        </div>
+      ` : `<div class="fc-grade-label">Tap card to flip when you've answered (out loud or in your head). Or press <kbd>Space</kbd> to flip, <kbd>→</kbd> to skip.</div>`}
       <div class="fc-stats" style="margin-top: 16px;">
         <div class="stat"><strong>${stats.due}</strong>due today</div>
         <div class="stat"><strong>${stats.total}</strong>total</div>
@@ -12532,6 +12544,37 @@ function gradeFlashcard(grade) {
   __fcFlipped = false;
   renderFlashcards();
 }
+
+// Skip without grading — keeps card due, moves to the next one in the queue.
+function skipFlashcard() {
+  if (!__fcCurrent) return;
+  __fcReviewQueue.shift();
+  __fcCurrent = __fcReviewQueue[0] || null;
+  __fcFlipped = false;
+  renderFlashcards();
+}
+
+// Keyboard shortcuts: only active when flashcards modal is open
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('practiceModal');
+  if (!modal?.classList.contains('open')) return;
+  const title = document.getElementById('practiceTitle')?.textContent || '';
+  if (!title.includes('Flashcards')) return;
+  // Ignore if typing inside an input/textarea
+  const tag = (e.target.tagName || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === ' ' || e.code === 'Space') {
+    e.preventDefault();
+    if (__fcCurrent) flipFlashcard();
+  } else if (/^[0-5]$/.test(e.key) && __fcFlipped) {
+    e.preventDefault();
+    gradeFlashcard(parseInt(e.key));
+  } else if (e.key === 'ArrowRight' || (e.key === 'Enter' && __fcFlipped)) {
+    e.preventDefault();
+    skipFlashcard();
+  }
+});
 
 function renderAddCardForm() {
   const topicChoices = DATA.flatMap(s => s.branches.flatMap(b => b.topics.map(t => ({ stageId: s.id, topicId: t.id, label: `Stage ${s.id} · ${t.name}` })))).slice(0, 100);
