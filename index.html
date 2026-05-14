@@ -12907,6 +12907,271 @@ const TERMS = {
     { name: 'Ollama', def: 'A CLI + server that runs GGUF-quantized models locally. `ollama run llama3` starts a chat in seconds.', t: 'req' },
     { name: 'Quantization', def: 'Compressing model weights from 16-bit floats to 4-bit ints. Cuts VRAM by 4x with modest quality loss.', t: 'rec' },
     { name: 'Model size vs VRAM', def: 'A 7B model in 4-bit takes ~5GB VRAM. A 70B model takes ~40GB. Match the model to your GPU.', t: 'rec' }
+  ],
+
+  /* === STAGE 4 — Backend (Node, Python, Postgres, Auth, Redis, Security) === */
+  '4:hono': [
+    { name: 'Hono', def: 'A modern, fast, type-safe web framework for Node, Bun, Deno, and Cloudflare Workers. Tiny core (~12KB), built on the Web Fetch API.', t: 'req' },
+    { name: 'Context (c)', def: 'The request/response handle in Hono: `c.req`, `c.res`, `c.json(data)`, `c.text(...)`. Single arg passed to every handler.', t: 'req' },
+    { name: 'Middleware', def: 'Functions that run before/after route handlers — auth checks, logging, CORS. Compose via `app.use(...)`.', t: 'req' },
+    { name: 'Route groups', def: '`app.route("/users", users)` mounts a sub-router. Helps modular backends.', t: 'rec' },
+    { name: 'Edge runtime support', def: 'Hono runs natively on Cloudflare Workers, Deno Deploy, Bun. Same code; pick deployment target later.', t: 'rec' },
+    { name: '@hono/zod-validator', def: 'Middleware that validates request body/query/params against Zod schemas. `zValidator("json", schema)`.', t: 'req' }
+  ],
+  '4:express': [
+    { name: 'Express', def: 'The Node.js web framework that has dominated since 2010. Minimalist, callback/middleware-based. Still in ~80% of existing Node codebases.', t: 'req' },
+    { name: 'app.use()', def: 'Mounts middleware (a function with `(req, res, next)`) for a path. The composition primitive.', t: 'req' },
+    { name: 'req / res', def: 'Express handler args: `req` has params/body/query, `res` is the response builder (`res.json(...)`, `res.status(404).send(...)`).', t: 'req' },
+    { name: 'next()', def: 'Call to pass control to the next middleware. `next(err)` triggers the error-handling chain.', t: 'rec' },
+    { name: 'Router', def: '`express.Router()` makes a mini-app you can mount with `app.use("/api", router)`. Used to split routes across files.', t: 'rec' }
+  ],
+  '4:fastify': [
+    { name: 'Fastify', def: 'A high-performance Node web framework — ~2x faster than Express. Schema-driven via JSON Schema for routing + validation.', t: 'rec' },
+    { name: 'Schema-first', def: 'Routes declare their request/response shape in JSON Schema; Fastify validates, compiles, and serializes accordingly.', t: 'rec' },
+    { name: 'Plugins', def: 'Fastify\'s composition model — each plugin gets its own encapsulated scope. The recommended way to share code.', t: 'rec' }
+  ],
+  '4:prisma': [
+    { name: 'ORM', def: 'Object-Relational Mapper — a library that maps DB rows to objects so you can query in code instead of raw SQL.', t: 'req' },
+    { name: 'schema.prisma', def: 'The Prisma schema file. Single source of truth for your DB structure. Generates the typed client when run.', t: 'req' },
+    { name: 'Prisma Migrate', def: '`prisma migrate dev` generates SQL migrations from schema changes. Applies them and updates the DB. Industry-standard migration flow.', t: 'req' },
+    { name: 'Prisma Client', def: 'The auto-generated, fully type-safe DB client. `prisma.user.findMany()` autocompletes with the actual fields of your User table.', t: 'req' },
+    { name: 'include vs select', def: '`include` fetches related rows (joins). `select` picks specific fields. Different shapes — `include` adds; `select` narrows.', t: 'req' },
+    { name: 'Transactions', def: '`prisma.$transaction([...])` batches multiple operations atomically. All succeed or all roll back.', t: 'rec' },
+    { name: 'N+1 query problem', def: 'Looping over records and querying for each = N+1 round trips. Fix with `include`/`select` or `findMany` with `where: { id: { in: [...] } }`.', t: 'req' }
+  ],
+  '4:auth-jwt': [
+    { name: 'JWT', def: 'JSON Web Token — a URL-safe string with three base64-encoded parts (header.payload.signature). Carries claims like userId + expiry. Self-contained.', t: 'req' },
+    { name: 'Claims', def: 'The payload fields inside a JWT: `sub` (subject), `iat` (issued at), `exp` (expiry), and custom claims like role.', t: 'req' },
+    { name: 'Bearer token', def: 'Convention: `Authorization: Bearer <jwt>` header. Standard way to send credentials with each request.', t: 'req' },
+    { name: 'Access vs refresh token', def: 'Access token = short-lived (~15min), sent on every request. Refresh token = long-lived, used only to mint new access tokens. Limits blast radius.', t: 'req' },
+    { name: 'Session auth', def: 'Server stores a session ID in a cookie + matches it to user data in Redis/DB. Easier to revoke than JWT. Preferred for traditional web apps.', t: 'rec' },
+    { name: 'OAuth 2.0', def: 'Protocol for letting a third-party app act on a user\'s behalf without seeing their password. Powers "Sign in with Google".', t: 'req' },
+    { name: 'OIDC (OpenID Connect)', def: 'Identity layer on top of OAuth 2.0. Adds an `id_token` that proves who the user is.', t: 'rec' }
+  ],
+  '4:auth-hash': [
+    { name: 'Password hashing', def: 'A one-way function — easy to compute hash(password), infeasible to reverse. NEVER store passwords plain; always store hash + salt.', t: 'req' },
+    { name: 'argon2', def: 'The winner of the Password Hashing Competition. Memory-hard, recommended default in 2026. Tunable: time, memory, parallelism.', t: 'req' },
+    { name: 'bcrypt', def: 'Older but still acceptable hash. Configurable work factor (default 12 = ~250ms). Don\'t use SHA-256 + salt — too fast.', t: 'req' },
+    { name: 'Salt', def: 'A unique random value per password, mixed into the hash. Prevents rainbow-table attacks. Stored alongside the hash.', t: 'req' },
+    { name: 'Pepper', def: 'A SECRET random value added to every password before hashing, stored only in your environment (not the DB). Protects if the DB leaks.', t: 'rec' },
+    { name: 'Constant-time compare', def: 'Comparing hashes must take the same time regardless of where they differ — otherwise timing attacks leak info. Use `crypto.timingSafeEqual` / `bcrypt.compare`.', t: 'rec' }
+  ],
+  '4:file-uploads': [
+    { name: 'multipart/form-data', def: 'HTTP encoding for binary file uploads — fields and files separated by boundary strings. Browser uses this when you POST a `<form enctype="multipart/form-data">`.', t: 'req' },
+    { name: 'Presigned URL', def: 'A time-limited URL that grants permission to upload (or read) one specific S3/R2/B2 object. Lets clients upload directly to storage without proxying through your server.', t: 'req' },
+    { name: 'Direct-to-blob upload', def: 'Pattern: client requests a presigned URL from your API, then uploads the file directly to S3/R2. Saves bandwidth + memory on your backend.', t: 'req' },
+    { name: 'Magic bytes', def: 'The first few bytes of a file that identify its true type (PDF starts with `%PDF`, JPEG with `FFD8FFE0`). Validate this, not the Content-Type header (which clients can lie about).', t: 'rec' },
+    { name: 'Cloudflare R2', def: 'S3-compatible blob storage with NO egress fees. Recommended default for student / side-project storage.', t: 'rec' }
+  ],
+  '4:fastapi-basics': [
+    { name: 'FastAPI', def: 'Modern Python web framework built on Starlette + Pydantic. Type-hint-driven; auto-generates OpenAPI docs + validation.', t: 'req' },
+    { name: 'Path parameter', def: '`@app.get("/users/{id}")` — `id` becomes a typed function argument: `def get_user(id: int)`.', t: 'req' },
+    { name: 'Pydantic BaseModel', def: 'Python class with type-hinted fields. FastAPI uses these for request body validation + response serialization.', t: 'req' },
+    { name: 'response_model', def: 'Decorator option that filters which fields actually go to the client. Hides internal/sensitive fields from API responses.', t: 'req' },
+    { name: '/docs (Swagger UI)', def: 'Auto-generated interactive API explorer at `/docs`. Free OpenAPI 3.1 spec + UI just from your type hints.', t: 'rec' }
+  ],
+  '4:fastapi-async': [
+    { name: 'async def', def: 'Coroutine function — can `await` other awaitables. FastAPI routes can be either `def` (sync, threadpool) or `async def` (event loop).', t: 'req' },
+    { name: 'Depends()', def: 'FastAPI\'s dependency injection. `def route(db: Session = Depends(get_db))` — DB session injected per request.', t: 'req' },
+    { name: 'BackgroundTasks', def: 'Run code AFTER returning the response — useful for non-critical work (logs, emails, analytics).', t: 'rec' },
+    { name: 'ASGI', def: 'Async Server Gateway Interface — the async successor to WSGI. Underlies FastAPI, Starlette, Django Channels.', t: 'rec' }
+  ],
+  '4:sqlalchemy': [
+    { name: 'SQLAlchemy', def: 'The industry-standard Python ORM. Two layers: Core (SQL expression language) + ORM (declarative classes).', t: 'req' },
+    { name: 'Session', def: 'A unit of work that tracks changes. `session.add(...)`, `session.commit()`. Like a Prisma transaction.', t: 'req' },
+    { name: 'Alembic', def: 'SQLAlchemy\'s migration tool. `alembic revision --autogenerate` diffs your model vs DB and writes migration scripts.', t: 'req' },
+    { name: 'Eager vs lazy loading', def: 'Lazy (default): related rows fetched on attribute access (N+1 risk). Eager: `selectinload(...)` / `joinedload(...)` fetches them up front.', t: 'rec' }
+  ],
+  '4:fastapi-auth': [
+    { name: 'OAuth2PasswordBearer', def: 'FastAPI security utility — extracts the `Authorization: Bearer ...` token from incoming requests.', t: 'req' },
+    { name: 'Scope', def: 'A named permission inside OAuth2 (e.g. `read:users`, `write:posts`). Routes can require specific scopes.', t: 'rec' },
+    { name: 'RBAC (Role-Based Access Control)', def: 'Authz model where users have roles (admin, editor, viewer), and each role has permissions. Most common pattern.', t: 'rec' }
+  ],
+  '4:pytest': [
+    { name: 'Fixture', def: 'A reusable test setup function. Returns a value via `yield` (cleanup after). Drives FastAPI\'s test client, DB sessions, etc.', t: 'req' },
+    { name: 'Parametrize', def: '`@pytest.mark.parametrize("input,expected", [(1, 2), (3, 4)])` — runs the test once per (input, expected) tuple.', t: 'req' },
+    { name: 'Conftest.py', def: 'Auto-discovered file where pytest fixtures live. Anything in conftest.py is available to all tests in that folder.', t: 'rec' },
+    { name: 'pytest-asyncio', def: 'Plugin enabling `async def` tests. Required for testing async FastAPI routes.', t: 'rec' }
+  ],
+  '4:redis-basics': [
+    { name: 'Redis', def: 'In-memory key-value store. Microsecond reads, ms writes. Used for caching, sessions, rate limits, pub/sub, queues.', t: 'req' },
+    { name: 'TTL (Time To Live)', def: '`SET key value EX 60` — auto-deletes after 60 seconds. The foundation of cache invalidation in Redis.', t: 'req' },
+    { name: 'Cache-aside pattern', def: 'On read: try cache → on miss, fetch from DB and SET. On write: UPDATE DB then DEL cache. Most common caching pattern.', t: 'req' },
+    { name: 'LRU eviction', def: 'When Redis runs out of memory, it can evict the Least-Recently-Used keys. Configurable via `maxmemory-policy`.', t: 'rec' },
+    { name: 'Pipeline', def: 'Batch multiple commands into one round trip: `pipeline.set(...).set(...).exec()`. Cuts latency dramatically for batches.', t: 'rec' },
+    { name: 'Pub/Sub', def: '`PUBLISH channel msg` / `SUBSCRIBE channel` for fire-and-forget messaging. NOT durable — use streams for durability.', t: 'rec' }
+  ],
+  '4:redis-queues': [
+    { name: 'BullMQ', def: 'TypeScript-first Redis-backed job queue. Add jobs to a queue; workers consume them in another process. Retries, scheduling, priorities all built in.', t: 'req' },
+    { name: 'Worker', def: 'A separate process that pulls jobs off the queue and runs them. Scales horizontally — add more workers under load.', t: 'req' },
+    { name: 'Backoff', def: 'Exponential retry delay on failure (1s, 2s, 4s, 8s...). Prevents hammering a failing dependency.', t: 'rec' },
+    { name: 'Idempotent job', def: 'A job that can be run multiple times safely (because retries DO happen). Use a unique job ID to dedup if needed.', t: 'rec' }
+  ],
+  '4:websockets': [
+    { name: 'WebSocket', def: 'Persistent bidirectional TCP connection between browser and server, upgraded from HTTP. Both sides can send messages anytime.', t: 'req' },
+    { name: 'Upgrade handshake', def: 'The client sends an HTTP request with `Upgrade: websocket`; the server responds 101 Switching Protocols. After that it\'s no longer HTTP.', t: 'rec' },
+    { name: 'Ping/Pong frames', def: 'Heartbeat messages to detect dead connections. Most libraries handle automatically.', t: 'rec' },
+    { name: 'Socket.IO', def: 'A higher-level library on top of WebSockets — adds rooms, namespaces, auto-reconnect, fallback transports. Common for chat apps.', t: 'rec' }
+  ],
+  '4:sse': [
+    { name: 'Server-Sent Events (SSE)', def: 'One-way streaming from server to browser over HTTP. Each event is a `data:` line. Browser handles reconnection automatically.', t: 'req' },
+    { name: 'EventSource', def: 'Browser API for consuming SSE: `new EventSource(url)`. Fires `onmessage` for each event from the server.', t: 'req' },
+    { name: 'When SSE > WebSocket', def: 'When you only need server-to-client streaming (LLM responses, progress updates, notifications). Simpler, works over plain HTTP.', t: 'rec' }
+  ],
+  '4:owasp': [
+    { name: 'OWASP', def: 'Open Worldwide Application Security Project — nonprofit that publishes free security guidance, including the famous Top 10.', t: 'req' },
+    { name: 'OWASP Top 10', def: 'The 10 most critical web app security risks, updated every few years. The minimum-viable security knowledge for any backend dev.', t: 'req' },
+    { name: 'A01: Broken Access Control', def: 'Bugs where users can access data they shouldn\'t (e.g. /api/orders/123 returns someone else\'s order). #1 on the 2021 OWASP list.', t: 'req' },
+    { name: 'A02: Cryptographic Failures', def: 'Weak encryption, plain-text password storage, missing TLS. Often a data-at-rest or in-transit problem.', t: 'rec' },
+    { name: 'A07: ID & Auth Failures', def: 'Weak password rules, lack of MFA, session-fixation bugs. The category most likely to bite small teams.', t: 'rec' }
+  ],
+  '4:xss': [
+    { name: 'XSS (Cross-Site Scripting)', def: 'Injecting attacker JS into a page so it runs in another user\'s browser. Three flavors: stored, reflected, DOM-based.', t: 'req' },
+    { name: 'Stored XSS', def: 'Attacker payload saved in the DB (e.g. in a comment). Runs for every user who views the comment. Worst kind.', t: 'req' },
+    { name: 'Reflected XSS', def: 'Payload comes back in a URL parameter. Attacker tricks victim into clicking a crafted link.', t: 'rec' },
+    { name: 'Content Security Policy (CSP)', def: 'HTTP header telling the browser which sources of scripts/styles are allowed. Major defense-in-depth.', t: 'req' },
+    { name: 'dangerouslySetInnerHTML', def: 'React escape hatch for injecting raw HTML. The name warns you — only use with sanitized input (DOMPurify).', t: 'rec' }
+  ],
+  '4:csrf': [
+    { name: 'CSRF (Cross-Site Request Forgery)', def: 'An attack where a malicious site tricks the browser into sending an authenticated request to your site (e.g. POST /transfer with the user\'s cookies).', t: 'req' },
+    { name: 'SameSite cookie', def: '`SameSite=Lax` blocks the cookie on most cross-site requests. The simplest CSRF defense in 2026. Default in modern browsers.', t: 'req' },
+    { name: 'CSRF token', def: 'A random per-session token included in every form/AJAX request as a header or hidden field. Server verifies it matches the session.', t: 'rec' },
+    { name: 'Double-submit pattern', def: 'CSRF token in BOTH a cookie AND a form/header. Browser auto-sends the cookie; attacker can\'t read it to put it in the form.', t: 'rec' }
+  ],
+  '4:sqli': [
+    { name: 'SQL Injection', def: 'Inserting SQL into user input that gets concatenated into a query. Classic: `\' OR \'1\'=\'1`. Can read/modify/delete the whole database.', t: 'req' },
+    { name: 'Parameterized query', def: 'The defense: `db.query("SELECT * FROM users WHERE id = ?", [userId])`. The DB driver treats the value as data, not SQL.', t: 'req' },
+    { name: 'Raw query escape hatch', def: 'Prisma/SQLAlchemy normally prevent SQLi automatically, but `$queryRawUnsafe`/`text(...)` lets you bypass that. Use `$queryRaw` (tagged template) instead.', t: 'rec' }
+  ],
+  '4:session-sec': [
+    { name: 'HttpOnly cookie', def: 'A cookie flag that hides the cookie from JS (`document.cookie` can\'t read it). Defends against XSS-stolen sessions.', t: 'req' },
+    { name: 'Secure cookie', def: 'A cookie flag that says "only send over HTTPS". Defends against MITM on http:// requests.', t: 'req' },
+    { name: 'Session fixation', def: 'Attack where attacker plants a known session ID, victim logs in with it, attacker uses it. Fix: rotate session ID on login.', t: 'rec' },
+    { name: 'Refresh-token rotation', def: 'Each time a refresh token is used, mint a new one and revoke the old. Detects stolen tokens (the legitimate user gets logged out + alerted).', t: 'rec' },
+    { name: 'Password reset link', def: 'A signed, single-use token sent via email. Must expire in <60min and be revocable. Don\'t embed the new password in the URL.', t: 'rec' }
+  ],
+
+  /* === STAGE 6 — RAG, Vector DBs, Agents, MCP === */
+  '6:embeddings': [
+    { name: 'Embedding', def: 'A dense vector (e.g. 1024 floats) representing the semantic meaning of text/image/audio. Similar inputs produce similar vectors.', t: 'req' },
+    { name: 'Cosine similarity', def: 'How similar two vectors are by angle: 1 = identical direction, 0 = perpendicular. Standard distance metric for RAG. Range: -1 to 1.', t: 'req' },
+    { name: 'Euclidean distance', def: 'Straight-line distance between two vectors. Sometimes used instead of cosine; usually equivalent for normalized vectors.', t: 'rec' },
+    { name: 'Embedding dimensions', def: 'Number of floats per vector. More dims = more detail but slower search + bigger DB. voyage-3 = 1024, text-embedding-3-large = 3072.', t: 'req' },
+    { name: 'voyage-3', def: 'Voyage AI\'s general-purpose embedding model. 1024 dims, Anthropic-recommended default for RAG over docs/web content.', t: 'req' },
+    { name: 'Domain-specific embeddings', def: 'voyage-code (code search), voyage-finance (financial docs), voyage-law (legal), voyage-multilingual. Big quality wins for one-domain corpora.', t: 'rec' }
+  ],
+  '6:pgvector': [
+    { name: 'pgvector', def: 'A PostgreSQL extension that adds vector data types and similarity operators. Lets you keep vectors and your relational data in ONE database.', t: 'req' },
+    { name: '<-> / <=> / <#> operators', def: 'pgvector\'s similarity operators: `<->` = L2 distance, `<=>` = cosine distance, `<#>` = inner product. Use with `ORDER BY embedding <=> query`.', t: 'req' },
+    { name: 'HNSW index', def: 'Hierarchical Navigable Small World — graph-based approximate-nearest-neighbor index. The 2026 default for pgvector. Fast queries, fast writes.', t: 'req' },
+    { name: 'IVFFlat index', def: 'Inverted-file flat index. Older pgvector index type, slower writes but smaller memory. Mostly superseded by HNSW.', t: 'rec' },
+    { name: 'Recall vs latency tradeoff', def: 'Approximate-NN indexes (HNSW/IVFFlat) trade exactness for speed. Tunable via `ef_search` parameter. Higher = more accurate but slower.', t: 'rec' }
+  ],
+  '6:pinecone': [
+    { name: 'Pinecone', def: 'A managed (SaaS) vector database. No infra to run. Optimized for high-scale, low-latency vector search.', t: 'req' },
+    { name: 'Namespace', def: 'Logical partition within an index (e.g. one namespace per user). Cheaper than separate indexes for multi-tenant apps.', t: 'rec' },
+    { name: 'Metadata filtering', def: 'Filter vector search by structured fields: `filter={"user_id": "abc", "year": 2026}`. Crucial for multi-tenant + recency.', t: 'rec' },
+    { name: 'Pod-based vs serverless', def: 'Pod-based = dedicated capacity, predictable cost. Serverless = pay-per-query, scales to zero. Serverless is the 2026 default for small/medium apps.', t: 'rec' }
+  ],
+  '6:qdrant': [
+    { name: 'Qdrant', def: 'An open-source vector DB written in Rust. Self-hostable, production-grade. Strong filter+vector hybrid search.', t: 'req' },
+    { name: 'Collection', def: 'Qdrant\'s top-level container for vectors (analogous to a table in SQL). Each has its own embedding dimension + distance metric.', t: 'rec' },
+    { name: 'Payload', def: 'Structured metadata attached to each vector. Used for filtering. Schema-less by default.', t: 'rec' }
+  ],
+  '6:weaviate': [
+    { name: 'Weaviate', def: 'Open-source vector DB with built-in hybrid search (vector + BM25) and integrated embedding/reranking modules.', t: 'req' },
+    { name: 'BM25', def: 'Classic keyword-relevance ranking algorithm (TF-IDF\'s smarter sibling). Captures exact-match relevance that vector search misses.', t: 'req' },
+    { name: 'Hybrid search', def: 'Combine vector similarity + keyword (BM25) scores. Catches both semantic match (vector) and exact-term match (BM25). Almost always beats either alone.', t: 'req' }
+  ],
+  '6:rag-loaders': [
+    { name: 'Document loader', def: 'Code that ingests raw files (PDF, HTML, CSV, code, Markdown) into a consistent text+metadata structure for the RAG pipeline.', t: 'req' },
+    { name: 'PDF extraction', def: 'PDFs are hard — tables, columns, images don\'t parse linearly. Libraries: pdf-parse (simple), Unstructured.io (high-quality), PyMuPDF (fast).', t: 'req' },
+    { name: 'Unstructured.io', def: 'Library + service for high-quality extraction from messy formats (PDF, PowerPoint, HTML). Returns structured Document objects with element types.', t: 'rec' },
+    { name: 'LlamaIndex Reader', def: 'A loader from the LlamaIndex framework. 100+ readers for sources like Notion, Slack, Confluence, S3, websites.', t: 'rec' }
+  ],
+  '6:rag-chunking': [
+    { name: 'Chunking', def: 'Splitting documents into smaller passages (typically 100-1000 tokens). Each chunk gets its own embedding + retrieval entry.', t: 'req' },
+    { name: 'Chunk size', def: 'Tokens per chunk. Smaller (~200) = more precise retrieval but more noise. Larger (~1000) = more context but less precise. 500 is a common default.', t: 'req' },
+    { name: 'Chunk overlap', def: 'Adjacent chunks share N tokens at boundaries (e.g. overlap=50). Prevents context loss when relevant info spans the chunk boundary.', t: 'req' },
+    { name: 'Recursive splitter', def: 'Smart splitter that tries paragraph → sentence → word boundaries in order. LangChain\'s RecursiveCharacterTextSplitter is the standard.', t: 'rec' },
+    { name: 'Semantic chunking', def: 'Splits by semantic shift (when embedding similarity drops below threshold). Better quality but more expensive than naive splitting.', t: 'rec' }
+  ],
+  '6:rag-retrieval': [
+    { name: 'k (top-k retrieval)', def: 'How many chunks to retrieve per query. Common starting point: k=5-10. Larger = more context but more tokens (cost).', t: 'req' },
+    { name: 'Reranking', def: 'Second pass: take top-50 from vector search, score each against the query with a more expensive cross-encoder, return top-5. Major quality lift.', t: 'req' },
+    { name: 'Cross-encoder', def: 'A model that takes (query, candidate) as joint input and scores relevance. Slower than embeddings (no caching) but more accurate.', t: 'rec' },
+    { name: 'Cohere Rerank', def: 'A managed API for reranking. ~5-10ms per query. Drop-in upgrade for any RAG retrieval.', t: 'rec' },
+    { name: 'MMR (Maximal Marginal Relevance)', def: 'Retrieval algorithm that balances relevance vs diversity — avoids returning 5 near-duplicate chunks.', t: 'rec' },
+    { name: 'HyDE (Hypothetical Document Embeddings)', def: 'Have the LLM generate a hypothetical answer to the question, embed THAT, retrieve against it. Often boosts recall.', t: 'rec' }
+  ],
+  '6:rag-eval': [
+    { name: 'Precision @ k', def: '% of the top-k retrieved chunks that are actually relevant. Measures "did we surface mostly good stuff?"', t: 'req' },
+    { name: 'Recall @ k', def: '% of all relevant chunks that appear in the top-k. Measures "did we miss anything?"', t: 'req' },
+    { name: 'MRR (Mean Reciprocal Rank)', def: 'Average of 1/(rank of first relevant result). Reward retrievers that put the BEST answer first.', t: 'rec' },
+    { name: 'Faithfulness', def: 'Does the generated answer ONLY say things grounded in the retrieved context? Hallucination metric for RAG.', t: 'req' },
+    { name: 'Ragas', def: 'Open-source framework for evaluating RAG: faithfulness, answer relevancy, context precision/recall. Run as part of CI.', t: 'rec' },
+    { name: 'Eval set / golden set', def: 'A hand-curated collection of (question, expected-answer, source-passages) tuples you score against. Update as failures emerge.', t: 'req' }
+  ],
+  '6:agent-loop': [
+    { name: 'Agent', def: 'An LLM that picks tools to call in a loop until it produces a final answer. The model decides the steps; you just give it tools + a goal.', t: 'req' },
+    { name: 'ReAct (Reason + Act)', def: 'Pattern where each step is: think → choose a tool → observe result → think again. The canonical agent loop.', t: 'req' },
+    { name: 'Tool', def: 'A function you give the LLM access to (search, calculator, DB query, file read). Described via JSON schema so the model knows when/how to call it.', t: 'req' },
+    { name: 'Observation', def: 'The output of a tool call, fed back to the LLM in the next turn so it can decide what to do next.', t: 'req' },
+    { name: 'Iteration limit', def: 'Hard cap on how many tool-call rounds an agent can take per request. Without it, infinite loops cost infinite money.', t: 'req' },
+    { name: 'Effective agents (Anthropic)', def: 'Anthropic\'s research-backed advice: prefer workflows (chained LLM calls with fixed steps) over agents (LLM picks steps). Use agents only when flexibility is needed.', t: 'rec' }
+  ],
+  '6:langgraph': [
+    { name: 'LangGraph', def: 'A library for building stateful, multi-step LLM agents as graphs. Nodes = steps; edges = conditional transitions. From the LangChain team.', t: 'req' },
+    { name: 'StateGraph', def: 'The main LangGraph class. You define a state schema (a TypedDict / Pydantic model), nodes that mutate state, edges that connect them.', t: 'req' },
+    { name: 'Checkpointing', def: 'LangGraph can persist agent state to a DB after each step. Enables resuming long-running agents + human-in-the-loop pauses.', t: 'rec' },
+    { name: 'Human-in-the-loop', def: 'Pattern where the agent pauses at a node and asks a human to approve/edit before continuing. LangGraph supports this natively via interrupts.', t: 'rec' }
+  ],
+  '6:langchain': [
+    { name: 'LangChain', def: 'Python/JS framework for LLM apps. Hundreds of integrations (loaders, splitters, vector DBs, models). Useful for prototypes; can be overkill in production.', t: 'rec' },
+    { name: 'LCEL (LangChain Expression Language)', def: 'A pipeline DSL using `|`: `prompt | model | output_parser`. Composable, supports streaming + batching.', t: 'rec' },
+    { name: 'Runnable', def: 'The base interface in LCEL — any object with `.invoke()`, `.stream()`, `.batch()`. Models, prompts, parsers all implement this.', t: 'rec' }
+  ],
+  '6:dspy': [
+    { name: 'DSPy', def: 'Stanford framework that treats LLM behavior as compilable programs. You declare signatures (input → output); DSPy optimizes prompts/few-shot examples automatically.', t: 'rec' },
+    { name: 'Signature', def: 'DSPy\'s declarative spec: `question -> answer` or `context, question -> answer`. The framework figures out the prompt.', t: 'rec' },
+    { name: 'Module', def: 'A unit of DSPy program: `Predict(signature)`, `ChainOfThought(...)`, `ReAct(tools)`. Composable like PyTorch nn.Module.', t: 'rec' },
+    { name: 'Compile', def: 'Run DSPy\'s optimizer over a training set + metric to auto-tune prompts/examples for your specific data.', t: 'rec' }
+  ],
+  '6:outlines': [
+    { name: 'Constrained generation', def: 'Forcing LLM output to match a grammar (regex / JSON schema / context-free grammar). The model can ONLY produce tokens that keep the output valid.', t: 'rec' },
+    { name: 'JSON schema constraint', def: 'Outlines / Anthropic let you pass a JSON Schema as a constraint. Output is GUARANTEED to parse — no `try/catch JSON.parse`.', t: 'rec' },
+    { name: 'Regex constraint', def: 'Restrict output to a regex. Useful for IDs, phone numbers, structured codes. Outlines composes these into JSON-schema generation.', t: 'rec' }
+  ],
+  '6:mcp-protocol': [
+    { name: 'MCP (Model Context Protocol)', def: 'Anthropic\'s open standard for connecting LLMs to external tools, data, and prompts via a uniform interface. Like USB-C for AI tools.', t: 'req' },
+    { name: 'MCP Server', def: 'A process that exposes tools/resources/prompts to MCP clients. Speaks the MCP protocol over stdio/SSE/HTTP.', t: 'req' },
+    { name: 'MCP Client', def: 'An app (Claude Desktop, Cursor, etc.) that connects to MCP servers to give Claude new capabilities.', t: 'req' },
+    { name: 'Resource', def: 'Read-only data an MCP server exposes (e.g. files, DB rows). The client/LLM can list them and fetch their content.', t: 'rec' },
+    { name: 'Prompt', def: 'A reusable prompt template an MCP server exposes. The client can invoke it with arguments to get a pre-built prompt.', t: 'rec' },
+    { name: 'Transport', def: 'How an MCP client+server communicate: `stdio` (local), `sse` (HTTP server-sent events), or `streamable-http` (newer HTTP transport).', t: 'req' }
+  ],
+  '6:mcp-server': [
+    { name: 'tools/list', def: 'MCP method clients call to discover what tools a server offers. Returns each tool\'s name, description, and JSON schema for arguments.', t: 'req' },
+    { name: 'tools/call', def: 'MCP method to invoke a tool with arguments. Returns the result that the LLM observes.', t: 'req' },
+    { name: 'MCP TypeScript SDK', def: '`@modelcontextprotocol/sdk` — the official TypeScript SDK for building MCP servers. Wraps protocol details.', t: 'req' },
+    { name: 'MCP Python SDK', def: '`mcp` Python package from Anthropic. Decorator-driven: `@server.tool()` registers a tool. Equally capable to the TS SDK.', t: 'req' },
+    { name: 'stdio MCP server', def: 'An MCP server that talks over stdin/stdout. The simplest deployment — launched as a subprocess by the client. Default for local dev.', t: 'rec' }
+  ],
+  '6:mcp-production': [
+    { name: 'Remote MCP', def: 'MCP servers exposed over HTTP/SSE instead of stdio. Lets you deploy them once and have many clients connect. Required for SaaS MCP.', t: 'rec' },
+    { name: 'streamable-http transport', def: 'Newer (2025) HTTP transport for MCP. Replaces SSE for production. Single HTTP endpoint, supports streaming + batching.', t: 'rec' },
+    { name: 'OAuth for MCP', def: 'Auth pattern for remote MCP: client authenticates with the server via OAuth before calling tools. Required for any tool with user-scoped data.', t: 'rec' }
+  ],
+  '6:mcp-security': [
+    { name: 'Tool poisoning', def: 'Attack where a malicious MCP server returns crafted output designed to override the system prompt or jailbreak the model.', t: 'req' },
+    { name: 'Confused deputy', def: 'When an MCP tool acts with HIGHER permissions than the user asking. Always scope tools by user identity, not by the server\'s creds.', t: 'rec' },
+    { name: 'Prompt injection via tool output', def: 'Untrusted content (web pages, emails) flows through a tool back to the LLM. The LLM may follow instructions embedded in that content. Defense: tag untrusted regions in the prompt.', t: 'req' },
+    { name: 'Capability scoping', def: 'Each tool should have the minimum permissions needed. Read-only tools shouldn\'t expose write methods. Failed scoping = LLM-driven RCE risk.', t: 'req' }
+  ],
+  '6:mcp-debug': [
+    { name: 'MCP Inspector', def: 'A web UI for testing MCP servers without an LLM. Lists tools/resources/prompts, lets you call them manually. The default debug tool.', t: 'req' },
+    { name: 'MCP logging', def: 'MCP servers can send `logging/message` notifications to the client. Critical for debugging tool-call failures in production.', t: 'rec' },
+    { name: 'Common bugs', def: 'JSON schema mismatch (tool args wrong), stdio buffering (newlines), transport version mismatch, missing notifications/initialized handshake.', t: 'rec' }
   ]
 };
 
@@ -13120,6 +13385,139 @@ const PRACTICES = {
   ],
   '2:cors': [
     { name: 'CORS Anywhere', url: 'https://github.com/Rob--W/cors-anywhere', type: 'tutorial', diff: 'intermediate', desc: 'Run a CORS proxy locally to learn what the headers do.' }
+  ],
+
+  /* === STAGE 3 — Frontend === */
+  '3:ts-basics': [
+    { name: 'TypeScript Exercises (Type Challenges)', url: 'https://github.com/type-challenges/type-challenges', type: 'challenge', diff: 'intermediate', desc: '700+ TypeScript type-system puzzles from easy to extreme.' },
+    { name: 'Total TypeScript (Matt Pocock — free tier)', url: 'https://www.totaltypescript.com/tutorials', type: 'tutorial', diff: 'beginner', desc: 'Free interactive TS courses. Definitive resource for typed JS.' },
+    { name: 'TypeScript Playground', url: 'https://www.typescriptlang.org/play', type: 'platform', diff: 'beginner', desc: 'Try TS in the browser — paste any code, see types + errors live.' }
+  ],
+  '3:react-comp': [
+    { name: 'React Tutorial (official)', url: 'https://react.dev/learn/tutorial-tic-tac-toe', type: 'tutorial', diff: 'beginner', desc: 'Build tic-tac-toe — the canonical React first project.' },
+    { name: 'Bulletproof React', url: 'https://github.com/alan2207/bulletproof-react', type: 'project', diff: 'intermediate', desc: 'Production-grade React architecture reference. Read the structure first; build later.' },
+    { name: 'BuildUI Free Tutorials', url: 'https://buildui.com/', type: 'tutorial', diff: 'intermediate', desc: 'Free walkthroughs building real React + Next.js patterns.' }
+  ],
+  '3:react-state': [
+    { name: 'React Hooks Quiz', url: 'https://www.bigfrontend.dev/quiz', type: 'quiz', diff: 'intermediate', desc: 'Filter for React hooks questions. Tests subtle state-update behaviors.' }
+  ],
+  '3:react-effect': [
+    { name: 'You Might Not Need useEffect', url: 'https://react.dev/learn/you-might-not-need-an-effect', type: 'tutorial', diff: 'intermediate', desc: 'Official React guide on common useEffect misuses + their cures.' },
+    { name: 'React Hooks Patterns', url: 'https://patterns.dev/', type: 'tutorial', diff: 'intermediate', desc: 'patterns.dev — high-quality React design patterns covered visually.' }
+  ],
+  '3:tanstack-query': [
+    { name: 'TanStack Query Examples', url: 'https://tanstack.com/query/latest/docs/framework/react/examples/basic', type: 'tutorial', diff: 'beginner', desc: '20+ runnable examples in the official docs.' },
+    { name: 'Practical React Query (TkDodo)', url: 'https://tkdodo.eu/blog/practical-react-query', type: 'tutorial', diff: 'intermediate', desc: 'Deep series from a TanStack Query maintainer — the canonical RQ wisdom.' }
+  ],
+  '3:tailwind': [
+    { name: 'Tailwind Playground', url: 'https://play.tailwindcss.com/', type: 'platform', diff: 'beginner', desc: 'Live editor for Tailwind. Best way to learn utility classes by playing.' },
+    { name: 'Tailwind UI components (free)', url: 'https://tailwindui.com/preview', type: 'tutorial', diff: 'beginner', desc: 'Examine the markup of professionally-designed components.' },
+    { name: 'Hyper UI', url: 'https://www.hyperui.dev/', type: 'tutorial', diff: 'beginner', desc: 'Free Tailwind component library — copy-paste real-world UI.' }
+  ],
+  '3:next-routing': [
+    { name: 'Next.js Learn (official)', url: 'https://nextjs.org/learn', type: 'tutorial', diff: 'beginner', desc: 'Free official course building a real app step by step.' },
+    { name: 'Next.js Examples', url: 'https://github.com/vercel/next.js/tree/canary/examples', type: 'project', diff: 'intermediate', desc: '300+ example apps in the Next.js repo. Search before building.' }
+  ],
+  '3:next-server': [
+    { name: 'Server Components Cheatsheet', url: 'https://nextjs.org/docs/app/building-your-application/rendering/server-components', type: 'tutorial', diff: 'intermediate', desc: 'Official guide. The mental model for App Router.' }
+  ],
+
+  /* === STAGE 4 — Backend === */
+  '4:hono': [
+    { name: 'Hono Examples Repo', url: 'https://github.com/honojs/examples', type: 'project', diff: 'beginner', desc: 'Reference implementations for Cloudflare Workers, Bun, Node, Deno.' },
+    { name: 'Hono Playground', url: 'https://hono.dev/', type: 'platform', diff: 'beginner', desc: 'Try Hono in the browser without installing.' }
+  ],
+  '4:prisma': [
+    { name: 'Prisma Examples', url: 'https://github.com/prisma/prisma-examples', type: 'project', diff: 'beginner', desc: '50+ runnable Prisma examples across stacks.' },
+    { name: 'Prisma Playground', url: 'https://playground.prisma.io/', type: 'platform', diff: 'beginner', desc: 'Run Prisma queries against a sample DB in the browser.' }
+  ],
+  '4:auth-jwt': [
+    { name: 'JWT Debugger', url: 'https://jwt.io/', type: 'platform', diff: 'beginner', desc: 'Paste a JWT to decode header + payload, verify signature.' },
+    { name: 'Build Auth From Scratch (Lucia)', url: 'https://lucia-auth.com/tutorials/username-and-password/', type: 'tutorial', diff: 'intermediate', desc: 'Step-by-step session auth tutorial that teaches what real auth libs do.' }
+  ],
+  '4:auth-hash': [
+    { name: 'Have I Been Pwned?', url: 'https://haveibeenpwned.com/Passwords', type: 'platform', diff: 'beginner', desc: 'API of leaked password hashes. Block users from picking known-bad passwords.' }
+  ],
+  '4:fastapi-basics': [
+    { name: 'FastAPI Full Course (freeCodeCamp)', url: 'https://www.youtube.com/watch?v=tLKKmouUams', type: 'tutorial', diff: 'beginner', desc: 'Free 20-hour course on YouTube. Start-to-finish FastAPI.' },
+    { name: 'Full Stack FastAPI Template', url: 'https://github.com/fastapi/full-stack-fastapi-template', type: 'project', diff: 'intermediate', desc: 'Official template: FastAPI + React + Postgres + Docker.' }
+  ],
+  '4:redis-basics': [
+    { name: 'Try Redis', url: 'https://try.redis.io/', type: 'tutorial', diff: 'beginner', desc: 'Interactive Redis tutorial in your browser. Free.' },
+    { name: 'Redis University', url: 'https://university.redis.io/', type: 'tutorial', diff: 'beginner', desc: 'Free official courses by level (RU101-401).' },
+    { name: 'Redis Patterns', url: 'https://redis.io/docs/latest/develop/use/patterns/', type: 'tutorial', diff: 'intermediate', desc: 'Common patterns: rate limit, leaderboard, distributed lock.' }
+  ],
+  '4:owasp': [
+    { name: 'OWASP Juice Shop', url: 'https://github.com/juice-shop/juice-shop', type: 'challenge', diff: 'intermediate', desc: 'Deliberately vulnerable web app. Hack it to learn the OWASP Top 10.' },
+    { name: 'PortSwigger Web Security Academy', url: 'https://portswigger.net/web-security', type: 'tutorial', diff: 'intermediate', desc: 'Free, hands-on labs covering XSS, SQLi, CSRF, etc. Excellent.' }
+  ],
+  '4:xss': [
+    { name: 'XSS Game (Google)', url: 'https://xss-game.appspot.com/', type: 'game', diff: 'intermediate', desc: 'Find the XSS — 6 progressively harder levels.' },
+    { name: 'DOMPurify', url: 'https://github.com/cure53/DOMPurify', type: 'platform', diff: 'beginner', desc: 'The library to sanitize HTML when you must allow it. Try its demo.' }
+  ],
+  '4:sqli': [
+    { name: 'SQLi Lab (PortSwigger)', url: 'https://portswigger.net/web-security/sql-injection', type: 'challenge', diff: 'intermediate', desc: 'Hands-on SQLi labs from easy to advanced. The best way to learn the attack.' }
+  ],
+
+  /* === STAGE 5 — LLM === */
+  '5:prompt-system': [
+    { name: 'Anthropic Prompt Library', url: 'https://docs.anthropic.com/en/prompt-library/library', type: 'tutorial', diff: 'beginner', desc: '40+ production-ready prompts with system + user templates. Steal these.' },
+    { name: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/', type: 'tutorial', diff: 'beginner', desc: 'Comprehensive guide covering zero-shot, few-shot, CoT, ReAct.' }
+  ],
+  '5:prompt-fewshot': [
+    { name: 'Anthropic Prompt Eng Interactive Tutorial', url: 'https://github.com/anthropics/prompt-eng-interactive-tutorial', type: 'tutorial', diff: 'beginner', desc: '9-chapter Jupyter tutorial. The official Anthropic course.' }
+  ],
+  '5:anthropic-api': [
+    { name: 'Anthropic Cookbook', url: 'https://github.com/anthropics/anthropic-cookbook', type: 'project', diff: 'beginner', desc: 'Recipes for every common Anthropic API use case. Copy + paste.' },
+    { name: 'Anthropic Courses', url: 'https://anthropic.skilljar.com/', type: 'tutorial', diff: 'beginner', desc: '6 free courses: API basics, prompt eng, tool use, RAG, real-world.' }
+  ],
+  '5:tool-use': [
+    { name: 'Anthropic Tool Use Cookbook', url: 'https://github.com/anthropics/anthropic-cookbook/tree/main/tool_use', type: 'project', diff: 'intermediate', desc: 'Working examples: customer service, parallel tools, JSON-mode.' }
+  ],
+  '5:streaming': [
+    { name: 'Vercel AI SDK Examples', url: 'https://github.com/vercel/ai/tree/main/examples', type: 'project', diff: 'beginner', desc: 'Streaming chat, structured output, tool use — all working samples.' }
+  ],
+  '5:ai-sdk': [
+    { name: 'AI SDK Playground', url: 'https://sdk.vercel.ai/playground', type: 'platform', diff: 'beginner', desc: 'Compare models, test prompts, generate code with the Vercel AI SDK.' },
+    { name: 'AI SDK Cookbook', url: 'https://ai-sdk.dev/cookbook', type: 'tutorial', diff: 'beginner', desc: 'Snippets for every common pattern: tools, streaming, vision, structured output.' }
+  ],
+
+  /* === STAGE 6 — RAG / Agents === */
+  '6:embeddings': [
+    { name: 'Embedding Visualizer', url: 'https://projector.tensorflow.org/', type: 'game', diff: 'beginner', desc: 'TensorFlow Projector. Visualize 1024-dim embeddings in 3D. Fascinating.' },
+    { name: 'Voyage Recipes', url: 'https://docs.voyageai.com/docs/anthropic', type: 'tutorial', diff: 'beginner', desc: 'Voyage + Claude RAG recipes — the recommended pair for new RAG.' }
+  ],
+  '6:pgvector': [
+    { name: 'pgvector Examples', url: 'https://github.com/pgvector/pgvector#readme', type: 'tutorial', diff: 'beginner', desc: 'Snippets for every language: Python, JS, Ruby, Go, Java.' },
+    { name: 'Supabase Vector Quickstart', url: 'https://supabase.com/docs/guides/ai/vector-columns', type: 'tutorial', diff: 'beginner', desc: 'Free Supabase tier comes with pgvector preinstalled. Fastest path to a RAG MVP.' }
+  ],
+  '6:rag-chunking': [
+    { name: 'Chunking Strategies (Pinecone)', url: 'https://www.pinecone.io/learn/chunking-strategies/', type: 'tutorial', diff: 'intermediate', desc: 'Compares fixed, semantic, recursive chunking with examples.' },
+    { name: 'LangChain Splitters', url: 'https://python.langchain.com/docs/concepts/text_splitters/', type: 'tutorial', diff: 'intermediate', desc: 'Decision tree for picking the right splitter for your content type.' }
+  ],
+  '6:rag-retrieval': [
+    { name: 'Cohere Rerank Playground', url: 'https://dashboard.cohere.com/playground/rerank', type: 'platform', diff: 'beginner', desc: 'Try reranking in the browser. See the quality jump from 5 reranked vs 5 raw.' },
+    { name: 'Pinecone Hybrid Search', url: 'https://www.pinecone.io/learn/hybrid-search-intro/', type: 'tutorial', diff: 'intermediate', desc: 'Combine vector + keyword. Almost always beats either alone.' }
+  ],
+  '6:rag-eval': [
+    { name: 'Ragas (RAG eval framework)', url: 'https://docs.ragas.io/', type: 'tutorial', diff: 'intermediate', desc: 'Open-source RAG evaluation: faithfulness, answer relevance, context precision.' },
+    { name: 'Hamel Husain — Evaluating Language Models', url: 'https://hamel.dev/blog/posts/evals/', type: 'tutorial', diff: 'intermediate', desc: 'Practical eval guide from a top ML practitioner. Gold standard.' }
+  ],
+  '6:agent-loop': [
+    { name: 'Anthropic Effective Agents', url: 'https://www.anthropic.com/research/building-effective-agents', type: 'tutorial', diff: 'intermediate', desc: 'Anthropic\'s research-backed agent design patterns. Required reading.' },
+    { name: 'Agent Recipes (Anthropic Cookbook)', url: 'https://github.com/anthropics/anthropic-cookbook/tree/main/patterns/agents', type: 'project', diff: 'intermediate', desc: 'Working code for every common agent pattern.' }
+  ],
+  '6:langgraph': [
+    { name: 'LangGraph Course (free, deeplearning.ai)', url: 'https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/', type: 'tutorial', diff: 'intermediate', desc: 'Free LangChain Academy course on LangGraph.' },
+    { name: 'LangGraph Examples', url: 'https://github.com/langchain-ai/langgraph/tree/main/examples', type: 'project', diff: 'intermediate', desc: 'Production-ready agent patterns in the LangGraph repo.' }
+  ],
+  '6:mcp-protocol': [
+    { name: 'HuggingFace MCP Course (free)', url: 'https://huggingface.co/learn/mcp-course', type: 'tutorial', diff: 'beginner', desc: 'Free 6-chapter MCP course from HuggingFace. Build a server + client.' },
+    { name: 'MCP Examples', url: 'https://modelcontextprotocol.io/examples', type: 'project', diff: 'beginner', desc: 'Official reference MCP server implementations to learn from.' }
+  ],
+  '6:mcp-server': [
+    { name: 'MCP Quickstart (Python)', url: 'https://modelcontextprotocol.io/quickstart/server', type: 'tutorial', diff: 'beginner', desc: 'Build a working MCP server in ~30 minutes.' },
+    { name: 'Awesome MCP Servers', url: 'https://github.com/punkpeye/awesome-mcp-servers', type: 'platform', diff: 'beginner', desc: 'Curated list of 200+ open-source MCP servers — read the source.' }
   ]
 };
 
