@@ -6,6 +6,21 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Skill Graph fixes (PUSH 12)
+
+### Fixed
+- **SVG was being CSS-stretched to 100% container width**, fighting the JS-computed `width` attribute. Result: wide stages (Stage 1 with 8 branches) were horizontally compressed instead of properly scrolling. Now `min-width: 100%` lets it fill small viewports but expand for content.
+- **Tooltip jumped off-target whenever the graph was scrolled.** Handler was using `clientX - rect.left` to position an `absolute`-positioned tooltip inside a scrolling container — missing the `scrollLeft/scrollTop` offset. Tooltip now tracks the cursor correctly even on a scrolled graph.
+- **Compact mode hid labels but kept the same huge spacing.** Now compact actually compacts: band height 220 → 140, column width 130 → 70, row spacing 28 → 18. Toggling triggers a re-render so layout adapts immediately.
+- **Stage labels in the graph did nothing on click.** They tried `getElementById('stage-N')` which doesn't exist; fallback scrolled to the first topic instead of the band header. Each `.stage-cluster` now has `id="stage-cluster-N"` + `data-stage-id` — labels jump cleanly to the right place.
+- **Toolbar wrapped badly on narrow screens.** Added a 640px breakpoint: search input goes full-width, pills tighten up, labels stack.
+- **Filter pill checkboxes could double-toggle** in some browsers (hidden checkbox inside the clickable label). Disabled the inner input from event flow + added `stopPropagation` on the label handler.
+
+### Tests
+193/193 passing (7 new PUSH 12 tests + 186 pre-existing).
+
+---
+
 ## 2026-05 — Flashcards 50× coverage (PUSH 11)
 
 ### Changed

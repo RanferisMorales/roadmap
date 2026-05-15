@@ -2613,10 +2613,16 @@ abbr.glossary-term:hover::after {
 }
 .graph-toolbar .pill.active { background: var(--node-stage); }
 .graph-toolbar .pill input { display: none; }
-.graph-toolbar .pill-group { display: inline-flex; gap: 4px; }
+.graph-toolbar .pill-group { display: inline-flex; gap: 4px; flex-wrap: wrap; }
 .graph-toolbar .toolbar-label {
   font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
   color: var(--text-dim); margin-right: 2px;
+}
+@media (max-width: 640px) {
+  .graph-toolbar { padding: 6px 8px; gap: 6px; }
+  .graph-toolbar input[type="search"] { flex: 1 1 100%; min-width: 0; }
+  .graph-toolbar .pill { padding: 3px 9px; font-size: 11px; }
+  .graph-toolbar .toolbar-label { font-size: 11px; margin-right: 0; flex-basis: 100%; }
 }
 .graph-container {
   width: 100%; height: 70vh; min-height: 540px;
@@ -2624,7 +2630,8 @@ abbr.glossary-term:hover::after {
   background: var(--bg); overflow: auto; position: relative;
 }
 .graph-container.compact .gnode-label { display: none; }
-.graph-svg { display: block; width: 100%; min-height: 100%; }
+/* Let JS set explicit width/height; container handles scroll. min-width keeps it filling small viewports. */
+.graph-svg { display: block; min-width: 100%; }
 
 /* Stage bands */
 .gband { transition: opacity 0.15s; }
@@ -12502,7 +12509,7 @@ function renderRoadmap() {
         <div class="mentor-cta-links">${mentorCta.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('')}</div>
       </div>` : '';
     return `
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="${stage.id}" id="stage-cluster-${stage.id}">
         <div class="stage-band">
           <div class="stage-num-big">${String(stage.id).padStart(2,'0')}</div>
           <div class="stage-band-info">
@@ -21771,13 +21778,15 @@ function refreshFlashcardsButton(stageId, topicId) {
 const STAGE_HUES = [40, 200, 260, 320, 0, 30, 280, 220, 160, 100, 340]; // 11 stages (9 core + Mobile + DS/ML)
 
 function buildSkillGraphLayout(filter) {
-  const bandHeight = 220;        // height per stage band
-  const bandPadTop = 56;          // top inside a band (room for label + branch labels)
-  const bandPadBottom = 16;
-  const xMargin = 80;
-  const branchGap = 24;           // px between branch columns
-  const topicRowHeight = 28;      // px between topic dots within a branch
-  const minWidth = 880;
+  const compact = document.getElementById('graphContainer')?.classList.contains('compact');
+  const bandHeight = compact ? 140 : 220;        // height per stage band
+  const bandPadTop = compact ? 44 : 56;          // top inside a band (room for label + branch labels)
+  const bandPadBottom = compact ? 10 : 16;
+  const xMargin = compact ? 40 : 80;
+  const branchGap = compact ? 12 : 24;           // px between branch columns
+  const topicRowHeight = compact ? 18 : 28;      // px between topic dots within a branch
+  const minColWidth = compact ? 70 : 130;        // narrower columns when no labels
+  const minWidth = compact ? 560 : 880;
 
   // First pass: filter topics + compute branch widths per stage
   const stagesLayout = DATA.map(stage => {
@@ -21788,11 +21797,10 @@ function buildSkillGraphLayout(filter) {
     return { stage, branches, hasAny: branches.length > 0 };
   });
 
-  // Width: distribute branches per stage evenly within usable width
-  // Use the stage with the most branches to size columns consistently
+  // Width: distribute branches per stage evenly within usable width.
+  // Use the stage with the most branches to size columns consistently.
+  // (minColWidth + minWidth defined above; tighter in compact mode.)
   const maxBranches = Math.max(1, ...stagesLayout.map(sl => sl.branches.length));
-  // Reserve a min column width
-  const minColWidth = 130;
   const calcWidth = xMargin * 2 + maxBranches * (minColWidth + branchGap);
   const width = Math.max(minWidth, calcWidth);
   const colWidth = (width - xMargin * 2 - (maxBranches - 1) * branchGap) / maxBranches;
@@ -21902,12 +21910,16 @@ function openSkillGraph() {
   // Wire filter pills
   setTimeout(() => {
     document.querySelectorAll('#graphToolbar [data-tier]').forEach(p => {
+      // Disable the hidden checkbox so its native label-toggle behavior doesn't double-fire
+      const cb = p.querySelector('input[type="checkbox"]');
+      if (cb) { cb.tabIndex = -1; cb.setAttribute('aria-hidden', 'true'); }
       p.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const tier = p.dataset.tier;
         __graphFilter[tier] = !__graphFilter[tier];
         p.classList.toggle('active', __graphFilter[tier]);
-        p.querySelector('input').checked = __graphFilter[tier];
+        if (cb) cb.checked = __graphFilter[tier];
         renderSkillGraph();
       });
     });
@@ -21928,6 +21940,8 @@ function openSkillGraph() {
       c.classList.toggle('compact', on);
       compactPill.classList.toggle('active', on);
       compactPill.querySelector('input').checked = on;
+      // Re-render so layout uses compact dimensions (smaller bands, narrower columns)
+      renderSkillGraph();
     });
     const search = document.getElementById('graphSearch');
     search?.addEventListener('input', debounce(() => {
@@ -22046,8 +22060,11 @@ function renderSkillGraph() {
     el.addEventListener('mousemove', (e) => {
       const container = document.getElementById('graphContainer');
       const rect = container.getBoundingClientRect();
-      tooltip.style.left = `${e.clientX - rect.left + 12}px`;
-      tooltip.style.top = `${e.clientY - rect.top + 12}px`;
+      // tooltip is position:absolute inside .graph-container — its (0,0) is the container's
+      // scrolled origin, NOT the visible top-left. Add scrollLeft/Top so it tracks correctly
+      // even when the graph is scrolled.
+      tooltip.style.left = `${e.clientX - rect.left + container.scrollLeft + 12}px`;
+      tooltip.style.top = `${e.clientY - rect.top + container.scrollTop + 12}px`;
     });
     el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
     el.addEventListener('keydown', (e) => {
@@ -22066,14 +22083,14 @@ function renderSkillGraph() {
     el.addEventListener('click', () => {
       const stageId = el.dataset.stageId;
       closePracticeModal();
-      const target = document.getElementById(`stage-${stageId}`) || document.querySelector(`[id^="stage-"][id$="${stageId}"]`);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        // Fallback: scroll to the first topic in that stage
-        const node = document.querySelector(`.topic[data-tk^="${stageId}::"]`);
-        node?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      // After PUSH 12: each stage-cluster has id="stage-cluster-N" + data-stage-id.
+      // Wait a frame for the modal to close so scrollIntoView lands on the right Y.
+      setTimeout(() => {
+        const target = document.getElementById(`stage-cluster-${stageId}`)
+          || document.querySelector(`.stage-cluster[data-stage-id="${stageId}"]`)
+          || document.querySelector(`.topic[data-tk^="${stageId}::"]`);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
     });
   });
 }
