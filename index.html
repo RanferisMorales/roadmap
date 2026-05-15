@@ -217,6 +217,36 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 .whats-new-item strong { font-family: 'Kalam', cursive; font-weight: 700; }
 .whats-new-item .date { font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; color: var(--text-mute); display: block; margin-bottom: 2px; }
 
+/* ---- Mobile responsiveness for recent additions ---- */
+@media (max-width: 640px) {
+  .more-menu { max-height: 70vh; overflow-y: auto; right: 0; left: auto; }
+  .omni-overlay { padding: 16px; align-items: flex-start; }
+  .omni-card { max-height: 90vh; }
+  .omni-foot { font-size: 10px; gap: 8px; }
+  .omni-foot span:last-child { display: none; }
+  .tour-overlay { padding: 12px; align-items: flex-start; }
+  .tour-card { max-height: 95vh; }
+  .tour-head h3 { font-size: 18px; }
+  .tour-body { padding: 14px 16px; }
+  .tour-body p, .tour-body li { font-size: 13.5px; }
+  .stq-stage-grid { grid-template-columns: 1fr; }
+  .stq-q-options button { padding: 10px 12px; font-size: 14px; }
+  .defq-cat-grid { grid-template-columns: 1fr; }
+  .ai-instructor-modal { height: 85vh; }
+  .ai-quick-actions button { padding: 4px 10px; font-size: 11px; }
+  .ai-input-row textarea { font-size: 14px; }
+  .builds-grid { grid-template-columns: 1fr; }
+  .accountability-grid .acct-today-form { grid-template-columns: 1fr; }
+  .acct-week-grid { gap: 2px; }
+  .acct-week-day .day-hours { font-size: 13px; }
+  .bc-stats { gap: 8px; font-size: 12px; }
+  .bc-stat strong { font-size: 14px; }
+  .bc-calendar { grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); }
+  .practices-grid { grid-template-columns: 1fr; }
+  .intro-jump-row { gap: 6px; }
+  .intro-jump-link, .intro-whats-new { font-size: 12px; padding: 3px 10px; }
+}
+
 /* ---- GLOBAL SEARCH PALETTE (Cmd/Ctrl+K) ---- */
 .omni-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.55);
@@ -13795,6 +13825,293 @@ const TERMS = {
     { name: 'Competing offer', def: 'A real offer from another company. Most leverage in negotiation. Apply to 2-5 places in parallel for this reason.', t: 'req' },
     { name: 'Total comp', def: 'Base + bonus + equity + sign-on. Negotiate ALL of these, not just base. Sign-on bonuses are easiest for the company to add.', t: 'req' },
     { name: 'Anchoring', def: 'Going first sets the anchor. If forced to give a number, give the TOP of your range — they\'ll negotiate down, not up.', t: 'rec' }
+  ],
+
+  /* === STAGE 1 — Math & Logic Fundamentals === */
+  '1:fund-boolean': [
+    { name: 'Boolean value', def: 'A type with only two possible values: `true` or `false`. The atomic unit of logic.', t: 'req' },
+    { name: 'AND (&&)', def: '`true` only if BOTH operands are true. Short-circuits: if the left side is false, the right isn\'t evaluated.', t: 'req' },
+    { name: 'OR (||)', def: '`true` if EITHER operand is true. Short-circuits: if the left side is true, the right isn\'t evaluated.', t: 'req' },
+    { name: 'NOT (!)', def: 'Inverts the value: `!true === false`. Highest precedence in most languages.', t: 'req' },
+    { name: 'XOR (exclusive or)', def: 'True if EXACTLY ONE operand is true (not both, not neither). Often written as `a !== b` for booleans.', t: 'rec' },
+    { name: 'De Morgan\'s laws', def: '`!(A && B)` equals `!A || !B`. `!(A || B)` equals `!A && !B`. The two rules for refactoring complex negations.', t: 'rec' },
+    { name: 'Truth table', def: 'A grid listing every possible input combination and the resulting output. The disciplined way to verify boolean logic.', t: 'req' }
+  ],
+  '1:fund-sets': [
+    { name: 'Set', def: 'An unordered collection of unique elements. No duplicates, no inherent order.', t: 'req' },
+    { name: 'Union (A ∪ B)', def: 'Elements in A OR B (or both). SQL: UNION. Code: `new Set([...a, ...b])`.', t: 'req' },
+    { name: 'Intersection (A ∩ B)', def: 'Elements in BOTH A and B. SQL: INNER JOIN. Code: `[...a].filter(x => b.has(x))`.', t: 'req' },
+    { name: 'Difference (A − B)', def: 'Elements in A that are NOT in B. SQL: LEFT JOIN ... WHERE B.id IS NULL. Code: `[...a].filter(x => !b.has(x))`.', t: 'req' },
+    { name: 'Symmetric difference', def: 'Elements in EITHER A or B but not both. SQL: FULL OUTER JOIN with WHERE both sides aren\'t simultaneously matched.', t: 'rec' },
+    { name: 'Cartesian product', def: 'All pairs (a, b) where a ∈ A, b ∈ B. SQL: CROSS JOIN. Used for combinatorial generation.', t: 'rec' }
+  ],
+  '1:fund-stats': [
+    { name: 'Mean (average)', def: 'Sum / count. Sensitive to outliers — one billionaire skews "average income" hugely.', t: 'req' },
+    { name: 'Median', def: 'The middle value when sorted. Outlier-resistant. Use for income, latency, anything skewed.', t: 'req' },
+    { name: 'Mode', def: 'The most frequent value. Useful for categorical data, rarely for continuous.', t: 'rec' },
+    { name: 'Standard deviation', def: 'How spread out the data is. Small σ = clustered around mean. Large σ = scattered.', t: 'req' },
+    { name: 'p50 / p95 / p99', def: 'Percentiles. p95 latency = 95% of requests are at or below this. The industry standard for performance metrics — not the mean.', t: 'req' },
+    { name: 'Variance', def: 'σ² — the squared deviation from the mean. Standard deviation is its square root. Used in regression and ML.', t: 'rec' }
+  ],
+  '1:fund-probability': [
+    { name: 'Probability', def: 'A number 0-1 representing how likely an event is. 0 = impossible, 1 = certain. P(A) ∈ [0, 1].', t: 'req' },
+    { name: 'Independent events', def: 'When one event doesn\'t affect another\'s probability. P(A and B) = P(A) × P(B).', t: 'req' },
+    { name: 'Conditional probability', def: 'P(A | B) = probability of A given B happened. Different from P(A and B). Email spam filters use this.', t: 'req' },
+    { name: 'Bayes\' theorem', def: 'P(A|B) = P(B|A) × P(A) / P(B). The math behind: "given this evidence, how should I update my belief?"', t: 'rec' },
+    { name: 'Expected value', def: 'Sum of (outcome × probability). The "average if you did this many times". Foundation of decision theory.', t: 'rec' }
+  ],
+  '1:fund-discrete': [
+    { name: 'Graph', def: 'Nodes (vertices) connected by edges. Models everything from networks to dependencies to friendships.', t: 'req' },
+    { name: 'Directed vs undirected', def: 'Directed = edges have direction (Twitter follow). Undirected = symmetric (Facebook friend).', t: 'req' },
+    { name: 'Permutation', def: 'Ordered arrangement. n! permutations of n items. (ABC, ACB, BAC, BCA, CAB, CBA)', t: 'rec' },
+    { name: 'Combination', def: 'Unordered selection. n choose k = n! / (k!(n-k)!). (ABC and CBA are the same combo)', t: 'rec' },
+    { name: 'Recurrence relation', def: 'Defines a sequence in terms of earlier terms. Fib(n) = Fib(n-1) + Fib(n-2). The basis of recursion analysis.', t: 'rec' }
+  ],
+  '1:fund-polya': [
+    { name: '1. Understand the problem', def: 'Restate it. What\'s known? What\'s unknown? What\'s the constraint? More time HERE saves 10x time later.', t: 'req' },
+    { name: '2. Devise a plan', def: 'Have you seen a similar problem? Can you simplify? Work backwards? Pattern-match against known techniques.', t: 'req' },
+    { name: '3. Carry out the plan', def: 'Execute step-by-step. Check each step. If a step fails, plan is wrong (go back to 2), not your typing.', t: 'req' },
+    { name: '4. Look back', def: 'Verify the answer. Could you have done it differently? What did you learn? This step is where mastery compounds.', t: 'req' },
+    { name: 'Rubber duck debugging', def: 'Explain your problem out loud to a duck (or anyone). The forced verbalization often surfaces the bug. Foundational debugging technique.', t: 'rec' }
+  ],
+  '1:fund-estimation': [
+    { name: 'Fermi estimation', def: 'Back-of-envelope guesses by breaking a problem into rough components. "How many piano tuners in Chicago?" → population × pianos/person × tunings/year ÷ tunings/tuner.', t: 'req' },
+    { name: 'Latency numbers', def: 'L1 cache ~1ns, RAM ~100ns, SSD ~100µs, network ~10ms. Know these orders of magnitude — they shape every performance decision.', t: 'req' },
+    { name: 'Order of magnitude', def: 'A factor of 10. "We need to scale this 100x" means two orders of magnitude — a completely different problem.', t: 'rec' },
+    { name: 'Round numbers fast', def: 'In Fermi math, drop precision. 1000 users × $5/mo ≈ $5K/mo. Don\'t calculate $4,873.42.', t: 'rec' }
+  ],
+
+  /* === STAGE 4 — SQL fundamentals === */
+  '4:sql-basics': [
+    { name: 'SELECT', def: '`SELECT col1, col2 FROM table WHERE condition` — the core query. Returns rows matching the condition.', t: 'req' },
+    { name: 'INNER JOIN', def: 'Returns rows where the join condition matches in BOTH tables. Drops non-matching rows from either side.', t: 'req' },
+    { name: 'LEFT JOIN', def: 'Returns ALL rows from the left table, with NULLs for the right side where no match exists.', t: 'req' },
+    { name: 'GROUP BY', def: 'Collapses rows into groups; lets you compute aggregates per group (SUM, COUNT, AVG).', t: 'req' },
+    { name: 'HAVING', def: 'Like WHERE but filters AFTER aggregation. `GROUP BY user HAVING COUNT(*) > 5`.', t: 'rec' },
+    { name: 'NULL', def: 'The "unknown" value. NULL = NULL is NULL (not true). Use `IS NULL` / `IS NOT NULL`.', t: 'req' }
+  ],
+  '4:sql-schema': [
+    { name: 'Primary key', def: 'A column (or set) that uniquely identifies each row. Usually an integer or UUID. Never NULL.', t: 'req' },
+    { name: 'Foreign key', def: 'A column referencing another table\'s primary key. Database enforces the relationship.', t: 'req' },
+    { name: 'Normalization', def: 'Splitting data into tables so each fact lives in exactly one place. 3NF is the common target.', t: 'req' },
+    { name: 'Denormalization', def: 'Intentionally duplicating data for read speed. Trade write complexity for read performance.', t: 'rec' },
+    { name: 'Constraint', def: 'NOT NULL, UNIQUE, CHECK, FOREIGN KEY. Database-enforced rules. Always prefer constraints over app-level checks.', t: 'req' }
+  ],
+  '4:sql-indexes': [
+    { name: 'Index', def: 'A separate sorted data structure that speeds up lookups. Postgres default is B-tree.', t: 'req' },
+    { name: 'B-tree index', def: 'Balanced tree. O(log n) lookup, insert, delete. Default for most columns. Supports range queries.', t: 'req' },
+    { name: 'Composite index', def: 'Index on multiple columns: `(user_id, created_at)`. Order matters — left-to-right prefix matching.', t: 'req' },
+    { name: 'EXPLAIN ANALYZE', def: 'Postgres command showing the query plan + actual timings. The first place to look for slow queries.', t: 'req' },
+    { name: 'Sequential scan', def: 'Reading every row in a table. Slow for big tables. Usually means a missing index — or the index isn\'t being used.', t: 'rec' }
+  ],
+  '4:sql-tx': [
+    { name: 'Transaction', def: '`BEGIN; ... COMMIT;` — a sequence of statements that all succeed or all roll back. Atomicity.', t: 'req' },
+    { name: 'ACID', def: 'Atomicity, Consistency, Isolation, Durability. The four guarantees a transactional DB provides.', t: 'req' },
+    { name: 'Isolation level', def: 'How transactions see each other\'s changes. Postgres default: READ COMMITTED. Higher levels (SERIALIZABLE) = stronger guarantees, more lock contention.', t: 'rec' },
+    { name: 'Migration', def: 'A versioned schema change file. `prisma migrate` or Alembic. Always reviewable in git, always reversible.', t: 'req' }
+  ],
+  '4:sql-windows': [
+    { name: 'Window function', def: '`ROW_NUMBER() OVER (PARTITION BY x ORDER BY y)` — computes a value for each row relative to a "window" of related rows. Different from GROUP BY.', t: 'rec' },
+    { name: 'CTE (WITH clause)', def: '`WITH name AS (subquery) SELECT ...` — a temporary named result set. Makes complex queries readable.', t: 'rec' },
+    { name: 'RANK / DENSE_RANK / ROW_NUMBER', def: 'Three ways to assign positions. RANK gives same rank to ties (skips next). DENSE_RANK doesn\'t skip. ROW_NUMBER is always unique.', t: 'rec' }
+  ],
+  '4:sql-optimize': [
+    { name: 'Query plan', def: 'How the DB will execute a query — which indexes, which join algorithms, which order. EXPLAIN shows it.', t: 'rec' },
+    { name: 'Nested loop join', def: 'For each row in A, scan B for matches. Fast for small A; slow for large. The default if no better algorithm fits.', t: 'rec' },
+    { name: 'Hash join', def: 'Build a hash table from one side, probe with the other. O(N+M) when memory allows. Postgres picks this for big joins.', t: 'rec' }
+  ],
+  '4:sql-indexing': [
+    { name: 'Index selectivity', def: 'How many DISTINCT values in the indexed column. High selectivity (email) = great index. Low (gender) = often useless.', t: 'rec' },
+    { name: 'Partial index', def: '`CREATE INDEX ON users(email) WHERE active = true` — only indexes rows matching a condition. Smaller, faster.', t: 'rec' },
+    { name: 'GIN index', def: 'Generalized Inverted Index. For arrays, JSONB, full-text search. Different use case than B-tree.', t: 'rec' }
+  ],
+  '4:trpc': [
+    { name: 'tRPC', def: 'End-to-end type-safe API library for TypeScript. Calls between Next.js client and Node server are type-checked automatically.', t: 'rec' },
+    { name: 'Procedure', def: 'A tRPC function with input/output types: `query` (read) or `mutation` (write). Like REST endpoints, but typed.', t: 'rec' },
+    { name: 'Context', def: 'Per-request data (db connection, user from auth). Passed to every procedure.', t: 'rec' },
+    { name: 'Router', def: 'Groups related procedures: `router({ list: ..., create: ..., delete: ... })`. Nested routers compose.', t: 'rec' }
+  ],
+
+  /* === STAGE 5 — LLM basics expansion === */
+  '5:tokens': [
+    { name: 'Token', def: 'The unit a model processes. ~4 chars or 0.75 words per token in English. "tokenization" itself is ~4 tokens.', t: 'req' },
+    { name: 'Tokenizer', def: 'The component that splits text into tokens. Different providers use different tokenizers (BPE, sentencepiece).', t: 'req' },
+    { name: 'Input vs output tokens', def: 'Provider bills both. Output is usually 4-5x more expensive than input. Watch your max_tokens.', t: 'req' },
+    { name: 'tiktoken / count-tokens', def: 'Libraries that estimate token count BEFORE you call the API. Lets you predict cost / hit-rate.', t: 'rec' },
+    { name: 'Context window', def: 'Max tokens a model can see at once (input + output + system). Claude Sonnet 4.6 = 200K-1M.', t: 'req' }
+  ],
+  '5:token-economics': [
+    { name: 'Cost per million tokens', def: 'Industry standard pricing unit. Claude Sonnet 4.6: $3 in, $15 out. Haiku: $1 / $5.', t: 'req' },
+    { name: 'Cache hit pricing', def: 'Cached prompt tokens are billed at ~10% of standard input rate. Huge cost saver for repeated long prompts.', t: 'req' },
+    { name: 'Cost per request', def: 'Estimate: (input_tokens / 1M × in_price) + (output_tokens / 1M × out_price). Track it per endpoint.', t: 'rec' },
+    { name: 'Budget alarm', def: 'A check that fires when daily spend > $X. Bills can balloon overnight (infinite loops, abusive users).', t: 'req' },
+    { name: 'Cheap-model fallback', def: 'Route easy queries (classification, summarization) to Haiku at 1/3 the cost. Reserve Opus for hard reasoning.', t: 'rec' }
+  ],
+  '5:context-strategies': [
+    { name: 'Conversation truncation', def: 'When history exceeds context window, drop oldest turns. Or summarize them. Don\'t just crash.', t: 'req' },
+    { name: 'Sliding window', def: 'Keep the last N turns. Simple. Loses long-term context.', t: 'req' },
+    { name: 'Summarization compaction', def: 'When approaching the limit, LLM summarizes earlier turns into 1-2 paragraphs that replace them.', t: 'rec' },
+    { name: 'RAG instead of huge context', def: 'For 1M-token corpora, retrieve top-k relevant chunks instead of dumping everything. Better quality + cheaper.', t: 'rec' }
+  ],
+  '5:model-selection': [
+    { name: 'Opus / Sonnet / Haiku', def: 'Anthropic\'s tier ladder. Opus = max capability + cost. Sonnet = balanced. Haiku = fast + cheap.', t: 'req' },
+    { name: 'Task → model', def: 'Classification, simple extraction → Haiku. Complex reasoning, code, agents → Sonnet+. Don\'t default to the biggest.', t: 'req' },
+    { name: 'Benchmark suites', def: 'MMLU (general knowledge), HumanEval (code), GPQA (hard reasoning). Compare models on tasks like yours.', t: 'rec' }
+  ],
+  '5:provider-pricing': [
+    { name: 'Pricing volatility', def: 'LLM prices drop ~50% per year. The cost calculations you do today will be obsolete in 12 months.', t: 'req' },
+    { name: 'Rate tier', def: 'Higher monthly spend = higher rate limits. Tier 1 (lowest) caps at ~50 req/min on most providers.', t: 'rec' },
+    { name: 'Cost per task', def: 'Track $-per-classification, $-per-RAG-answer. The right benchmark for picking models.', t: 'rec' }
+  ],
+  '5:multimodal': [
+    { name: 'Multi-modal', def: 'A model that accepts more than text input — images, audio, video. Claude Sonnet 4.6 handles images.', t: 'req' },
+    { name: 'Vision', def: 'Image input. Claude can read screenshots, photos, diagrams, charts. Useful for accessibility, debugging UI, receipt OCR.', t: 'req' },
+    { name: 'Image encoding', def: 'Pass as base64-encoded data URL or HTTP URL. Counts toward token budget (large images = many tokens).', t: 'rec' },
+    { name: 'OCR alternative', def: 'For dense text in images, vision-LLMs are now better than traditional OCR. Cost-prohibitive at high volume though.', t: 'rec' }
+  ],
+  '5:json-mode': [
+    { name: 'Structured output', def: 'Forcing the LLM to return JSON matching a schema. Guaranteed parseable — no try/catch around `JSON.parse`.', t: 'req' },
+    { name: 'JSON Schema', def: 'A schema spec (type, properties, required). Pass it to the LLM; provider constrains output to match.', t: 'req' },
+    { name: 'Tool use as JSON', def: 'Anthropic\'s pattern: define a "tool" with input schema, force its use. The "arguments" field is your structured output.', t: 'rec' }
+  ],
+
+  /* === STAGE 9 — Mobile Development === */
+  '9:mob-platforms': [
+    { name: 'Native', def: 'Built specifically for one OS using its primary language (Swift for iOS, Kotlin for Android). Best performance + access to platform APIs.', t: 'req' },
+    { name: 'Cross-platform', def: 'One codebase, both platforms. React Native (JS/TS) and Flutter (Dart) are the main 2026 options.', t: 'req' },
+    { name: 'React Native', def: 'Facebook\'s framework that uses React\'s mental model but renders native UI components (not WebViews).', t: 'req' },
+    { name: 'Flutter', def: 'Google\'s framework that draws its own pixels (Skia engine). Pixel-perfect but more learning curve (Dart, widget tree).', t: 'rec' }
+  ],
+  '9:mob-ux': [
+    { name: 'Touch target', def: 'Minimum tappable size: 44pt (iOS) / 48dp (Android). Smaller and users miss-tap.', t: 'req' },
+    { name: 'Stack navigation', def: 'Push/pop screens like a deck of cards. Back button returns to previous. iOS swipe-to-go-back is standard.', t: 'req' },
+    { name: 'Tab navigation', def: 'Bottom tabs (iOS) or top tabs (Android) for top-level sections. ≤5 tabs usually.', t: 'req' },
+    { name: 'Pull to refresh', def: 'Dragging the top of a list reloads. Universal mobile pattern.', t: 'rec' },
+    { name: 'Safe area', def: 'Region not blocked by notch, home indicator, status bar. Use `SafeAreaView` to avoid drawing under hardware.', t: 'rec' }
+  ],
+  '9:mob-toolchain': [
+    { name: 'Xcode', def: 'Apple\'s IDE. Required for iOS builds + App Store submission. Mac-only.', t: 'req' },
+    { name: 'Android Studio', def: 'Google\'s IDE. Required for Android builds. Multi-OS.', t: 'req' },
+    { name: 'Watchman', def: 'File-watcher tool React Native uses for hot reload. Quirky on Windows.', t: 'rec' },
+    { name: 'EAS Build', def: 'Expo\'s cloud build service. Builds iOS .ipa + Android .aab without needing local Xcode/Android setup.', t: 'rec' }
+  ],
+  '9:mob-rn-basics': [
+    { name: 'View', def: 'React Native\'s `<div>`. The fundamental layout container.', t: 'req' },
+    { name: 'Text', def: 'All text MUST be inside `<Text>`. Plain strings in `<View>` crash.', t: 'req' },
+    { name: 'FlatList', def: 'Virtualized list — only renders what\'s visible. Use for any list >20 items. Pass `data` + `renderItem`.', t: 'req' },
+    { name: 'StyleSheet', def: 'React Native\'s CSS analog. JS object with camelCase properties. No selectors, no cascade — just inline styles.', t: 'req' },
+    { name: 'Pressable', def: 'Modern touch handler. Replaces TouchableOpacity. Supports hover/press states.', t: 'rec' }
+  ],
+  '9:mob-expo': [
+    { name: 'Expo', def: 'A framework + tooling on top of React Native that handles native builds, OTA updates, and ~100 native modules.', t: 'req' },
+    { name: 'Managed workflow', def: 'You only write JS/TS. Expo handles all native code. Recommended for new projects.', t: 'req' },
+    { name: 'Bare workflow', def: 'Full access to native code (Swift, Kotlin). More power, more pain. Only when Expo can\'t do what you need.', t: 'rec' },
+    { name: 'Expo Go', def: 'Free dev app that runs your JS without building native. Great for quick iteration on real devices.', t: 'rec' }
+  ],
+  '9:mob-nav': [
+    { name: 'Expo Router', def: 'File-based routing. `app/profile.tsx` → /profile route. Same mental model as Next.js App Router.', t: 'req' },
+    { name: 'Stack', def: 'Push/pop navigation. New screens slide in from the right. Has built-in header.', t: 'req' },
+    { name: 'Tabs', def: 'Bottom-tab navigator. Each tab holds its own stack independently.', t: 'req' },
+    { name: 'Drawer', def: 'Side menu (iOS hamburger pattern, Android navigation drawer). Use sparingly — tabs are usually better.', t: 'rec' }
+  ],
+  '9:mob-push': [
+    { name: 'Push notification', def: 'A message your server sends to the device that shows up even when the app is closed. Critical for retention.', t: 'req' },
+    { name: 'Expo Push', def: 'Free cross-platform push API. One call, both iOS + Android. Best for solo devs / startups.', t: 'req' },
+    { name: 'Push token', def: 'A device-specific string your server stores. You send it to Expo/FCM to deliver a notification to that device.', t: 'req' },
+    { name: 'APNS / FCM', def: 'Apple Push Notification Service / Firebase Cloud Messaging. The underlying delivery infrastructure. Expo wraps both.', t: 'rec' }
+  ],
+  '9:mob-ios-store': [
+    { name: 'Apple Developer Program', def: '$99/year membership. Required to ship to the iOS App Store.', t: 'req' },
+    { name: 'TestFlight', def: 'Apple\'s beta-testing service. Push builds to up to 10K external testers without App Store review.', t: 'req' },
+    { name: 'App Review', def: 'Apple manually reviews every submission. 1-7 days. Can reject for guideline violations, crashes, missing features.', t: 'req' }
+  ],
+
+  /* === STAGE 10 — Data Science / ML Research === */
+  '10:ds-numpy-pandas': [
+    { name: 'NumPy', def: 'The foundational Python library for numerical arrays. Vectorized operations are 100x faster than Python loops.', t: 'req' },
+    { name: 'ndarray', def: 'NumPy\'s n-dimensional array. Homogeneous (single dtype), fixed-size. Foundation of every other DS library.', t: 'req' },
+    { name: 'Pandas DataFrame', def: 'A 2D table with named columns. Like a SQL table or spreadsheet. The standard for tabular data in Python.', t: 'req' },
+    { name: 'Series', def: 'A 1D Pandas object — a single labeled column. DataFrames are dicts of Series.', t: 'rec' },
+    { name: 'Vectorization', def: 'Applying an operation to a whole array at once. `arr * 2` instead of `for x in arr: x * 2`. NumPy-fast.', t: 'req' }
+  ],
+  '10:ds-jupyter': [
+    { name: 'Notebook', def: 'A document interleaving code cells, output, and Markdown. Lets you iterate interactively + share results.', t: 'req' },
+    { name: 'Cell', def: 'A unit of code (or Markdown). Shift+Enter runs the cell + moves to the next.', t: 'req' },
+    { name: 'Kernel', def: 'The Python process running the cells. Restart it to clear all variables ("kernel hell" = stale state from out-of-order execution).', t: 'rec' },
+    { name: 'Marimo', def: 'Reactive notebook alternative. No hidden state — re-runs dependent cells automatically. Newer, better for production.', t: 'rec' }
+  ],
+  '10:ds-eda': [
+    { name: 'EDA (Exploratory Data Analysis)', def: 'First 30-60 min with new data: shape, dtypes, distributions, missing values, correlations. Skip and your models fail.', t: 'req' },
+    { name: '.head() / .tail() / .describe()', def: 'Pandas inspection trio. `describe()` gives count, mean, std, min/max, quartiles — your first stats overview.', t: 'req' },
+    { name: 'Missing values', def: 'NULL/NaN/None. Decide per column: drop, impute (median, mode, forward-fill), or treat as a signal.', t: 'req' },
+    { name: 'Outlier', def: 'A value far from the rest of the distribution. Sometimes a measurement error, sometimes the signal. Plot before deciding.', t: 'rec' }
+  ],
+  '10:ds-stats-for-ml': [
+    { name: 'Hypothesis test', def: 'A formal procedure to test if an observed difference is "real" or random noise. Foundation of A/B testing.', t: 'rec' },
+    { name: 'p-value', def: 'Probability of seeing this result if the null hypothesis is true. <0.05 = "significant" (convention, not law).', t: 'rec' },
+    { name: 'Confidence interval', def: 'A range that, with 95% confidence, contains the true value. More informative than a point estimate.', t: 'rec' }
+  ],
+  '10:ds-sklearn': [
+    { name: 'scikit-learn', def: 'The default classical-ML library. Consistent API: `model.fit(X, y)`, `model.predict(X)`, `model.score(X, y)`.', t: 'req' },
+    { name: 'fit / transform / predict', def: 'The trinity. `fit` learns from data. `transform` applies the learned operation. `predict` outputs labels.', t: 'req' },
+    { name: 'Pipeline', def: '`Pipeline([("scaler", StandardScaler()), ("model", LogisticRegression())])` — chains preprocessing + model. Prevents data leakage.', t: 'req' }
+  ],
+  '10:ds-train-val-test': [
+    { name: 'Training set', def: '60-80% of data. What the model learns from. Hyperparameters are NOT tuned on this.', t: 'req' },
+    { name: 'Validation set', def: '10-20%. Used for hyperparameter tuning. The model never "trains" on this but it influences choices.', t: 'req' },
+    { name: 'Test set', def: '10-20%. UNTOUCHED until final evaluation. Touching it earlier = data leakage = inflated metrics that fail in production.', t: 'req' },
+    { name: 'K-fold cross-validation', def: 'Split data into K parts; train K times, each time holding out a different part as validation. Average the scores. Best for small datasets.', t: 'rec' }
+  ],
+  '10:ds-regression': [
+    { name: 'Linear regression', def: 'Fits a line: y = mx + b. The simplest predictive model. Baseline for any regression problem.', t: 'req' },
+    { name: 'Logistic regression', def: 'Despite the name, used for binary CLASSIFICATION. Outputs P(y=1). Always start here for classification.', t: 'req' },
+    { name: 'Coefficient interpretation', def: 'In linear regression, a coefficient tells you the unit change in y per unit change in x (holding others constant). Interpretability is its superpower.', t: 'rec' },
+    { name: 'Regularization (L1/L2)', def: 'Penalty terms (Lasso = L1, Ridge = L2) that shrink coefficients to prevent overfitting. L1 also does feature selection.', t: 'rec' }
+  ],
+  '10:ds-trees': [
+    { name: 'Decision tree', def: 'A flowchart of yes/no questions ending in a prediction. Interpretable but prone to overfitting alone.', t: 'req' },
+    { name: 'Random Forest', def: 'Many decision trees trained on random subsets, predictions averaged. Robust, good default for tabular data.', t: 'req' },
+    { name: 'XGBoost / LightGBM', def: 'Gradient-boosted trees. Often the WINNING approach on tabular Kaggle competitions. Faster, more accurate than RF.', t: 'req' },
+    { name: 'Feature importance', def: 'Trees tell you which features mattered most for predictions. Great for interpretability + feature selection.', t: 'rec' }
+  ],
+  '10:ds-features': [
+    { name: 'Feature engineering', def: 'Transforming raw data into model-friendly inputs. Often more impact than model choice on tabular tasks.', t: 'req' },
+    { name: 'One-hot encoding', def: 'Convert categorical (red, green, blue) to N binary columns. Standard for non-ordinal categories.', t: 'req' },
+    { name: 'Scaling / normalization', def: 'Bring features to the same range. Critical for distance-based models (KNN, SVM, NN), unnecessary for trees.', t: 'req' },
+    { name: 'Target encoding', def: 'Replace a categorical value with the mean target value for that category. Risky — leaks information if not done with cross-validation.', t: 'rec' }
+  ],
+  '10:ds-metrics': [
+    { name: 'Accuracy', def: '% correct. Useless on imbalanced data (95% accuracy when 95% of data is "no" = predicting "no" always).', t: 'req' },
+    { name: 'Precision', def: 'Of predicted positives, how many are actually positive. "Don\'t cry wolf."', t: 'req' },
+    { name: 'Recall', def: 'Of actual positives, how many we caught. "Don\'t miss the cancer."', t: 'req' },
+    { name: 'F1 score', def: 'Harmonic mean of precision and recall. Single number balancing both.', t: 'req' },
+    { name: 'ROC-AUC', def: 'Area under the ROC curve. Threshold-independent measure of classifier quality. 0.5 = random; 1.0 = perfect.', t: 'rec' }
+  ],
+  '10:ds-pytorch': [
+    { name: 'Tensor', def: 'A multidimensional array on CPU or GPU. Like NumPy but with autograd. The fundamental PyTorch type.', t: 'req' },
+    { name: 'Autograd', def: 'Automatic differentiation. PyTorch tracks every operation and can compute gradients via `.backward()`. Enables training.', t: 'req' },
+    { name: 'nn.Module', def: 'Base class for any model. Subclass, define `__init__` + `forward()`. Composable.', t: 'req' },
+    { name: 'Optimizer', def: 'Updates weights based on gradients. SGD, Adam, AdamW. Adam is the modern default.', t: 'req' },
+    { name: 'Loss function', def: 'Measures how wrong predictions are. Cross-entropy for classification, MSE for regression. The gradient signal.', t: 'req' }
+  ],
+  '10:ds-nn-basics': [
+    { name: 'Neuron / perceptron', def: 'A weighted sum + activation function. The atom of a neural network. y = activation(Σ wᵢxᵢ + b).', t: 'req' },
+    { name: 'Activation function', def: 'Non-linearity (ReLU, tanh, sigmoid). Without it, a multi-layer NN collapses to a single linear function.', t: 'req' },
+    { name: 'Forward pass', def: 'Compute predictions from inputs through the network. Each layer applies weights + activation.', t: 'req' },
+    { name: 'Backpropagation', def: 'Compute gradients of the loss w.r.t. every weight. Chain rule applied layer by layer, output to input.', t: 'req' },
+    { name: 'Epoch', def: 'One full pass through the training data. Models train for many (10-1000) epochs.', t: 'rec' }
+  ],
+  '10:ds-transformers': [
+    { name: 'Attention', def: 'Mechanism letting the model weight different input tokens differently for each output token. "Attention is all you need."', t: 'req' },
+    { name: 'Self-attention', def: 'A token attends to OTHER tokens in the same sequence. Captures context like "the bank" (river vs financial).', t: 'req' },
+    { name: 'Multi-head attention', def: 'Multiple parallel attention layers, each learning different patterns (syntax, semantics, position).', t: 'rec' },
+    { name: 'Encoder / Decoder', def: 'Encoder maps input to a representation. Decoder generates output from it. GPT = decoder-only; BERT = encoder-only.', t: 'rec' }
+  ],
+  '10:ds-hf': [
+    { name: 'Hugging Face', def: 'The "GitHub of ML." Hosts 1M+ models + datasets. The default way to use open-source LLMs and other ML models.', t: 'req' },
+    { name: 'transformers library', def: '`pip install transformers`. The canonical Python library for loading + fine-tuning models from HF Hub.', t: 'req' },
+    { name: 'AutoModel / AutoTokenizer', def: 'Generic loaders that auto-detect the right class for any model: `AutoModel.from_pretrained("meta-llama/Llama-3-8b")`.', t: 'req' },
+    { name: 'Spaces', def: 'HF\'s free hosting for ML demos. Build a Gradio/Streamlit app, deploy to a Space, get a public URL.', t: 'rec' }
   ]
 };
 
@@ -15294,6 +15611,204 @@ export const config = { matcher: ["/dashboard/:path*"] };</code></pre>` },
   <li>Tell 5 people you trust to try breaking it</li>
 </ol>` }
     ]
+  },
+  {
+    id: `browser-extension`,
+    title: `Browser Extension (Manifest V3)`,
+    category: `site`,
+    difficulty: `intermediate`,
+    time: `6-12 hrs`,
+    stack: `TypeScript · React · Vite · Chrome MV3 · Plasmo (optional)`,
+    desc: `A Chrome/Edge/Firefox extension that lives in the browser. Examples: a Hacker News reader popup, a productivity blocker, a price-tracker. MV3-only stack — service workers, not background pages.`,
+    steps: [
+      { title: `Why extensions are a good portfolio project`, body: `<p>Three reasons recruiters love these:</p>
+<ul>
+  <li><strong>Real users in real browsers</strong> — not just a localhost demo</li>
+  <li><strong>Distribution is real</strong> — Chrome Web Store, ~7-day review</li>
+  <li><strong>Constraints force discipline</strong> — MV3\\'s sandbox surfaces your understanding of permissions, messaging, and storage</li>
+</ul>
+<p>~5MB is a comfortable bundle. Plenty of room for a real app.</p>` },
+      { title: `Pick a scaffolder`, body: `<p>Two solid options in 2026:</p>
+<ul>
+  <li><strong><a href="https://www.plasmo.com/" target="_blank" rel="noopener">Plasmo</a></strong> — opinionated, React-first framework. Hot reload, TypeScript, easy storage. The "Next.js for extensions". Recommended.</li>
+  <li><strong><a href="https://github.com/vitejs/vite-plugin-react" target="_blank" rel="noopener">Vite + manual manifest</a></strong> — full control, more boilerplate. Use if you want to learn the primitives.</li>
+</ul>
+<pre><code>pnpm create plasmo my-extension
+cd my-extension
+pnpm dev   # builds to build/chrome-mv3-dev; load that folder in chrome://extensions</code></pre>` },
+      { title: `Understand the 4 surfaces`, body: `<p>An extension is up to 4 pieces of code that communicate:</p>
+<ol>
+  <li><strong>popup.tsx</strong> — UI shown when you click the toolbar icon. React app. Closes when clicked away.</li>
+  <li><strong>content.tsx</strong> — Script injected into web pages. Reads/modifies the DOM of the user\\'s tabs.</li>
+  <li><strong>background.ts (service worker)</strong> — Long-running logic. Listens for events. Has full Chrome API access. Sleeps when idle.</li>
+  <li><strong>options.tsx</strong> — Settings page (optional).</li>
+</ol>
+<p>They communicate via <code>chrome.runtime.sendMessage(...)</code> + listeners.</p>` },
+      { title: `Manifest V3 essentials`, body: `<p>The manifest declares your permissions. Plasmo auto-generates it; here\\'s what you\\'d write manually:</p>
+<pre><code>{
+  "manifest_version": 3,
+  "name": "My Extension",
+  "version": "1.0.0",
+  "description": "Does X",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://*.example.com/*"],
+  "action": { "default_popup": "popup.html" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [{
+    "matches": ["&lt;all_urls&gt;"],
+    "js": ["content.js"]
+  }]
+}</code></pre>
+<p><strong>Request only what you need</strong> — over-permissioning gets you rejected at review.</p>` },
+      { title: `Storage with chrome.storage`, body: `<pre><code>// Get
+const { count = 0 } = await chrome.storage.local.get('count');
+// Set
+await chrome.storage.local.set({ count: count + 1 });
+// Listen for changes (sync across popup + background)
+chrome.storage.onChanged.addListener((changes) =&gt; {
+  if (changes.count) console.log('Count changed:', changes.count.newValue);
+});</code></pre>
+<p>Plasmo wraps this as <code>useStorage()</code>, a React-friendly hook.</p>
+<p>Use <code>chrome.storage.sync</code> (instead of <code>local</code>) to auto-sync settings across the user\\'s devices via their Google account.</p>` },
+      { title: `Inject UI into pages with a content script`, body: `<pre><code>// content.tsx (Plasmo)
+import type { PlasmoCSConfig } from "plasmo";
+
+export const config: PlasmoCSConfig = {
+  matches: ["https://news.ycombinator.com/*"]
+};
+
+const Banner = () =&gt; (
+  &lt;div style={{
+    position: "fixed", top: 0, right: 0, padding: 10,
+    background: "tomato", color: "white", zIndex: 99999,
+  }}&gt;
+    Hello from your extension!
+  &lt;/div&gt;
+);
+
+export default Banner;</code></pre>
+<p>Plasmo handles Shadow DOM isolation so your CSS doesn\\'t collide with the host page.</p>` },
+      { title: `Submit to the Chrome Web Store`, body: `<ol>
+  <li>Pay <strong>$5 one-time</strong> developer fee at <a href="https://chrome.google.com/webstore/devconsole" target="_blank" rel="noopener">Chrome Web Store Developer Console</a></li>
+  <li>Zip your <code>build/chrome-mv3-prod</code> folder</li>
+  <li>Upload + write a description (1-3 paragraphs) + 5 screenshots (1280×800)</li>
+  <li>Submit for review — typically 1-7 days</li>
+</ol>
+<p>For Firefox: <a href="https://addons.mozilla.org/developers/" target="_blank" rel="noopener">addons.mozilla.org</a> ($0 fee, similar process). Edge inherits Chrome extensions automatically if you flip a publishing toggle.</p>` },
+      { title: `Common rejection reasons`, body: `<ul>
+  <li><strong>Over-permissioning</strong> — requesting "all URLs" when you only need one</li>
+  <li><strong>Vague description</strong> — store reviewers want to know exactly what data you collect + why</li>
+  <li><strong>Trademark issues</strong> — using a company\\'s name in your extension\\'s name (e.g. "GitHub +") is auto-flagged</li>
+  <li><strong>Remote code execution</strong> — MV3 forbids loading + executing code from servers. Bundle everything.</li>
+</ul>` }
+    ]
+  },
+  {
+    id: `cli-tool`,
+    title: `CLI Tool (Bun / Node + Commander)`,
+    category: `api`,
+    difficulty: `beginner`,
+    time: `3-6 hrs`,
+    stack: `TypeScript · Bun (or Node) · Commander · npm publish`,
+    desc: `A command-line tool you can install with \`npm i -g your-tool\` and run from any terminal. Great portfolio project — visible, useful, and 100% your code from scratch.`,
+    steps: [
+      { title: `Pick something specific to build`, body: `<p>A generic CLI is boring. A SPECIFIC one is portfolio-worthy. Ideas:</p>
+<ul>
+  <li>A README generator that fills in templates from package.json</li>
+  <li>A "what changed since I left" git log summarizer</li>
+  <li>A localized .env validator (compares to .env.example, warns on missing keys)</li>
+  <li>A markdown table formatter (paste in CSV, get aligned table)</li>
+  <li>A claude-cli wrapper for your custom prompts</li>
+</ul>
+<p>Constraint: solve ONE annoyance you have. Real motivation = real iteration.</p>` },
+      { title: `Initialize with Bun (or Node)`, body: `<pre><code>mkdir my-cli && cd my-cli
+bun init                    # or "npm init -y" for Node
+bun add commander chalk     # CLI parser + colored output
+bun add -d typescript @types/node</code></pre>
+<p>Bun is 2-3x faster than Node, includes TypeScript natively, and the binary it produces with "bun build --compile" is self-contained. Recommended for new CLIs.</p>` },
+      { title: `Define commands with Commander`, body: `<pre><code>#!/usr/bin/env bun
+// src/index.ts
+import { Command } from "commander";
+import chalk from "chalk";
+import pkg from "../package.json";
+
+const program = new Command();
+
+program
+  .name("my-cli")
+  .description("A CLI that does X")
+  .version(pkg.version);
+
+program
+  .command("hello")
+  .description("Say hello")
+  .argument("&lt;name&gt;", "Who to greet")
+  .option("-l, --loud", "shout it")
+  .action((name, opts) =&gt; {
+    const msg = opts.loud ? \`HELLO, \${name.toUpperCase()}!\` : \`Hello, \${name}.\`;
+    console.log(chalk.cyan(msg));
+  });
+
+program.parse();</code></pre>
+<p>The shebang <code>#!/usr/bin/env bun</code> (or <code>node</code>) lets the file run directly.</p>` },
+      { title: `Map the binary in package.json`, body: `<pre><code>{
+  "name": "my-cli",
+  "version": "1.0.0",
+  "bin": {
+    "my-cli": "./src/index.ts"
+  },
+  "files": ["src/", "dist/", "README.md"],
+  "type": "module"
+}</code></pre>
+<p>When users <code>npm i -g my-cli</code>, npm symlinks <code>my-cli</code> on their PATH to <code>src/index.ts</code>.</p>
+<p>For Node (not Bun), you\\'ll need a build step: <code>tsc</code> → <code>dist/index.js</code> → point <code>bin</code> at the JS file.</p>` },
+      { title: `Read/write files with proper UX`, body: `<pre><code>import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { resolve } from "node:path";
+
+function readJson(path: string) {
+  const full = resolve(process.cwd(), path);
+  if (!existsSync(full)) {
+    console.error(chalk.red(\`Error: \${full} not found\`));
+    process.exit(1);
+  }
+  return JSON.parse(readFileSync(full, "utf-8"));
+}</code></pre>
+<p><strong>Always exit with a non-zero code on error</strong> — shell scripts depend on this.</p>` },
+      { title: `Prompt for input with @clack/prompts`, body: `<p>For interactive CLIs (config wizards, scaffolders):</p>
+<pre><code>bun add @clack/prompts</code></pre>
+<pre><code>import { text, confirm, intro, outro } from "@clack/prompts";
+
+intro("Welcome!");
+const name = await text({ message: "Your name?", validate: (v) =&gt; v.length &gt; 0 ? undefined : "Required" });
+const proceed = await confirm({ message: "Are you sure?" });
+outro("Done.");</code></pre>
+<p>Prefer this over <code>inquirer</code> in 2026 — cleaner API, better defaults.</p>` },
+      { title: `Test it locally before publishing`, body: `<pre><code># Link it system-wide as if installed
+bun link
+# OR for Node:
+npm link
+
+# Now you can run it from anywhere
+my-cli hello world
+
+# Unlink when done:
+bun unlink</code></pre>
+<p>This catches packaging bugs (missing files, wrong shebang) BEFORE you publish to npm.</p>` },
+      { title: `Publish to npm`, body: `<ol>
+  <li>Make sure your name is unique: <code>npm view my-cli</code> (404 = available)</li>
+  <li>Sign in: <code>npm login</code></li>
+  <li>Test the package contents: <code>npm pack --dry-run</code> shows what will ship</li>
+  <li>Publish: <code>npm publish --access public</code></li>
+</ol>
+<p>Subsequent versions: bump in package.json, then <code>npm publish</code> again. Use <code>npm version patch|minor|major</code> to auto-bump.</p>
+<p>For scoped packages (<code>@yourorg/my-cli</code>): include <code>"publishConfig": { "access": "public" }</code> in package.json.</p>` },
+      { title: `Bonus: ship a standalone binary`, body: `<p>With Bun, you can produce a SINGLE-FILE binary with no Node/Bun dependency:</p>
+<pre><code>bun build src/index.ts --compile --outfile=my-cli
+./my-cli hello world</code></pre>
+<p>Distribute via GitHub Releases — users download the binary and run it. ~50MB per binary, but no install step.</p>
+<p>For Node, <a href="https://github.com/vercel/pkg" target="_blank" rel="noopener">vercel/pkg</a> does the same (now in maintenance mode; Bun is the modern path).</p>` }
+    ]
+
   }
 ];
 
@@ -19790,33 +20305,37 @@ function dismissSkillSuggestion() {
 /* ============================================================
    INIT
    ============================================================ */
+// Init split into 3 phases for better first-paint perf:
+//   1. CRITICAL — theme + render so the user sees something immediately
+//   2. INTERACTIVE — hydration + features the user can act on
+//   3. IDLE — heavy / non-critical work deferred to requestIdleCallback or setTimeout
 applyTheme();
 applySettings();
 // Re-render from DATA so new topics added to DATA pick up automatically.
-// (Static HTML below in #roadmap is kept as the no-JS fallback only.)
 try { render(); } catch (e) { console.error('render() failed; falling back to static HTML', e); }
-// Hydrate state (complete/in-progress) into the freshly-rendered HTML.
 hydrate();
+checkOnboarding();
+// Quick UI that the user expects immediately
 initHowto();
 refreshTodaysFocus();
 renderQuickJump();
-refreshAllNoteIndicators();
 renderStreakPill();
-initPomodoroOnLoad();
-applyScheduleBanners();
-refreshAllProjectCriteria();
-personalizeFromProfile();  // Phase 8: drive intro/howto/footer/menu/banner from state.profile
-// #11 Glossary — scan and wrap recognized terms in the rendered HTML.
-// Defer to next tick so the static HTML is parsed first.
-setTimeout(scanGlossary, 50);
-checkOnboarding();
-// Honor #s5/branch/topic deep links AFTER onboarding check so the onboarding modal
-// doesn't trap the user behind a topic that auto-opened underneath it
+initPomodoroOnLoad();  // restores running-timer UI if one was active
+personalizeFromProfile();
+// Deep links + tour are user-driven flows
 if (!document.getElementById('onbOverlay').classList.contains('open')) {
   applyHashRouting();
 }
-// First-visit tour — shows after onboarding completes/skips, once per browser
 maybeShowFirstVisitTour();
+// Defer the rest to idle time so first paint isn't blocked.
+const _idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+_idle(() => {
+  refreshAllNoteIndicators();
+  applyScheduleBanners();
+  refreshAllProjectCriteria();
+});
+// Glossary auto-scan touches every text node; keep it on its own deferred tick.
+setTimeout(scanGlossary, 200);
 
 // Attach note autosave once the textarea exists in the DOM
 (function wireNoteAutosave() {
