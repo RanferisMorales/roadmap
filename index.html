@@ -217,6 +217,112 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 .whats-new-item strong { font-family: 'Kalam', cursive; font-weight: 700; }
 .whats-new-item .date { font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; color: var(--text-mute); display: block; margin-bottom: 2px; }
 
+/* ---- GLOBAL SEARCH PALETTE (Cmd/Ctrl+K) ---- */
+.omni-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  display: none; align-items: flex-start; justify-content: center;
+  z-index: 220; padding: 60px 16px 16px;
+}
+.omni-overlay.open { display: flex; }
+.omni-card {
+  background: var(--bg-elev); border: 3px solid var(--border); border-radius: 14px;
+  max-width: 680px; width: 100%; max-height: 80vh;
+  display: grid; grid-template-rows: auto 1fr auto;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.25); overflow: hidden;
+}
+.omni-input-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-bottom: 2px solid var(--border);
+}
+.omni-input-row input {
+  flex: 1; padding: 8px 10px; border: 2px solid var(--border); border-radius: 6px;
+  background: var(--bg); color: var(--text);
+  font-family: 'Patrick Hand', cursive; font-size: 16px;
+}
+.omni-input-row .omni-hint {
+  font-family: 'Architects Daughter', cursive; font-size: 11px; color: var(--text-mute);
+}
+.omni-results { overflow-y: auto; padding: 8px 0; }
+.omni-section { padding: 4px 0; }
+.omni-section-head {
+  font-family: 'Architects Daughter', cursive; font-size: 11px; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 6px 16px; display: flex; gap: 8px; align-items: baseline;
+}
+.omni-section-head .count { font-size: 10px; color: var(--text-mute); font-weight: normal; }
+.omni-item {
+  padding: 8px 16px; cursor: pointer; user-select: none;
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px;
+  font-family: 'Patrick Hand', cursive; color: var(--text);
+  border-left: 3px solid transparent;
+}
+.omni-item:hover, .omni-item.selected { background: var(--bg-card); border-left-color: var(--accent); }
+.omni-item .name { font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; }
+.omni-item .meta { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); justify-self: end; }
+.omni-item .snippet {
+  font-family: 'Patrick Hand', cursive; font-size: 12.5px; color: var(--text-mute);
+  grid-column: 1 / -1; line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.omni-item mark { background: var(--node-stage); color: #1a1a1a; padding: 0 2px; border-radius: 2px; }
+:root[data-theme="dark"] .omni-item mark { background: #fbbf24; color: #1a1a1a; }
+.omni-foot {
+  padding: 8px 16px; border-top: 2px solid var(--border);
+  font-family: 'Architects Daughter', cursive; font-size: 11px; color: var(--text-mute);
+  display: flex; gap: 14px; flex-wrap: wrap;
+}
+.omni-foot kbd {
+  font-family: 'Consolas', monospace; font-size: 10px;
+  background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 3px;
+  padding: 1px 5px;
+}
+.omni-empty {
+  padding: 30px 16px; text-align: center; color: var(--text-mute);
+  font-family: 'Patrick Hand', cursive; font-size: 14px;
+}
+
+/* ---- STAGE CONCEPT QUIZ ---- */
+.stq-setup, .stq-game, .stq-result { display: grid; gap: 12px; }
+.stq-setup h3 { font-family: 'Architects Daughter', cursive; font-size: 20px; }
+.stq-setup p { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5; }
+.stq-stage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.stq-stage-btn {
+  padding: 10px 14px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; color: var(--text);
+  cursor: pointer; text-align: left;
+  display: grid; gap: 4px;
+}
+.stq-stage-btn:hover { background: var(--node-stage); }
+.stq-stage-btn .meta { font-family: 'Patrick Hand', cursive; font-weight: 400; font-size: 12px; color: var(--text-mute); }
+.stq-q-card {
+  padding: 16px 18px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+}
+.stq-q-prompt {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+}
+.stq-q-text {
+  font-family: 'Patrick Hand', cursive; font-size: 17px; line-height: 1.55; color: var(--text);
+}
+.stq-q-options { display: grid; gap: 8px; }
+.stq-q-options button {
+  padding: 12px 16px; background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 10px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; color: var(--text);
+  cursor: pointer; text-align: left; transition: transform 0.1s;
+}
+.stq-q-options button:hover:not(:disabled) { transform: translate(-1px, -1px); }
+.stq-q-options button.correct { background: #d1fae5; border-color: #10b981; color: #064e3b; }
+.stq-q-options button.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+.stq-q-options button.was-correct { background: #d1fae5; border-color: #10b981; opacity: 0.7; }
+:root[data-theme="dark"] .stq-q-options button.correct { background: #064e3b; color: #6ee7b7; }
+:root[data-theme="dark"] .stq-q-options button.wrong { background: #7f1d1d; color: #fca5a5; }
+:root[data-theme="dark"] .stq-q-options button.was-correct { background: #064e3b; color: #6ee7b7; }
+.stq-explain {
+  padding: 10px 14px; border: 2px dashed var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; color: var(--text); line-height: 1.45;
+}
+
 /* ---- FIRST-VISIT TOUR ---- */
 .tour-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -2551,6 +2657,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
+          <button onclick="closeMoreMenu(); openStageQuiz()">🧠 Stage Concept Quiz</button>
           <button onclick="closeMoreMenu(); openFlashcards()">🧠 Flashcards</button>
           <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
           <div class="more-menu-group" role="presentation"><span>Plan &amp; Track</span></div>
@@ -2567,6 +2674,7 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openInterviewRandom()">🎲 Random Interview</button>
           <button onclick="closeMoreMenu(); openCostTracker()">💰 AI Spend</button>
           <div class="more-menu-group" role="presentation"><span>Tools</span></div>
+          <button onclick="closeMoreMenu(); openOmni()">🔎 Search everywhere <span style="color:var(--text-mute);font-size:11px;">(Ctrl/Cmd+K)</span></button>
           <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
           <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
           <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
@@ -2583,6 +2691,23 @@ abbr.glossary-term:hover::after {
       </button>
     </div>
   </header>
+
+  <!-- GLOBAL SEARCH PALETTE (Cmd/Ctrl+K) -->
+  <div class="omni-overlay" id="omniOverlay" role="dialog" aria-modal="true" aria-hidden="true" onclick="if(event.target===this)closeOmni()">
+    <div class="omni-card">
+      <div class="omni-input-row">
+        <input type="search" id="omniInput" placeholder="Search topics, terms, builds, practices..." autocomplete="off" spellcheck="false" oninput="renderOmniResults(this.value)" onkeydown="if(event.key==='ArrowDown'){event.preventDefault();omniMoveSelection(1)}else if(event.key==='ArrowUp'){event.preventDefault();omniMoveSelection(-1)}else if(event.key==='Enter'){event.preventDefault();omniEnter()}" />
+        <span class="omni-hint"><kbd>Esc</kbd> close</span>
+      </div>
+      <div class="omni-results" id="omniResults"></div>
+      <div class="omni-foot">
+        <span><kbd>↑↓</kbd> navigate</span>
+        <span><kbd>Enter</kbd> open</span>
+        <span><kbd>Esc</kbd> close</span>
+        <span style="margin-left: auto;">Shortcut: <kbd>Ctrl/Cmd + K</kbd></span>
+      </div>
+    </div>
+  </div>
 
   <!-- FIRST-VISIT TOUR OVERLAY -->
   <div class="tour-overlay" id="tourOverlay" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-hidden="true">
@@ -15787,7 +15912,8 @@ function renderBootcampDash() {
           <div class="bc-stat"><strong>${bc.currentWeek}</strong> current week</div>
           <div class="bc-stat"><strong>${bc.weeks - completedCount}</strong> weeks left</div>
           <div class="bc-stat"><strong>${bc.startDate || '—'}</strong> started</div>
-          <button class="phub-skill-pill" style="margin-left:auto;" onclick="openBootcampSetup()" type="button">⚙ Settings</button>
+          <button class="phub-skill-pill" style="margin-left:auto;" onclick="bcPrintPlan()" type="button">🖨 Print plan</button>
+          <button class="phub-skill-pill" onclick="openBootcampSetup()" type="button">⚙ Settings</button>
         </div>
       </div>
 
@@ -15883,6 +16009,788 @@ const WHATS_NEW = [
     'Built-in static-HTML re-render from DATA so future content updates pick up automatically.',
   ]},
 ];
+
+/* ============================================================
+   GLOBAL SEARCH PALETTE (Cmd/Ctrl + K)
+   Searches across topics, key terms, acronyms, builds, practices.
+   ============================================================ */
+let __omniSelected = 0;
+let __omniResults = [];
+
+function openOmni() {
+  const overlay = document.getElementById('omniOverlay');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  const input = document.getElementById('omniInput');
+  if (input) {
+    input.value = '';
+    setTimeout(() => input.focus(), 30);
+  }
+  renderOmniResults('');
+}
+
+function closeOmni() {
+  const overlay = document.getElementById('omniOverlay');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function omniHighlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const lower = text.toLowerCase();
+  const ql = q.toLowerCase();
+  const idx = lower.indexOf(ql);
+  if (idx < 0) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + '<mark>' + escapeHtml(text.slice(idx, idx + ql.length)) + '</mark>' + escapeHtml(text.slice(idx + ql.length));
+}
+
+function omniSearch(q) {
+  if (!q.trim()) return [];
+  const query = q.toLowerCase().trim();
+  const results = [];
+  // 1. Topics
+  DATA.forEach(stage => {
+    stage.branches.forEach(b => {
+      b.topics.forEach(t => {
+        const name = t.name.toLowerCase();
+        const desc = (t.desc || '').toLowerCase();
+        if (name.includes(query) || desc.includes(query)) {
+          results.push({
+            kind: 'topic',
+            name: t.name,
+            snippet: `Stage ${stage.id} · ${b.name} · ${t.desc || ''}`,
+            meta: `Stage ${stage.id}`,
+            action: () => { closeOmni(); openModal(stage.id, t.id); },
+            score: name.includes(query) ? 100 : 50,
+          });
+        }
+      });
+    });
+  });
+  // 2. Key Terms
+  Object.entries(TERMS).forEach(([key, terms]) => {
+    const [stageId, topicId] = key.split(':');
+    const stage = DATA.find(s => s.id === parseInt(stageId, 10));
+    if (!stage) return;
+    const topic = stage.branches.flatMap(b => b.topics).find(t => t.id === topicId);
+    terms.forEach(term => {
+      const name = term.name.toLowerCase();
+      const def = term.def.toLowerCase();
+      if (name.includes(query) || def.includes(query)) {
+        results.push({
+          kind: 'term',
+          name: term.name,
+          snippet: term.def,
+          meta: topic ? `from Stage ${stageId} / ${topic.name}` : `Stage ${stageId}`,
+          action: () => { closeOmni(); openModal(parseInt(stageId, 10), topicId); },
+          score: name.includes(query) ? 80 : 30,
+        });
+      }
+    });
+  });
+  // 3. Acronyms
+  Object.entries(GLOSSARY).forEach(([acr, def]) => {
+    const lname = acr.toLowerCase();
+    const ldef = def.toLowerCase();
+    if (lname.includes(query) || ldef.includes(query)) {
+      results.push({
+        kind: 'acronym',
+        name: acr,
+        snippet: def,
+        meta: 'acronym',
+        action: () => { closeOmni(); openGlossary(); setTimeout(() => { const input = document.getElementById('glossarySearch'); if (input) { input.value = acr; filterGlossary(); } }, 50); },
+        score: lname === query ? 200 : (lname.includes(query) ? 90 : 30),
+      });
+    }
+  });
+  // 4. Builds
+  BUILDS.forEach(b => {
+    const name = b.title.toLowerCase();
+    const desc = b.desc.toLowerCase();
+    if (name.includes(query) || desc.includes(query)) {
+      results.push({
+        kind: 'build',
+        name: b.title,
+        snippet: b.desc,
+        meta: `${b.category} · ${b.difficulty}`,
+        action: () => { closeOmni(); openBuild(b.id); },
+        score: name.includes(query) ? 90 : 30,
+      });
+    }
+  });
+  // 5. Practices (per-topic)
+  Object.entries(PRACTICES).forEach(([key, list]) => {
+    list.forEach(p => {
+      const name = p.name.toLowerCase();
+      const desc = (p.desc || '').toLowerCase();
+      if (name.includes(query) || desc.includes(query)) {
+        results.push({
+          kind: 'practice',
+          name: p.name,
+          snippet: p.desc || '',
+          meta: `${p.type} · ${p.diff}`,
+          action: () => { closeOmni(); window.open(p.url, '_blank', 'noopener'); },
+          score: name.includes(query) ? 70 : 20,
+        });
+      }
+    });
+  });
+  // Sort by score descending, then de-dup by (kind, name)
+  const seen = new Set();
+  const unique = [];
+  results.sort((a, b) => b.score - a.score).forEach(r => {
+    const key = `${r.kind}::${r.name}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(r);
+    }
+  });
+  return unique.slice(0, 50);  // cap at 50
+}
+
+function renderOmniResults(q) {
+  __omniResults = omniSearch(q);
+  __omniSelected = 0;
+  const el = document.getElementById('omniResults');
+  if (!el) return;
+  if (!q.trim()) {
+    el.innerHTML = `<div class="omni-empty">
+      Type to search across <strong>topics</strong>, <strong>terms</strong>, <strong>acronyms</strong>, <strong>builds</strong>, and <strong>practice resources</strong>.<br>
+      ${DATA.reduce((s, st) => s + st.branches.reduce((a, b) => a + b.topics.length, 0), 0)} topics · ${Object.values(TERMS).reduce((s, t) => s + t.length, 0) + Object.keys(GLOSSARY).length} glossary entries · ${BUILDS.length} builds · ${Object.values(PRACTICES).reduce((s, p) => s + p.length, 0)} practice resources
+    </div>`;
+    return;
+  }
+  if (__omniResults.length === 0) {
+    el.innerHTML = `<div class="omni-empty">No matches for "${escapeHtml(q)}".</div>`;
+    return;
+  }
+  // Group by kind
+  const byKind = { topic: [], term: [], acronym: [], build: [], practice: [] };
+  __omniResults.forEach((r, i) => { r._index = i; byKind[r.kind].push(r); });
+  const labels = { topic: '📚 Topics', term: '🏷 Key Terms', acronym: '🔤 Acronyms', build: '🔨 Builds', practice: '🎮 Practice Resources' };
+  const order = ['topic', 'term', 'acronym', 'build', 'practice'];
+  el.innerHTML = order.filter(k => byKind[k].length > 0).map(kind => {
+    const items = byKind[kind];
+    return `<div class="omni-section">
+      <div class="omni-section-head">${labels[kind]} <span class="count">${items.length}</span></div>
+      ${items.map(r => `
+        <div class="omni-item ${r._index === __omniSelected ? 'selected' : ''}" data-i="${r._index}" onmousedown="omniInvoke(${r._index})">
+          <div class="name">${omniHighlight(r.name, q)}</div>
+          <div class="meta">${escapeHtml(r.meta)}</div>
+          <div class="snippet">${omniHighlight(r.snippet, q)}</div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+}
+
+function omniInvoke(idx) {
+  const r = __omniResults[idx];
+  if (r) r.action();
+}
+
+function omniMoveSelection(delta) {
+  if (!__omniResults.length) return;
+  __omniSelected = (__omniSelected + delta + __omniResults.length) % __omniResults.length;
+  // Re-render selection state
+  document.querySelectorAll('#omniResults .omni-item').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.dataset.i, 10) === __omniSelected);
+    if (parseInt(el.dataset.i, 10) === __omniSelected) {
+      el.scrollIntoView({ block: 'nearest' });
+    }
+  });
+}
+
+function omniEnter() {
+  if (__omniResults.length > 0) {
+    omniInvoke(__omniSelected);
+  }
+}
+
+/* ============================================================
+   STAGE CONCEPT QUIZ — tests reasoning, not just recall
+   Hand-curated questions per stage with options + explanations.
+   ============================================================ */
+const STAGE_CONCEPT_QUIZZES = {
+  1: {
+    title: 'Stage 1: Programming Fundamentals',
+    questions: [
+      {
+        q: 'You have a list of 1M user records and need to check if a specific email exists. Which approach is fastest?',
+        options: [
+          'Loop through the list comparing each email',
+          'Sort the list, then binary search',
+          'Build a Set/dict from the list once, then check membership',
+          'Use SQL with a WHERE clause'
+        ],
+        correct: 2,
+        explain: 'Set/dict membership is O(1) average. Loop is O(n), sort+binary is O(n log n + log n) BUT requires an extra sort upfront. If you check many emails, build the set once.'
+      },
+      {
+        q: 'Your Python script raises `TypeError: unsupported operand type(s) for +: \'int\' and \'str\'`. The bug is most likely:',
+        options: [
+          'You forgot to import a library',
+          'You\'re concatenating a number with a string without converting one of them',
+          'A network error',
+          'Python is broken'
+        ],
+        correct: 1,
+        explain: 'The error message literally says: trying to + an int and a str. Fix: `str(num) + my_string` or use an f-string.'
+      },
+      {
+        q: 'You see code: `if (x = 5) { ... }` in JavaScript. What\'s wrong?',
+        options: [
+          'Nothing — that\'s comparison',
+          'It should be `==` or `===` — `=` is assignment, not comparison',
+          'JavaScript doesn\'t support if statements',
+          'It needs a semicolon'
+        ],
+        correct: 1,
+        explain: '`=` assigns. `==` compares with coercion. `===` compares strictly. Most modern linters catch this. Always use `===`.'
+      },
+      {
+        q: 'You commit your `.env` file to GitHub with API keys in it. What should you do?',
+        options: [
+          'Delete the file in a new commit',
+          'Edit the file and commit the changes',
+          'Revoke/rotate the keys IMMEDIATELY, then add `.env` to `.gitignore` and remove from git history',
+          'Just make the repo private'
+        ],
+        correct: 2,
+        explain: 'Once a key is on GitHub (even briefly, even in private repos), assume it\'s compromised. Revoke first, clean later. Deleting in a new commit doesn\'t remove from history.'
+      },
+      {
+        q: 'In Big O, what\'s the complexity of finding the max value in an unsorted array of N items?',
+        options: [
+          'O(1)',
+          'O(log N)',
+          'O(N)',
+          'O(N²)'
+        ],
+        correct: 2,
+        explain: 'You must look at every element to know which is the max — O(N). If sorted, you\'d know it\'s the last (O(1)).'
+      }
+    ]
+  },
+  2: {
+    title: 'Stage 2: Web Fundamentals',
+    questions: [
+      {
+        q: 'A user reports your site is broken in their browser. You can\'t reproduce it. What\'s the FIRST thing to check?',
+        options: [
+          'Rewrite the page',
+          'Open the browser DevTools Console — most front-end bugs leave a trace',
+          'Email the user a long survey',
+          'Restart your computer'
+        ],
+        correct: 1,
+        explain: 'Console errors are the #1 debugging signal. Ask the user to paste any errors they see in DevTools Console (F12 → Console tab).'
+      },
+      {
+        q: 'You\'re fetching from `api.example.com` and the browser blocks the request with a CORS error. The fix needs to happen:',
+        options: [
+          'On YOUR frontend code',
+          'On the api.example.com server',
+          'In your browser settings',
+          'By switching browsers'
+        ],
+        correct: 1,
+        explain: 'CORS is enforced by the browser based on headers the SERVER sets. The fix is server-side (add `Access-Control-Allow-Origin`). Browsers won\'t let JS bypass this.'
+      },
+      {
+        q: 'Your CSS layout breaks when content is longer than expected. The element overflows its parent. The most likely fix:',
+        options: [
+          '`overflow: hidden` everywhere',
+          'Check the box model — likely `box-sizing: border-box` is missing, or you have fixed widths instead of flex/grid',
+          'Use !important',
+          'Switch to a CSS framework'
+        ],
+        correct: 1,
+        explain: 'Overflow problems usually trace to: missing `box-sizing: border-box`, fixed widths in a flex container, or `white-space: nowrap` without a `max-width`. Diagnose, don\'t paper over.'
+      },
+      {
+        q: 'What\'s the difference between `localStorage` and `sessionStorage`?',
+        options: [
+          'No difference, just different names',
+          'localStorage persists until cleared; sessionStorage is wiped when the tab closes',
+          'sessionStorage is encrypted, localStorage isn\'t',
+          'localStorage is shared across origins, sessionStorage isn\'t'
+        ],
+        correct: 1,
+        explain: 'Both are origin-scoped key-value stores. localStorage = persistent. sessionStorage = per-tab, cleared on tab close. Neither is secure storage.'
+      }
+    ]
+  },
+  3: {
+    title: 'Stage 3: Frontend / React',
+    questions: [
+      {
+        q: 'You have a React component that re-renders on every keystroke even though only one piece of state changes. The cause is most likely:',
+        options: [
+          'A new object/array is created on every render and passed as a prop',
+          'React is broken',
+          'You\'re missing semicolons',
+          'You need to use `useEffect` more'
+        ],
+        correct: 0,
+        explain: 'In React, reference inequality triggers re-renders. `{...obj}` or `[...arr]` inline in JSX creates a new reference on every render. Fix: memoize with `useMemo` or move outside render.'
+      },
+      {
+        q: 'When should you use TanStack Query (React Query) instead of `useEffect + fetch + useState`?',
+        options: [
+          'Never — useEffect is always better',
+          'Only for offline apps',
+          'For server state (data from your backend) — it handles caching, refetching, loading/error states automatically',
+          'Only for static data'
+        ],
+        correct: 2,
+        explain: 'TanStack Query is specifically designed for server state. It cuts ~80% of your data-fetching boilerplate. Use useState for local UI state only.'
+      },
+      {
+        q: 'In Next.js App Router, a Server Component CANNOT:',
+        options: [
+          'Fetch data with `await fetch(...)`',
+          'Use React hooks like `useState`, `useEffect`, `useContext`',
+          'Import other components',
+          'Read environment variables'
+        ],
+        correct: 1,
+        explain: 'Server Components run server-side only — no React state, no effects, no event handlers. For interactivity, use Client Components (`"use client"` at top of file).'
+      },
+      {
+        q: 'You\'re storing a JWT auth token. Where should it live?',
+        options: [
+          'In a JavaScript variable (in-memory)',
+          'In localStorage (any JS on your page can read it — XSS risk)',
+          'In an HttpOnly cookie (JS cannot read it — XSS-safe)',
+          'In a global window property'
+        ],
+        correct: 2,
+        explain: 'HttpOnly cookies are immune to XSS-stolen tokens. localStorage is convenient but any malicious JS (e.g. from a compromised npm package) can exfiltrate the token.'
+      }
+    ]
+  },
+  4: {
+    title: 'Stage 4: Backend',
+    questions: [
+      {
+        q: 'A user reports your API is "slow" for one specific endpoint. First debugging step:',
+        options: [
+          'Rewrite in a faster language',
+          'Add `console.log` everywhere',
+          'Add timing/logging to find which part is slow (DB query, external API call, or computation)',
+          'Add more servers'
+        ],
+        correct: 2,
+        explain: '"Slow" is meaningless without measurement. Instrument first to find the bottleneck. Usually it\'s ONE thing (a slow query, an N+1, a missing index). Then fix that specifically.'
+      },
+      {
+        q: 'You store user passwords. The CORRECT approach is:',
+        options: [
+          'Plaintext (with a "secret" prefix)',
+          'MD5 hash',
+          'SHA-256 hash with a salt',
+          'argon2 or bcrypt with appropriate work factor'
+        ],
+        correct: 3,
+        explain: 'SHA-256 is too fast (billions/sec on GPU = crackable). argon2/bcrypt are intentionally slow + memory-hard. NEVER plaintext, NEVER MD5. argon2 is the 2026 best practice.'
+      },
+      {
+        q: 'You have a Prisma query inside a loop iterating over 1000 user IDs. What\'s wrong?',
+        options: [
+          'Nothing, that\'s fine',
+          'N+1 problem — that\'s 1000 sequential DB calls. Use `findMany` with `where: { id: { in: ids } }` for ONE call',
+          'You\'re using JavaScript instead of TypeScript',
+          'You need to add `await`'
+        ],
+        correct: 1,
+        explain: 'Looping queries is the classic N+1. One call per iteration = 1000 round trips. Batch with `IN` clause = 1 round trip.'
+      },
+      {
+        q: 'Your API returns 200 OK but with an `error: "..."` field in the JSON body when things go wrong. Why is this bad?',
+        options: [
+          'It\'s not — that\'s fine',
+          'HTTP status codes exist for a reason. Use 4xx for client errors, 5xx for server errors. Clients (and monitoring) rely on them',
+          'JSON can\'t carry error messages',
+          'It uses too much bandwidth'
+        ],
+        correct: 1,
+        explain: 'Status codes are the standard signal. Treating all errors as 200 breaks retries, monitoring, browser caching, and CDN behavior. Use 4xx/5xx properly + an error body for details.'
+      }
+    ]
+  },
+  5: {
+    title: 'Stage 5: LLM Application Development',
+    questions: [
+      {
+        q: 'Your Claude API call costs spike from $0.10/day to $50/day overnight. First place to look:',
+        options: [
+          'Anthropic\'s pricing page',
+          'Recent prompt changes — likely you\'re passing way more input tokens (huge system prompt, long conversation history, or no truncation)',
+          'Server CPU usage',
+          'Bandwidth bills'
+        ],
+        correct: 1,
+        explain: 'Cost = input_tokens × $X + output_tokens × $Y. Bills usually spike from input tokens (long context, no caching, infinite conversation history). Add prompt caching + history truncation.'
+      },
+      {
+        q: 'You want Claude to return a list of users with names + emails. The MOST RELIABLE way:',
+        options: [
+          'Ask in the prompt: "Return as JSON array"',
+          'Use Tool Use / Function Calling — define a tool whose input schema is your output shape, force its use',
+          'Hope the model returns valid JSON',
+          'Parse natural language with regex'
+        ],
+        correct: 1,
+        explain: 'Tool Use forces the model to produce arguments matching a JSON schema — guaranteed valid output. Asking for JSON in the prompt is hit-or-miss. Modern Claude supports both tool use and structured outputs.'
+      },
+      {
+        q: 'You\'re building a chatbot. Where should the API key live?',
+        options: [
+          'In the frontend JS bundle (convenient)',
+          'In a `NEXT_PUBLIC_` env var (visible to users)',
+          'On your backend — proxy all LLM calls through your server, never expose the key to clients',
+          'In a comment in the code'
+        ],
+        correct: 2,
+        explain: 'API keys in client code = anyone who views your page can extract them and drain your account. Always proxy through your backend. The browser only sees a relative API path.'
+      },
+      {
+        q: 'You want to reduce LLM cost without sacrificing quality. The HIGHEST-leverage move is usually:',
+        options: [
+          'Switch to a worse model',
+          'Use prompt caching for the system prompt (often 80%+ cost reduction on repeat requests)',
+          'Reduce max_tokens to 10',
+          'Cache nothing'
+        ],
+        correct: 1,
+        explain: 'Prompt caching writes the prompt prefix once and reuses it. If you have a 5K-token system prompt and 200 users, that\'s 1M tokens at full price vs cached. Anthropic\'s cache tier is ~10% of standard input price.'
+      }
+    ]
+  },
+  6: {
+    title: 'Stage 6: RAG / Agents / MCP',
+    questions: [
+      {
+        q: 'Your RAG app\'s answer quality is poor. Where do you investigate FIRST?',
+        options: [
+          'Switch to a bigger LLM',
+          'Retrieval — is the right chunk being found? Inspect what your top-k actually returns for a failing query',
+          'Add more prompt engineering',
+          'Fine-tune the model'
+        ],
+        correct: 1,
+        explain: 'Most "bad RAG" is bad retrieval. If the right context isn\'t in the prompt, no LLM can answer correctly. Eval retrieval first: precision@k, recall@k. Fix chunking, add reranking, then worry about the generator.'
+      },
+      {
+        q: 'You\'re embedding 100K product descriptions for search. Which embedding model is the best default?',
+        options: [
+          'A general embedding model like voyage-3',
+          'A domain-specific one like voyage-code (for code) or voyage-finance (for finance) — match the domain',
+          'Random vectors',
+          'It doesn\'t matter'
+        ],
+        correct: 1,
+        explain: 'Domain-specific embeddings outperform general ones for in-domain content. voyage-3 is a strong general default, but voyage-code/voyage-finance/voyage-law/voyage-multilingual are big quality wins for those domains.'
+      },
+      {
+        q: 'Your agent gets stuck in an infinite loop calling tools. What MUST you add?',
+        options: [
+          'Nothing — it\'ll figure it out',
+          'An iteration limit (max_steps / max_iterations) that hard-stops after N rounds',
+          'More tools',
+          'A bigger model'
+        ],
+        correct: 1,
+        explain: 'No iteration cap = infinite cost + infinite latency. Every agent loop needs a hard max-step. Anthropic\'s SDK + LangGraph + Vercel AI SDK all support this.'
+      },
+      {
+        q: 'MCP (Model Context Protocol) is best described as:',
+        options: [
+          'A new programming language',
+          'An open standard for connecting LLMs to external tools/data via a uniform interface',
+          'A faster GPU',
+          'A type of vector database'
+        ],
+        correct: 1,
+        explain: 'MCP = "USB-C for AI tools". Build an MCP server once; any MCP-compatible client (Claude Desktop, Cursor, custom apps) can connect to it. Replaces N×M bespoke integrations with 1×M.'
+      }
+    ]
+  },
+  7: {
+    title: 'Stage 7: Production',
+    questions: [
+      {
+        q: 'You\'re deploying a Node app to production for the first time. The MOST important thing you usually forget:',
+        options: [
+          'Picking a flashy server',
+          'Setting up logging + error monitoring (Sentry) BEFORE you have users',
+          'Choosing a domain name',
+          'Compiling the code'
+        ],
+        correct: 1,
+        explain: 'Production without observability = flying blind. When something breaks, you find out from angry users, not your tools. Add Sentry + structured logs as part of the FIRST deploy, not later.'
+      },
+      {
+        q: 'Your service has a sudden traffic spike. The page is slow. WHAT do you scale first?',
+        options: [
+          'Add more servers blindly',
+          'Profile to find the bottleneck — most spikes hit ONE component (DB, external API, single endpoint). Fix that, not everything',
+          'Rewrite in Rust',
+          'Take the site offline'
+        ],
+        correct: 1,
+        explain: 'Scaling without measurement = throwing money at a problem. Most "scale issues" trace to a single slow query, a missing cache, or one runaway endpoint. Profile, then scale or fix that part.'
+      },
+      {
+        q: 'Feature flags are valuable mainly because they:',
+        options: [
+          'Make code prettier',
+          'Decouple deploy from release — you can ship code dark, ramp 1%→10%→100%, and instantly kill broken features without redeploying',
+          'Speed up your build',
+          'Replace tests'
+        ],
+        correct: 1,
+        explain: 'The killer use case for flags: instant rollback. If a deploy introduces a bug, flip the flag off in seconds. No deploy needed. Required infrastructure for safe shipping.'
+      },
+      {
+        q: 'You need to handle 100K requests/sec. Vertical scaling (bigger machine) is no longer enough. What\'s required?',
+        options: [
+          'Buy an even bigger machine',
+          'Stateless services + horizontal scaling + load balancer. Sessions must move out of memory (Redis/DB)',
+          'Switch programming language',
+          'It\'s impossible at that scale'
+        ],
+        correct: 1,
+        explain: 'Horizontal scaling requires statelessness — any server can handle any request. Session affinity (sticky sessions) is a workaround, not a solution. Move sessions to Redis early; saves migration pain later.'
+      }
+    ]
+  },
+  8: {
+    title: 'Stage 8: Job Hunt',
+    questions: [
+      {
+        q: 'A recruiter asks "What salary are you looking for?" You should:',
+        options: [
+          'Give a specific number immediately',
+          'Redirect: "I\'m optimizing for the right role over a specific number. What does the role pay?" — whoever gives the first number anchors against themselves',
+          'Refuse to answer',
+          'Give the lowest you\'d accept'
+        ],
+        correct: 1,
+        explain: 'The first number anchors negotiation. Always defer to the company\'s range first. If forced, give the TOP of your range based on levels.fyi data — they\'ll negotiate down, not up.'
+      },
+      {
+        q: 'You have a 4-hour take-home interview. The interviewer specified 4 hours. You should:',
+        options: [
+          'Spend 12 hours to make it perfect',
+          'Spend exactly ~4 hours, scope ruthlessly, write a great README explaining tradeoffs',
+          'Skip it',
+          'Use AI to generate the whole thing'
+        ],
+        correct: 1,
+        explain: 'Going over time shows you can\'t scope. A 4-hr solution with a great README + 1-paragraph "given more time I\'d..." section beats a 12-hr over-engineered one. Interviewers can tell.'
+      },
+      {
+        q: 'Your portfolio has 3 generic CRUD apps. Hiring managers screen 500 portfolios for 1 hire. To stand out:',
+        options: [
+          'Build a 4th CRUD app',
+          'Build ONE strange/specific project — a tool you needed yourself, a niche audience, a weird API mashup. Personality > polish',
+          'Copy a popular project',
+          'Just have more projects'
+        ],
+        correct: 1,
+        explain: 'Generic projects blur together. A 5-second "wait, what is that?" reaction gets your resume read. Build something that signals you specifically: your hobby, your problem, your weird interest.'
+      },
+      {
+        q: 'You\'ve been applying for 2 months with no offers. What\'s the realistic explanation?',
+        options: [
+          'The market hates you',
+          'The junior market in 2025-2026 has ~5-10x applicants per role vs 2021. Plan for 3-9 months, 100-500 resumes sent, 80-95% rejection. This is normal',
+          'You should give up',
+          'Switch careers'
+        ],
+        correct: 1,
+        explain: 'Most self-taught learners quit at month 3-4 thinking they\'ve failed. The market is genuinely brutal right now. 2 months with no offers is below the median, not failure. Adjust strategy (targeted apps, referrals, better portfolio), don\'t quit.'
+      }
+    ]
+  }
+};
+
+let __stq = null;
+
+function openStageQuiz() {
+  const cards = Object.entries(STAGE_CONCEPT_QUIZZES).map(([sid, quiz]) => {
+    const stage = DATA.find(s => s.id === parseInt(sid, 10));
+    if (!stage) return '';
+    return `<button class="stq-stage-btn" onclick="startStageQuiz(${sid})">
+      <div>${escapeHtml(quiz.title)}</div>
+      <div class="meta">${quiz.questions.length} reasoning questions</div>
+    </button>`;
+  }).join('');
+  const html = `
+    <div class="stq-setup">
+      <h3>🧠 Stage Concept Quiz</h3>
+      <p>Tests your <strong>reasoning</strong>, not just term recall. Each question is a real scenario you'd face on the job — pick the best answer, then read the explanation.</p>
+      <p style="font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute);">Different from the 📝 Definitions Quiz (which is multiple-choice over the glossary).</p>
+      <div class="stq-stage-grid">${cards}</div>
+    </div>
+  `;
+  showPracticeModal('🧠 Stage Concept Quiz', html);
+}
+
+function startStageQuiz(stageId) {
+  const quiz = STAGE_CONCEPT_QUIZZES[stageId];
+  if (!quiz) return;
+  __stq = {
+    stageId,
+    title: quiz.title,
+    questions: quiz.questions,
+    idx: 0,
+    correct: 0,
+    answered: false,
+  };
+  renderStageQuizQuestion();
+}
+
+function renderStageQuizQuestion() {
+  const s = __stq;
+  if (!s) return;
+  if (s.idx >= s.questions.length) {
+    renderStageQuizResult();
+    return;
+  }
+  const q = s.questions[s.idx];
+  const html = `
+    <div class="stq-game">
+      <div class="defq-progress">
+        <span>Question <strong>${s.idx + 1}</strong> of ${s.questions.length} · ${escapeHtml(s.title)}</span>
+        <span>Score: <strong>${s.correct}</strong></span>
+      </div>
+      <div class="defq-progress-bar"><div class="fill" style="width: ${(s.idx / s.questions.length) * 100}%"></div></div>
+      <div class="stq-q-card">
+        <div class="stq-q-prompt">Scenario</div>
+        <div class="stq-q-text">${escapeHtml(q.q)}</div>
+      </div>
+      <div class="stq-q-options" id="stqOptions">
+        ${q.options.map((opt, i) => `<button onclick="answerStageQuiz(${i})">${escapeHtml(opt)}</button>`).join('')}
+      </div>
+      <div class="stq-explain" id="stqExplain" style="display:none;"></div>
+      <div class="defq-actions">
+        <button class="secondary" onclick="quitStageQuiz()">Quit</button>
+        <button id="stqNextBtn" onclick="nextStageQuiz()" disabled>Next →</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('🧠 ' + s.title, html);
+}
+
+function answerStageQuiz(idx) {
+  const s = __stq;
+  if (!s) return;
+  const q = s.questions[s.idx];
+  const correct = idx === q.correct;
+  if (correct) s.correct++;
+  s.answered = true;
+  document.querySelectorAll('#stqOptions button').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct) b.classList.add(i === idx ? 'correct' : 'was-correct');
+    else if (i === idx) b.classList.add('wrong');
+  });
+  const ex = document.getElementById('stqExplain');
+  ex.style.display = 'block';
+  ex.innerHTML = `<strong>${correct ? '✓ Correct' : '✗ Not quite'}</strong> — ${escapeHtml(q.explain)}`;
+  const next = document.getElementById('stqNextBtn');
+  if (next) { next.disabled = false; next.focus(); }
+}
+
+function nextStageQuiz() {
+  if (!__stq) return;
+  __stq.idx++;
+  renderStageQuizQuestion();
+}
+
+function quitStageQuiz() {
+  if (!__stq) return;
+  if (confirm('Quit this quiz?')) {
+    __stq = null;
+    openStageQuiz();
+  }
+}
+
+function renderStageQuizResult() {
+  const s = __stq;
+  if (!s) return;
+  const pct = Math.round((s.correct / s.questions.length) * 100);
+  const html = `
+    <div class="stq-result">
+      <div class="defq-result ${pct >= 70 ? 'passing' : 'failing'}">
+        <div class="score">${s.correct}/${s.questions.length}</div>
+        <div class="label">${pct}%</div>
+        <div class="grade">${pct >= 90 ? 'A — strong reasoning' : pct >= 70 ? 'B — solid' : pct >= 50 ? 'C — review the stage' : 'F — re-study this stage'}</div>
+      </div>
+      <div class="defq-actions">
+        <button class="secondary" onclick="openStageQuiz()">All stages</button>
+        <button onclick="startStageQuiz(${s.stageId})">Retry this stage</button>
+      </div>
+    </div>
+  `;
+  showPracticeModal('🧠 Quiz Result', html);
+  __stq = null;
+}
+
+/* ============================================================
+   BOOTCAMP PRINT — printable week-by-week schedule
+   ============================================================ */
+function bcPrintPlan() {
+  const bc = state.bootcamp;
+  if (!bc.enabled || !bc.plan) {
+    alert('Set up the Bootcamp first.');
+    return;
+  }
+  // Generate printable HTML in a new window
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('Pop-up blocked. Allow pop-ups for this site to print.');
+    return;
+  }
+  const stageNames = {};
+  DATA.forEach(s => stageNames[s.id] = s.title);
+  const weeksHtml = bc.plan.map(w => {
+    const topicsHtml = (w.topics || []).map(t => `<li><strong>${t.name}</strong> <em style="color:#666;">(${t.branch}, ${t.t})</em></li>`).join('');
+    return `<div class="week-row">
+      <h3>Week ${w.week} · ${escapeHtml(w.stageTitle || stageNames[w.stageId] || '')}</h3>
+      ${w.topics?.length ? `<ul>${topicsHtml}</ul>` : '<p><em>(rest / review)</em></p>'}
+      ${w.practice ? `<p><strong>🎮 Practice:</strong> ${escapeHtml(w.practice.name)} — <a href="${w.practice.url}">${w.practice.url}</a></p>` : ''}
+      ${w.project ? `<p><strong>🚢 Stage exit goal:</strong> ${escapeHtml(w.project)}</p>` : ''}
+    </div>`;
+  }).join('');
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8" /><title>Roadmap Bootcamp — ${bc.weeks} weeks (${BC_PATH_LABELS[bc.path] || bc.path})</title>
+<style>
+body { font-family: Georgia, serif; max-width: 720px; margin: 24px auto; padding: 16px; color: #1a1a1a; line-height: 1.5; }
+h1 { font-size: 24px; margin-bottom: 4px; }
+h2 { font-size: 16px; color: #666; margin-bottom: 16px; }
+h3 { font-size: 18px; margin-top: 18px; margin-bottom: 6px; border-bottom: 2px solid #ccc; padding-bottom: 2px; }
+ul { margin: 6px 0 6px 22px; }
+li { margin-bottom: 3px; }
+p { margin: 4px 0; font-size: 14px; }
+.week-row { page-break-inside: avoid; }
+.cover { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #ccc; }
+.cover .meta { font-size: 13px; color: #666; }
+@media print { body { margin: 0; padding: 12px; } }
+</style></head><body>
+<div class="cover">
+<h1>📋 Roadmap Bootcamp</h1>
+<h2>${BC_PATH_LABELS[bc.path] || bc.path} · ${bc.weeks} weeks</h2>
+<p class="meta">Start date: ${bc.startDate || 'not set'} · Current week: ${bc.currentWeek} · Generated: ${new Date().toLocaleString()}</p>
+<p>Print this and check off weeks as you go. Re-open <strong>Bootcamp</strong> in the app to mark weeks complete and see practice resources.</p>
+</div>
+${weeksHtml}
+<script>window.onload = () => window.print();</${'script'}>
+</body></html>`);
+  win.document.close();
+}
+
 
 /* ============================================================
    FIRST-VISIT TOUR — 6-step walkthrough of the most useful tools.
@@ -18678,8 +19586,18 @@ document.addEventListener('keydown', e => {
    KEYBOARD SHORTCUTS — #22 support
    ============================================================ */
 document.addEventListener('keydown', e => {
+  // Cmd/Ctrl + K → open global search palette (works even when input focused)
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    openOmni();
+    return;
+  }
   if (e.key === 'Escape') {
-    // Close any open modal — order: tour → difficulty prompt → onboarding → practice modal → topic modal
+    // Close any open modal — order: omni → tour → difficulty prompt → onboarding → practice modal → topic modal
+    if (document.getElementById('omniOverlay')?.classList.contains('open')) {
+      closeOmni();
+      return;
+    }
     if (document.getElementById('tourOverlay')?.classList.contains('open')) {
       closeTour();
       return;
