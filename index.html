@@ -2729,7 +2729,7 @@ abbr.glossary-term:hover::after {
         <input type="search" id="omniInput" placeholder="Search topics, terms, builds, practices..." autocomplete="off" spellcheck="false" oninput="renderOmniResults(this.value)" onkeydown="if(event.key==='ArrowDown'){event.preventDefault();omniMoveSelection(1)}else if(event.key==='ArrowUp'){event.preventDefault();omniMoveSelection(-1)}else if(event.key==='Enter'){event.preventDefault();omniEnter()}" />
         <span class="omni-hint"><kbd>Esc</kbd> close</span>
       </div>
-      <div class="omni-results" id="omniResults"></div>
+      <div class="omni-results" id="omniResults" role="listbox" aria-label="Search results" aria-live="polite"></div>
       <div class="omni-foot">
         <span><kbd>↑↓</kbd> navigate</span>
         <span><kbd>Enter</kbd> open</span>
@@ -2746,8 +2746,8 @@ abbr.glossary-term:hover::after {
         <h3 id="tourTitle">👋 Welcome to your roadmap</h3>
         <span class="step-counter" id="tourStepCounter">Step 1 of 6</span>
       </div>
-      <div class="tour-body" id="tourBody"></div>
-      <div class="tour-progress" id="tourProgress"></div>
+      <div class="tour-body" id="tourBody" role="document" aria-live="polite"></div>
+      <div class="tour-progress" id="tourProgress" role="progressbar" aria-label="Tour progress"></div>
       <div class="tour-foot">
         <button class="tour-skip" onclick="closeTour()" type="button">Skip tour</button>
         <div style="display: flex; gap: 6px;">
@@ -14112,6 +14112,314 @@ const TERMS = {
     { name: 'transformers library', def: '`pip install transformers`. The canonical Python library for loading + fine-tuning models from HF Hub.', t: 'req' },
     { name: 'AutoModel / AutoTokenizer', def: 'Generic loaders that auto-detect the right class for any model: `AutoModel.from_pretrained("meta-llama/Llama-3-8b")`.', t: 'req' },
     { name: 'Spaces', def: 'HF\'s free hosting for ML demos. Build a Gradio/Streamlit app, deploy to a Space, get a public URL.', t: 'rec' }
+  ],
+
+  /* === STAGE 3 — Frontend (missing topics) === */
+  '3:ts-narrowing': [
+    { name: 'Type narrowing', def: 'TypeScript shrinking a union to a specific type via runtime checks. `if (typeof x === "string") { x.toUpperCase() }` — x is string in the branch.', t: 'req' },
+    { name: 'typeof guard', def: 'Narrows by runtime type: string, number, boolean, undefined, object, function. The most common narrowing tool.', t: 'req' },
+    { name: 'instanceof guard', def: 'Narrows to a class: `if (err instanceof Error) { err.message }`. Works for class hierarchies.', t: 'rec' },
+    { name: 'in operator', def: 'Narrows by property existence: `if ("email" in user) { ... }`. Good for discriminating unions of object shapes.', t: 'rec' },
+    { name: 'Discriminated union', def: 'Union of object types sharing a literal "tag" field: `{ kind: "circle", r } | { kind: "square", side }`. Narrow by `switch (s.kind)`.', t: 'req' },
+    { name: 'Type predicate', def: '`function isUser(x: any): x is User { ... }` — return type tells TS this function narrows.', t: 'rec' }
+  ],
+  '3:vitest': [
+    { name: 'Vitest', def: 'Fast Vite-native test runner. Drop-in Jest API but much faster (uses Vite\'s transform pipeline). The 2026 default for TS/JS unit tests.', t: 'req' },
+    { name: 'describe / it / test', def: 'Standard test structure: `describe("suite", () => { it("does X", () => { expect(x).toBe(y) }) })`.', t: 'req' },
+    { name: 'expect matchers', def: '`toBe`, `toEqual`, `toContain`, `toThrow`, `toHaveBeenCalledWith`. The assertion vocabulary.', t: 'req' },
+    { name: 'vi.mock', def: 'Module mocking. `vi.mock("./api", () => ({ getUser: vi.fn() }))`. Replaces the real module for the test.', t: 'rec' },
+    { name: 'Snapshot testing', def: '`expect(output).toMatchSnapshot()`. First run saves; subsequent runs diff. Easy regression catching for stable outputs.', t: 'rec' }
+  ],
+  '3:rtl': [
+    { name: 'React Testing Library', def: 'Library for testing React components from the USER\'s perspective. Query by visible text + accessible roles, not by implementation details.', t: 'req' },
+    { name: 'render', def: '`render(<Comp />)` mounts a component into a JSDOM container. Returns query functions: getByText, getByRole, etc.', t: 'req' },
+    { name: 'getByRole', def: 'The recommended query: `getByRole("button", { name: "Save" })`. Forces you to write accessible markup to make tests pass.', t: 'req' },
+    { name: 'userEvent vs fireEvent', def: '`userEvent.click()` simulates real user interaction (focus + mousedown + click + ...). `fireEvent.click()` is lower-level. Prefer userEvent.', t: 'rec' },
+    { name: 'waitFor / findBy', def: '`await screen.findByText("Loaded")` polls until found or times out. For async UI updates.', t: 'rec' }
+  ],
+  '3:playwright': [
+    { name: 'Playwright', def: 'End-to-end test framework that drives real browsers (Chromium, Firefox, WebKit). The 2026 default replacing Cypress for new projects.', t: 'rec' },
+    { name: 'Locator', def: '`page.locator("button:has-text(\\"Save\\")")` — auto-waits, retries, and re-queries on every interaction. Resilient.', t: 'rec' },
+    { name: 'Auto-waiting', def: 'Playwright waits for elements to be visible + actionable before clicking. Eliminates flaky `sleep(1)` calls.', t: 'rec' },
+    { name: 'Trace viewer', def: 'On failure, Playwright saves a time-travel debugger: every action + screenshot + network. `npx playwright show-trace`.', t: 'rec' }
+  ],
+  '3:cwv': [
+    { name: 'Core Web Vitals', def: 'Google\'s set of user-experience metrics: LCP (load), INP (interactivity), CLS (visual stability). Affect SEO rankings.', t: 'rec' },
+    { name: 'LCP (Largest Contentful Paint)', def: 'Time until the biggest visible element renders. Target: <2.5s on mobile. Most affected by image/hero loading.', t: 'rec' },
+    { name: 'INP (Interaction to Next Paint)', def: 'How quickly the page responds to a click/tap. Target: <200ms. Replaced FID in 2024.', t: 'rec' },
+    { name: 'CLS (Cumulative Layout Shift)', def: 'How much content jumps around as the page loads. Target: <0.1. Caused by images without dimensions, late-loading ads, web fonts.', t: 'rec' },
+    { name: 'PageSpeed Insights', def: 'Google\'s tool that gives LCP/INP/CLS for any URL + suggestions. Real-user data from Chrome users (CrUX dataset).', t: 'rec' }
+  ],
+  '3:bundle': [
+    { name: 'Bundle', def: 'The compiled JavaScript file(s) shipped to the browser. Smaller = faster initial load.', t: 'rec' },
+    { name: 'Tree shaking', def: 'Bundler optimization that strips imports nothing uses. Requires ESM (CommonJS is too dynamic).', t: 'rec' },
+    { name: 'Code splitting', def: 'Breaking the bundle into chunks loaded on-demand: route splits, lazy components. Reduces initial download.', t: 'rec' },
+    { name: 'next/dynamic', def: 'Next.js dynamic import: `dynamic(() => import("./Heavy"))`. Splits the bundle automatically at that boundary.', t: 'rec' },
+    { name: '@next/bundle-analyzer', def: 'Visualizes what\'s in your bundle. Big squares = bloat. Common culprits: moment.js, lodash full import, font icons.', t: 'rec' }
+  ],
+  '3:images': [
+    { name: 'next/image', def: 'Next.js\'s Image component. Auto-handles responsive srcset, lazy loading, format conversion (WebP/AVIF), CDN caching.', t: 'rec' },
+    { name: 'Lazy loading', def: '`loading="lazy"` defers offscreen images until scrolled near. Native browser support; no JS needed.', t: 'rec' },
+    { name: 'WebP / AVIF', def: 'Modern image formats. WebP ~30% smaller than JPEG. AVIF ~50% smaller. Use both with `<picture>` fallback.', t: 'rec' },
+    { name: 'Aspect ratio', def: 'Setting `width="800" height="600"` (or CSS `aspect-ratio: 4/3`) reserves space so the page doesn\'t jump when the image loads. Fixes CLS.', t: 'rec' }
+  ],
+  '3:motion': [
+    { name: 'Framer Motion', def: 'React animation library. `<motion.div animate={{ x: 100 }} />` declaratively animates properties. Variants, gestures, layout animations.', t: 'rec' },
+    { name: 'AnimatePresence', def: 'Wrapper that animates components on UNMOUNT (exit animations). Otherwise React just removes them.', t: 'rec' },
+    { name: 'layoutId', def: 'Magic prop that animates an element from one position/size to another across components — for shared-element transitions.', t: 'rec' }
+  ],
+
+  /* === STAGE 6 — Data Engineering branch === */
+  '6:de-etl': [
+    { name: 'ETL (Extract / Transform / Load)', def: 'The classic data pipeline pattern: pull from source, clean/reshape, write to warehouse.', t: 'rec' },
+    { name: 'ELT', def: 'Extract / Load / Transform — load raw into the warehouse FIRST, transform with SQL there. Modern pattern enabled by cheap warehouse compute.', t: 'rec' },
+    { name: 'Idempotent pipeline', def: 'Running the same pipeline twice produces the same result. Critical for retries + safe re-runs.', t: 'rec' },
+    { name: 'Schema evolution', def: 'How your pipeline handles upstream schema changes (new column, renamed field). Plan for it; data sources change.', t: 'rec' }
+  ],
+  '6:de-dbt': [
+    { name: 'dbt (data build tool)', def: 'Framework for writing data transformations as SQL files + Jinja templates. Manages dependencies, runs, tests, docs.', t: 'rec' },
+    { name: 'dbt model', def: 'A `.sql` file that becomes a table/view in the warehouse. References other models via `{{ ref("other_model") }}` — dbt resolves order.', t: 'rec' },
+    { name: 'dbt test', def: 'Built-in data quality checks: `unique`, `not_null`, `accepted_values`. Catches data regressions early.', t: 'rec' }
+  ],
+  '6:de-airflow': [
+    { name: 'Workflow orchestration', def: 'Tool that schedules + monitors data pipelines, handles retries, dependencies, alerting. Airflow, Prefect, Dagster, Temporal.', t: 'opt' },
+    { name: 'DAG (Directed Acyclic Graph)', def: 'Airflow\'s representation of a workflow: tasks with dependencies, no cycles. One DAG per pipeline.', t: 'opt' },
+    { name: 'Backfill', def: 'Running a pipeline for historical dates (e.g. "process the last 30 days now"). Most orchestrators handle this natively.', t: 'opt' }
+  ],
+  '6:de-versioning': [
+    { name: 'Data versioning', def: 'Tracking changes to datasets the way git tracks code. Tools: DVC, LakeFS, Apache Iceberg (table format with built-in versioning).', t: 'opt' },
+    { name: 'DVC (Data Version Control)', def: 'Git-like CLI for large data files. Stores pointers in git, actual data in S3/GCS.', t: 'opt' },
+    { name: 'Reproducibility', def: 'Same code + same data version → same result. Without versioning, "the model from last week" is unreplicable.', t: 'opt' }
+  ],
+
+  /* === STAGE 7 — Production (missing topics) === */
+  '7:prompt-versioning': [
+    { name: 'Prompt versioning', def: 'Treating prompts like code: store in git or a prompt-management tool, tag versions, roll back on quality regression.', t: 'req' },
+    { name: 'A/B prompt testing', def: 'Run two prompt versions in parallel; compare metrics (cost, quality, latency). The disciplined way to improve prompts.', t: 'req' },
+    { name: 'Langfuse Prompts', def: 'Hosted prompt management — versioning, A/B routing, eval integration. Drop-in for production LLM apps.', t: 'rec' }
+  ],
+  '7:env-promotion': [
+    { name: 'Environment promotion', def: 'Code moves dev → staging → prod via the SAME artifact, not re-builds. "Build once, deploy many."', t: 'rec' },
+    { name: 'Preview deployment', def: 'Every PR gets its own URL. Vercel/Netlify default. Test before merging.', t: 'rec' },
+    { name: '12-factor app', def: 'Methodology principle: config from env vars, not source. Same artifact runs in any env, parameterized by env.', t: 'rec' }
+  ],
+  '7:rollback': [
+    { name: 'Rollback', def: 'Reverting to a known-good previous version. Should be possible in MINUTES, ideally seconds.', t: 'rec' },
+    { name: 'Instant rollback', def: 'Vercel: click "Promote previous deployment" to instantly route traffic back. No rebuild needed.', t: 'rec' },
+    { name: 'Forward fix vs rollback', def: 'When fixing: roll back FIRST (stop the bleeding), then forward-fix in calm. Don\'t debug under pressure.', t: 'rec' },
+    { name: 'Canary deploy', def: 'Send 1% → 5% → 25% → 100% of traffic to new version. Catches bugs without affecting everyone.', t: 'rec' }
+  ],
+  '7:railway': [
+    { name: 'Railway / Fly.io / Render', def: 'PaaS hosts for backends. Easier than AWS. Connect a GitHub repo; they build + deploy + give you a URL.', t: 'rec' },
+    { name: 'Build pack vs Dockerfile', def: 'Build pack auto-detects your stack and builds. Dockerfile gives full control. Start with build pack, switch to Docker when you need more.', t: 'rec' },
+    { name: 'Vertical scale (memory)', def: 'These PaaS hosts let you bump CPU/RAM with a slider. Good first response to "the app is slow."', t: 'rec' }
+  ],
+  '7:aws-basics': [
+    { name: 'EC2', def: 'Elastic Compute Cloud — virtual machines you rent by the hour. The foundational AWS compute service.', t: 'rec' },
+    { name: 'S3', def: 'Object storage. Cheap, durable, scales infinitely. Use for blobs (images, backups, static sites).', t: 'rec' },
+    { name: 'RDS', def: 'Relational Database Service. Managed Postgres/MySQL — they handle backups, patching, failover.', t: 'rec' },
+    { name: 'IAM', def: 'Identity and Access Management. Who can do what. The "least privilege" principle — give only what\'s needed.', t: 'rec' },
+    { name: 'VPC', def: 'Virtual Private Cloud — your isolated network in AWS. Subnets, security groups, route tables.', t: 'rec' }
+  ],
+  '7:mono-vs-micro': [
+    { name: 'Monolith', def: 'One application, one codebase, one deploy. Simple to develop, simple to deploy, simple to debug.', t: 'rec' },
+    { name: 'Microservices', def: 'Many small services with their own deployments + databases. Useful at scale; overkill for most apps.', t: 'rec' },
+    { name: 'Modular monolith', def: 'One deploy, but code organized in clear modules with strict interfaces. Often the right answer until you have a team-size problem.', t: 'rec' },
+    { name: 'When to split', def: 'Only when a team genuinely can\'t ship independently OR a component needs different scaling characteristics. NOT because it sounds modern.', t: 'rec' }
+  ],
+  '7:sd-interviews': [
+    { name: 'System design framework', def: '1) Clarify requirements 2) Estimate scale 3) API design 4) Data model 5) High-level architecture 6) Deep-dive on bottlenecks.', t: 'rec' },
+    { name: 'Functional vs non-functional', def: 'Functional = what it does. Non-functional = how well (latency, scale, availability). Always ask both.', t: 'rec' },
+    { name: 'Back-of-envelope', def: 'Quick scale math: DAU × actions/day × bytes/action = storage needed. Don\'t obsess over precision.', t: 'rec' }
+  ],
+  '7:ds-queues': [
+    { name: 'Message queue', def: 'A buffer between producers and consumers. Decouples services and absorbs spikes. RabbitMQ, SQS, Kafka, Redis Streams.', t: 'opt' },
+    { name: 'At-least-once delivery', def: 'Message will be delivered ≥1 times. Consumers must be idempotent.', t: 'opt' },
+    { name: 'Exactly-once', def: 'Theoretically possible, expensive in practice. Most queues are at-least-once + idempotent consumers.', t: 'opt' },
+    { name: 'Dead letter queue (DLQ)', def: 'Messages that fail N retries get parked in a DLQ for inspection. Critical for debugging stuck pipelines.', t: 'opt' }
+  ],
+
+  /* === STAGE 8 — Job Hunt (missing topics) === */
+  '8:cover-letters': [
+    { name: 'Targeted cover letter', def: 'Specific to ONE company: mentions a recent product launch, a values match, a referrer. ~1 page max.', t: 'opt' },
+    { name: 'When to skip', def: 'For high-volume applications via job boards, cover letters are rarely read. Skip them. Save effort for targeted apps.', t: 'opt' },
+    { name: 'Hook + match + ask', def: 'Three paragraphs: hook (one specific reason for THIS company), match (relevant experience), ask (next step).', t: 'opt' }
+  ],
+  '8:mock-interviews': [
+    { name: 'Pramp', def: 'Free peer-to-peer mock interview platform. You interview a peer, then they interview you. Anonymous.', t: 'rec' },
+    { name: 'interviewing.io', def: 'Real engineers from top companies. Free if you do well in the initial rounds. Paid otherwise.', t: 'rec' },
+    { name: 'Think out loud', def: 'Verbalize your reasoning. Interviewers grade your PROCESS more than your solution.', t: 'rec' },
+    { name: 'Failure recovery', def: 'How you handle being stuck matters more than never being stuck. Ask questions, restate assumptions, simplify.', t: 'rec' }
+  ],
+  '8:oss': [
+    { name: 'Open source contribution', def: 'Adding code, docs, or tests to a public repo. Public proof of skill that recruiters can see.', t: 'rec' },
+    { name: 'Good first issue', def: 'GitHub label maintainers use to flag beginner-friendly tasks. Browse `goodfirstissue.dev`.', t: 'rec' },
+    { name: 'PR etiquette', def: 'Read CONTRIBUTING.md first. Open an issue before a big PR. Small focused PRs land faster than mega ones.', t: 'rec' },
+    { name: 'OSS as resume', def: '5 merged PRs in a known project = more credibility than 50 personal repos. Maintainers vouch for you.', t: 'rec' }
+  ],
+  '8:communities': [
+    { name: 'Reactiflux', def: 'The biggest React community on Discord. ~200K members. #help-react for real-time help, #jobs for hiring.', t: 'rec' },
+    { name: 'r/cscareerquestions', def: 'Subreddit for tech career discussion. Skim the wiki. Megathreads are higher signal than the front page.', t: 'rec' },
+    { name: 'Lurk before posting', def: 'Read a community for 1-2 weeks before posting. Catches the tone, sees what gets downvoted, builds context.', t: 'rec' }
+  ],
+  '8:intl-markets': [
+    { name: 'Notice period', def: 'EU norm: 1-3 months after resigning. US norm: 2 weeks. Plan offers around the candidate\'s outgoing notice.', t: 'rec' },
+    { name: 'Otta / Welcome to the Jungle', def: 'European-focused job boards. Higher signal than LinkedIn for EU/UK startups.', t: 'rec' },
+    { name: 'Honeypot', def: 'EU tech-focused board. Companies apply to YOU after seeing your profile.', t: 'rec' },
+    { name: 'Compensation differences', def: 'US tech pays 2-3x EU/Canada/Australia. UK between. India top tier is now globally competitive. Negotiate per local benchmarks.', t: 'rec' }
+  ],
+  '8:remote-vs-office': [
+    { name: 'First-job recommendation', def: 'For first 1-2 years, office or hybrid usually beats fully remote — mentorship and osmosis matter more than commute time.', t: 'opt' },
+    { name: 'Remote skill gap', def: 'Remote requires strong written communication + self-direction. Both are LEARNED skills, not given.', t: 'opt' }
+  ],
+  '8:startup-vs-bigtech': [
+    { name: 'Big tech (FAANG-style)', def: 'Better pay, structured training, prestigious brand. Slower iteration, narrower scope, more politics.', t: 'opt' },
+    { name: 'Startup', def: 'Lower base + equity (usually worthless), more ownership, faster learning, ability to ship full features.', t: 'opt' },
+    { name: 'Series A-B sweet spot', def: 'Past the "will it survive" risk, before bureaucracy. Often the best learning environment + decent comp.', t: 'opt' }
+  ],
+  '8:freelance': [
+    { name: 'Freelance vs W-2', def: 'Freelance: own your time, manage your own taxes/health, find clients. W-2: stable, employer handles overhead.', t: 'opt' },
+    { name: 'Upwork', def: 'Largest freelance marketplace. Race-to-the-bottom on price but good for first clients.', t: 'opt' },
+    { name: 'Toptal', def: 'Vetted (top-3% claim) marketplace. Higher rates, longer screen. Strong for senior freelancers.', t: 'opt' },
+    { name: 'Hourly vs project rate', def: 'Hourly punishes you for being efficient. Project rate aligns incentives with client. Move to project as you gain confidence.', t: 'opt' }
+  ],
+  '8:continued-learning': [
+    { name: 'Half-life of skills', def: 'Web/AI tooling has a ~6-12 month half-life. What you learned today is partially obsolete in a year. Plan for continuous learning.', t: 'req' },
+    { name: 'TLDR newsletter', def: 'Daily 5-minute summary of tech news. Good signal-to-noise for staying current.', t: 'req' },
+    { name: 'Hacker News', def: 'Tech-news + comment community. Daily skim of front-page titles is enough; deep-dive comments on topics you care about.', t: 'rec' },
+    { name: 'Conference talks', def: 'Free, recorded, archival. JSConf, React Summit, Next.js Conf, KubeCon. Watch at 2x speed.', t: 'rec' }
+  ],
+  '8:market-reality': [
+    { name: '2025-2026 junior market', def: '~5-10x more applicants per role than 2021. 3-9 months of applications, 100-500 resumes sent, 80-95% rejection rate is NORMAL.', t: 'req' },
+    { name: 'Funnel math', def: 'Apps → screens (5-10%) → onsites (30-50%) → offers (20-40%). Even doing well you need 100+ apps for first offer.', t: 'req' },
+    { name: 'Burnout point', def: 'Most self-taught learners quit at month 3-4 thinking they\'ve failed. They haven\'t — they\'re at the median.', t: 'req' }
+  ],
+  '8:portfolio-differentiation': [
+    { name: 'Generic CRUD problem', def: 'Hiring managers see 100s of "to-do app + auth + dashboard" portfolios. Yours blurs together.', t: 'req' },
+    { name: 'Strange specific', def: 'Build ONE thing that signals personality: a tool you needed yourself, a niche audience, a weird API mashup.', t: 'req' },
+    { name: 'Story over polish', def: 'A working hack with a great backstory beats a polished clone. README explains WHY you built it.', t: 'req' }
+  ],
+  '8:first-job-reality': [
+    { name: '12-18 month competence curve', def: 'You won\'t feel "actually good" until month 12-18 of your first role. That\'s by design — production complexity dwarfs anything you can practice alone.', t: 'req' },
+    { name: 'Imposter syndrome', def: 'Loudest in months 1-6. Never fully goes away even for seniors. Document your wins weekly — concrete evidence beats feeling.', t: 'req' },
+    { name: 'Ask early, ask often', def: 'In your first 6 months, asking is your job. Senior engineers \'expected\' you to ask. Silence wastes weeks.', t: 'req' }
+  ],
+  '8:specialization': [
+    { name: 'T-shaped engineer', def: 'Broad across many things, deep in one. Junior = wide bar. Mid+/Senior = deepening that vertical bar in one specialty.', t: 'rec' },
+    { name: 'When to specialize', def: 'After 12-18 months of first-job production experience. Specializing too early closes doors; too late stalls around year 3.', t: 'rec' },
+    { name: 'Specialty options', def: 'Frontend perf, backend infra, ML platform, AI/LLM applications, DevOps, security, dev tools, DevRel. Each has its own career arc.', t: 'rec' }
+  ],
+
+  /* === STAGE 9 — Mobile (missing topics) === */
+  '9:mob-state': [
+    { name: 'AsyncStorage', def: 'React Native\'s simple key-value persistence. ~6MB limit. Async API (unlike localStorage on web).', t: 'rec' },
+    { name: 'Zustand on RN', def: 'Same Zustand as web. Add `persist` middleware backed by AsyncStorage for state that survives app restart.', t: 'rec' },
+    { name: 'TanStack Query on RN', def: 'Same React Query, same patterns. Works for server state. Pair with AsyncStorage for offline caching.', t: 'rec' }
+  ],
+  '9:mob-native-apis': [
+    { name: 'expo-camera', def: 'Camera access. Live preview + photo + video. Permission flow handled by Expo.', t: 'rec' },
+    { name: 'expo-location', def: 'GPS / location. Foreground or background. Battery cost — sample sparingly.', t: 'rec' },
+    { name: 'expo-haptics', def: 'Trigger device vibration patterns. `Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)`. Small touch that feels professional.', t: 'rec' },
+    { name: 'expo-local-authentication', def: 'Face ID / Touch ID / fingerprint. Returns success/fail booleans. Never see the actual biometric.', t: 'rec' }
+  ],
+  '9:mob-perf': [
+    { name: 'Hermes engine', def: 'Facebook\'s JS engine optimized for RN. Faster startup + lower memory than JavaScriptCore. Default in modern RN.', t: 'rec' },
+    { name: 'FlatList optimization', def: 'Set `getItemLayout` when items have fixed height — skips measurement. Set `windowSize` smaller for memory.', t: 'rec' },
+    { name: 'memo / useMemo for re-renders', def: 'Same as React on web. Wrap pure leaf components in `React.memo()` to avoid re-render cascades.', t: 'rec' },
+    { name: 'Native driver for animations', def: '`useNativeDriver: true` in Animated.timing — runs animation on native thread, doesn\'t block JS. Required for 60fps animations.', t: 'rec' }
+  ],
+  '9:mob-offline': [
+    { name: 'Optimistic UI', def: 'Update UI immediately, send to server in background, rollback on error. Makes flaky connections feel fast.', t: 'rec' },
+    { name: 'Retry queue', def: 'Failed writes queue locally; replay when online. Most users don\'t notice connection blips.', t: 'rec' },
+    { name: 'WatermelonDB', def: 'Reactive offline-first database for RN. Schema-defined, lazy-loaded, syncs to your backend.', t: 'rec' },
+    { name: 'expo-sqlite', def: 'SQLite for RN. Simpler than WatermelonDB; you write SQL. Good for moderate-size local data.', t: 'rec' },
+    { name: 'react-native-mmkv', def: 'Faster + smaller alternative to AsyncStorage. Synchronous API. From the team behind react-native-reanimated.', t: 'rec' }
+  ],
+  '9:mob-deeplinks': [
+    { name: 'Deep link', def: 'A URL that opens your app at a specific screen. `myapp://invoice/123`. Required for password resets, share-to-app, marketing emails.', t: 'rec' },
+    { name: 'Universal Link (iOS)', def: '`https://myapp.com/invoice/123` opens the app if installed, falls back to website. Verified via Apple-App-Site-Association file.', t: 'rec' },
+    { name: 'App Link (Android)', def: 'Android\'s equivalent. Verified via assetlinks.json on your domain.', t: 'rec' }
+  ],
+  '9:mob-auth': [
+    { name: 'Sign in with Apple', def: 'Apple\'s OAuth. MANDATORY on iOS if you offer any third-party login. expo-apple-authentication handles it.', t: 'req' },
+    { name: 'Google Sign-In', def: 'Use the official Google client SDK on each platform. expo-auth-session covers most flows.', t: 'rec' },
+    { name: 'Clerk for RN', def: 'Hosted auth-as-a-service. Drop-in components for sign-in / sign-up / MFA. Generous free tier.', t: 'rec' },
+    { name: 'Biometric unlock', def: 'expo-local-authentication. After user logs in once, re-auth via Face ID / Touch ID. Massively reduces churn.', t: 'rec' }
+  ],
+  '9:mob-crashlytics': [
+    { name: 'Sentry React Native', def: 'Cross-platform crash + error monitoring. Auto-captures uncaught JS errors + native crashes. Source map upload for stack traces.', t: 'rec' },
+    { name: 'Firebase Crashlytics', def: 'Free Google option. Strong for Android (FCM ecosystem). Setup is more involved than Sentry.', t: 'rec' },
+    { name: 'PostHog Mobile', def: 'Product analytics on top of crash tracking — funnels, retention, feature flags. Cross-platform RN support.', t: 'rec' }
+  ],
+  '9:mob-android-store': [
+    { name: 'Google Play Console', def: 'Android publishing dashboard. $25 one-time developer fee.', t: 'req' },
+    { name: 'App Bundle (.aab)', def: 'Replaces APK. Play Store generates optimized APKs per device. Required since 2021.', t: 'req' },
+    { name: 'Internal / Closed / Open testing', def: 'Three pre-production tracks: internal (≤100 testers, instant), closed (invite list, 1-day review), open (public beta).', t: 'rec' }
+  ],
+  '9:mob-ota': [
+    { name: 'OTA (Over-The-Air) update', def: 'Ship code without App Store review. JS/asset changes deploy in minutes; native changes still need a full submission.', t: 'rec' },
+    { name: 'EAS Update', def: 'Expo\'s hosted OTA service. Push branches per environment (dev/staging/prod). Easy rollback.', t: 'rec' },
+    { name: 'CodePush', def: 'Microsoft\'s competing OTA solution. Same idea, older, still widely used.', t: 'rec' },
+    { name: 'When OTA is NOT enough', def: 'New permissions, native module changes, Expo SDK upgrades — must go through full review.', t: 'rec' }
+  ],
+
+  /* === STAGE 10 — DS/ML (missing topics) === */
+  '10:ds-matplotlib-seaborn': [
+    { name: 'Matplotlib', def: 'Foundation of Python plotting. Low-level — you control every pixel. Verbose but flexible.', t: 'req' },
+    { name: 'pyplot API', def: '`plt.plot()`, `plt.scatter()`, `plt.show()`. The state-machine interface. Familiar from MATLAB.', t: 'req' },
+    { name: 'Seaborn', def: 'High-level statistical plotting on top of Matplotlib. Sensible defaults. `sns.scatterplot(data=df, x="age", y="income", hue="role")`.', t: 'req' },
+    { name: 'Figure vs Axes', def: 'Figure = whole image. Axes = one subplot. `fig, ax = plt.subplots()` gives both. Use ax.* for control.', t: 'rec' }
+  ],
+  '10:ds-plotly': [
+    { name: 'Plotly Express', def: 'High-level Plotly API. `px.scatter(df, x="a", y="b")` produces interactive charts in 1 line.', t: 'rec' },
+    { name: 'Interactive vs static', def: 'Plotly = interactive (zoom, pan, hover tooltips). Matplotlib = static images. Pick based on audience.', t: 'rec' },
+    { name: 'Dash', def: 'Plotly\'s framework for building data apps in pure Python. Like Streamlit; different opinionation.', t: 'rec' }
+  ],
+  '10:ds-clustering': [
+    { name: 'K-Means', def: 'Partition data into K clusters by minimizing distance to cluster centers. You pick K. Sensitive to initialization.', t: 'rec' },
+    { name: 'Elbow method', def: 'Plot inertia (intra-cluster distance) vs K. The "elbow" suggests the right K. Heuristic; not magic.', t: 'rec' },
+    { name: 'DBSCAN', def: 'Density-based clustering. Finds clusters of any shape, marks low-density points as noise. No K needed — set density params instead.', t: 'rec' },
+    { name: 'Hierarchical clustering', def: 'Bottom-up merge or top-down split. Produces a dendrogram. Useful when you want to explore cluster structure visually.', t: 'rec' }
+  ],
+  '10:ds-cnn': [
+    { name: 'Convolution', def: 'A small filter (e.g. 3×3) slides over an image, producing a feature map. Learns local patterns (edges, textures, shapes).', t: 'rec' },
+    { name: 'Pooling', def: 'Downsample (max or average over 2×2). Reduces spatial size, builds translation invariance.', t: 'rec' },
+    { name: 'Receptive field', def: 'The patch of input one neuron "sees." Grows with depth. Deep CNNs see whole images.', t: 'rec' },
+    { name: 'ResNet', def: 'Residual networks. Skip connections let you train 100+ layer nets that were untrainable before. Still strong baseline in 2026.', t: 'rec' }
+  ],
+  '10:ds-finetune': [
+    { name: 'Fine-tuning', def: 'Take a pretrained model, continue training on your specific data. Cheaper than training from scratch. Most LLM customization in 2026.', t: 'rec' },
+    { name: 'LoRA (Low-Rank Adaptation)', def: 'Adds small trainable matrices to a frozen base model. Trains 0.1% of parameters. ~10x cheaper than full fine-tuning.', t: 'rec' },
+    { name: 'QLoRA', def: 'LoRA + 4-bit quantization. Fits 70B model fine-tuning on a single consumer GPU. Standard for hobbyists.', t: 'rec' },
+    { name: 'Unsloth', def: 'Library that makes LoRA/QLoRA training 2-5x faster. Easier API than raw HF.', t: 'rec' },
+    { name: 'When NOT to fine-tune', def: 'Most "should I fine-tune?" questions = no, use RAG or prompt engineering. Fine-tune for: style, format, domain-specific terminology.', t: 'rec' }
+  ],
+  '10:ds-mlops': [
+    { name: 'MLOps', def: 'DevOps for ML — versioned data, reproducible training, deployment pipelines, monitoring drift.', t: 'rec' },
+    { name: 'Weights & Biases (wandb)', def: 'Experiment tracking SaaS. Log hyperparameters, metrics, artifacts. Comparing runs is the killer feature.', t: 'rec' },
+    { name: 'MLflow', def: 'Open-source equivalent to wandb. Self-hostable. Less polished but free.', t: 'rec' },
+    { name: 'Model drift', def: 'Production data distribution shifts away from training data. Model silently gets worse. Monitor predictions over time.', t: 'rec' }
+  ],
+  '10:ds-evals': [
+    { name: 'LLM eval', def: 'Measuring quality of LLM outputs against expected behavior. "Vibes-based" testing doesn\'t scale.', t: 'req' },
+    { name: 'LLM-as-judge', def: 'Use a stronger model to score outputs of a weaker model. Cheap + scalable + biased — calibrate against humans.', t: 'req' },
+    { name: 'promptfoo', def: 'CLI tool for prompt eval. Runs your prompts on a test set, compares with assertions or LLM judges.', t: 'rec' },
+    { name: 'Inspect (UK AI Safety)', def: 'Framework for systematic LLM evals from UK AI Safety Institute. Used for serious model evaluation.', t: 'rec' }
+  ],
+  '10:ds-papers': [
+    { name: 'Three-pass reading', def: '1) Abstract + figures (15min) — decide if relevant. 2) Full paper skeptically (1hr). 3) Replication-level deep dive (4hr+). Don\'t do all 3 on every paper.', t: 'rec' },
+    { name: 'arXiv Sanity', def: 'Karpathy\'s tool for browsing ML papers by similarity to ones you like. Better than arxiv.org default.', t: 'rec' },
+    { name: 'Papers With Code', def: 'Site linking papers to their reproducible implementations. Filter by benchmark.', t: 'rec' }
+  ],
+  '10:ds-kaggle': [
+    { name: 'Kaggle', def: 'ML competition platform + free datasets + free GPU notebooks. Apply skills against real benchmarks.', t: 'rec' },
+    { name: 'Beginner starting points', def: 'Titanic (classic), House Prices (regression intro), Digit Recognizer (CV intro). Get baselines BEFORE active competitions.', t: 'rec' },
+    { name: 'Read winning solutions', def: 'Every comp has a "Solutions & Discussions" tab. Top finishers post their approach. Most learning happens here, not in competing.', t: 'rec' }
+  ],
+  '10:ds-reproduce': [
+    { name: 'Paper reproduction', def: 'Implement a published method from scratch + try to get within 5-10% of reported metrics. Single best research-track signal.', t: 'opt' },
+    { name: 'Common gotchas', def: 'Hyperparameters often missing from papers. Data preprocessing differs. Random seeds matter. "Hidden tricks" in the appendix.', t: 'opt' },
+    { name: 'Karpathy reproduction recipe', def: '1) Get data + model running with toy hyperparams. 2) Scale up. 3) Match the paper\'s metric. Catch your bugs at step 1.', t: 'opt' }
   ]
 };
 
@@ -16534,6 +16842,8 @@ let __omniResults = [];
 
 function openOmni() {
   const overlay = document.getElementById('omniOverlay');
+  // Save the currently-focused element so we can restore on close
+  if (typeof __focusStack !== 'undefined') __focusStack.push(document.activeElement);
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   const input = document.getElementById('omniInput');
@@ -16548,6 +16858,11 @@ function closeOmni() {
   const overlay = document.getElementById('omniOverlay');
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
+  // Restore focus to whatever opened us
+  if (typeof __focusStack !== 'undefined' && __focusStack.length) {
+    const prev = __focusStack.pop();
+    if (prev && typeof prev.focus === 'function') prev.focus();
+  }
 }
 
 function omniHighlight(text, q) {
@@ -16727,6 +17042,55 @@ function omniEnter() {
    Hand-curated questions per stage with options + explanations.
    ============================================================ */
 const STAGE_CONCEPT_QUIZZES = {
+  0: {
+    title: 'Stage 0: Environment Setup',
+    questions: [
+      {
+        q: 'You install Node, Python, and git. From a fresh terminal, what\'s the FIRST thing you should verify?',
+        options: [
+          'That you can run `node`, `python`, `git` from any directory and get a version number back',
+          'That your laptop is plugged in',
+          'That you can write a Hello World immediately',
+          'That you have antivirus installed'
+        ],
+        correct: 0,
+        explain: 'A successful install = the binaries are on PATH. If `node --version` works from your project folder but not from `~/Desktop`, your PATH is wrong. Verify this BEFORE writing any code.'
+      },
+      {
+        q: 'You\'re cloning your first repo via HTTPS and GitHub asks for a password. What should you do?',
+        options: [
+          'Enter your GitHub password',
+          'GitHub disabled password auth in 2021. Generate an SSH key OR a Personal Access Token (PAT)',
+          'Email GitHub support',
+          'Try again with a different password'
+        ],
+        correct: 1,
+        explain: 'GitHub has required token-based auth since 2021. SSH keys are the modern default — generate once with `ssh-keygen`, add the public key to GitHub, never see a password prompt again.'
+      },
+      {
+        q: 'You\'re on Windows and `pip install` complains about permissions. The fix is:',
+        options: [
+          'Run as administrator',
+          'Use a virtual environment — `python -m venv .venv` or `uv venv` — never install globally',
+          'Disable Windows security',
+          'Switch to Mac'
+        ],
+        correct: 1,
+        explain: 'Global pip installs pollute your system Python and need admin. Virtual envs isolate per-project deps. uv / venv / poetry all do this. NEVER `sudo pip install` on macOS/Linux either.'
+      },
+      {
+        q: 'You set up VS Code and want to install 30 extensions you saw on a YouTube list. The right approach:',
+        options: [
+          'Install all 30 — more tools = better',
+          'Install 5-10 absolute essentials (language support, formatter, ESLint, Prettier, GitLens). Add others only when you feel friction',
+          'Install zero, use a text editor',
+          'Install only paid extensions'
+        ],
+        correct: 1,
+        explain: '"More extensions" → slower startup, conflicting keybindings, decision fatigue. Start lean. Add extensions reactively when you notice "I wish VS Code did X."'
+      }
+    ]
+  },
   1: {
     title: 'Stage 1: Programming Fundamentals',
     questions: [
@@ -17129,6 +17493,126 @@ const STAGE_CONCEPT_QUIZZES = {
         explain: 'Most self-taught learners quit at month 3-4 thinking they\'ve failed. The market is genuinely brutal right now. 2 months with no offers is below the median, not failure. Adjust strategy (targeted apps, referrals, better portfolio), don\'t quit.'
       }
     ]
+  },
+  9: {
+    title: 'Stage 9: Mobile Development (Elective)',
+    questions: [
+      {
+        q: 'You\'re starting your first mobile app. You know React. The fastest path to a shipping iOS + Android app is:',
+        options: [
+          'Learn Swift and Kotlin natively from scratch',
+          'React Native + Expo managed workflow — reuses 80% of React knowledge, no native code needed for most features',
+          'Build a web app and call it "mobile-friendly"',
+          'Wait for a better framework'
+        ],
+        correct: 1,
+        explain: 'Expo wraps RN with cloud builds, ~100 native modules, OTA updates — you write JS only. Native (Swift/Kotlin) is more powerful but means TWO codebases. Pick managed Expo for new apps unless you have a specific native-only need.'
+      },
+      {
+        q: 'Your iOS app uses Google Sign-In. App Store reviewer rejects it. Why?',
+        options: [
+          'Google is banned on iOS',
+          'Apple requires "Sign in with Apple" alongside any other third-party login. Add it or get rejected.',
+          'You forgot to pay the developer fee',
+          'Random reviewer mistake — resubmit'
+        ],
+        correct: 1,
+        explain: 'Mandatory since 2020 — App Store Guidelines 4.8. If you have Google/Facebook/Twitter login, you MUST also offer Sign in with Apple. Easy to add via expo-apple-authentication. Without it, automatic rejection.'
+      },
+      {
+        q: 'You add push notifications. Your testing on simulator works. On a real device, they never arrive. Most likely cause:',
+        options: [
+          'Push notifications need a real device — simulators don\'t receive them. Test on TestFlight or a connected device.',
+          'You need to add a database',
+          'Your code is broken',
+          'Apple is offline'
+        ],
+        correct: 0,
+        explain: 'iOS simulator cannot receive push notifications, period. Same for Android emulator (though Android emulator can use FCM with Google Play Services installed). Always test push on a real device.'
+      },
+      {
+        q: 'Your RN app feels janky when scrolling a long list. Best first fix:',
+        options: [
+          'Buy a faster phone',
+          'Switch ScrollView → FlatList. FlatList virtualizes rendering — only renders visible items. ScrollView renders everything.',
+          'Reduce content size',
+          'Disable animations entirely'
+        ],
+        correct: 1,
+        explain: 'ScrollView with 1000 items renders all 1000. FlatList renders ~10 visible + small offscreen buffer. Use FlatList for any list >20 items. The single biggest RN perf win.'
+      },
+      {
+        q: 'You want to push a bug fix WITHOUT going through App Store review (1-7 days). The legitimate option is:',
+        options: [
+          'Hack around it somehow',
+          'EAS Update (or CodePush) — OTA updates ship JS/asset changes in minutes. Native code changes still need a full submission.',
+          'Email all your users a workaround',
+          'There is no way'
+        ],
+        correct: 1,
+        explain: 'OTA updates are the killer feature of cross-platform mobile. Bug in your JS? Ship a fix in 5 minutes. Native code (Swift modules, Info.plist changes, new permissions)? Still needs full submission + review.'
+      }
+    ]
+  },
+  10: {
+    title: 'Stage 10: Data Science / ML Research (Elective)',
+    questions: [
+      {
+        q: 'You have a tabular classification dataset with 50K rows. Which model should you try FIRST?',
+        options: [
+          'A deep neural network with 10 hidden layers',
+          'XGBoost or LightGBM — gradient-boosted trees dominate tabular data and are usually the winning approach on Kaggle',
+          'A massive transformer',
+          'k-nearest neighbors'
+        ],
+        correct: 1,
+        explain: 'On TABULAR data, gradient-boosted trees almost always beat neural nets. They\'re faster to train, more interpretable, and need less data. Reach for deep learning when you have images, audio, text, or 1M+ rows — not before.'
+      },
+      {
+        q: 'You spend 80% of your time on data cleaning and EDA, 20% on modeling. This is:',
+        options: [
+          'Wrong — should be 50/50',
+          'Normal and correct. Data quality dominates model quality. "Garbage in, garbage out."',
+          'A sign you need better tools',
+          'A sign you\'re a bad ML engineer'
+        ],
+        correct: 1,
+        explain: 'Real DS work is mostly cleaning, exploring, and feature engineering. The model choice is usually a 1-day decision; the data work is the project. Don\'t skip EDA to get to "the fun part" — the fun part fails without it.'
+      },
+      {
+        q: 'You train a model, get 99% accuracy on test data, deploy it, and production is 60%. The MOST likely cause:',
+        options: [
+          'The model overfit',
+          'Data leakage — info from the test set (or future data) leaked into training. Often via feature engineering applied before the train/test split.',
+          'Bad luck',
+          'You need a bigger model'
+        ],
+        correct: 1,
+        explain: 'Data leakage is the #1 cause of "99% in eval, 60% in production." Common leaks: scaling/imputation done before split (test stats leak), target encoding done globally, time-series shuffled. Always SPLIT FIRST, then apply transforms via Pipeline.'
+      },
+      {
+        q: 'You want to deploy a custom-trained model. Where does it run?',
+        options: [
+          'On the user\'s phone',
+          'It depends — torchscript/ONNX export → load on a Python server (FastAPI), or Hugging Face Spaces for demos, or AWS SageMaker for prod scale',
+          'In a Word doc',
+          'It can\'t be deployed'
+        ],
+        correct: 1,
+        explain: 'Two paths: (1) Export to ONNX or torchscript and serve via FastAPI on a VPS — full control, low cost for low traffic. (2) Hugging Face Spaces (free demos, paid GPU) or SageMaker (managed, $$). Hugging Face Inference Endpoints is the modern in-between.'
+      },
+      {
+        q: 'You read a flashy ML paper claiming SOTA on benchmark X. Your manager wants you to ship it. Realistic timeline?',
+        options: [
+          'A week — the paper has code',
+          '4-12 weeks. Most papers don\'t reproduce cleanly. Reimplementing from scratch + adapting to your data + productionizing is genuinely months of work.',
+          '1 day',
+          'Never possible'
+        ],
+        correct: 1,
+        explain: 'Even with code, papers often miss hyperparameters, data preprocessing, or have subtle bugs. Reproducing claimed numbers is hard. Adapting to YOUR domain (different data, different metrics) is harder still. Plan accordingly.'
+      }
+    ]
   }
 };
 
@@ -17381,6 +17865,8 @@ function openTour() {
   const overlay = document.getElementById('tourOverlay');
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
+  // A11y: trap focus inside the tour; restore on close
+  if (typeof saveAndMoveFocusInto === 'function') saveAndMoveFocusInto(overlay);
   try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) {}
 }
 
@@ -17388,6 +17874,7 @@ function closeTour() {
   const overlay = document.getElementById('tourOverlay');
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
+  if (typeof restoreFocus === 'function') restoreFocus();
 }
 
 function tourStep(delta) {
@@ -17494,7 +17981,7 @@ function openAiInstructor() {
         <button onclick="aiQuickAction('debug')" type="button">🐛 Help me debug</button>
         <button onclick="aiQuickAction('motivate')" type="button">💪 I need motivation</button>
       </div>
-      <div class="ai-chat-log" id="aiChatLog">${messagesHtml}</div>
+      <div class="ai-chat-log" id="aiChatLog" role="log" aria-live="polite" aria-label="AI Instructor conversation">${messagesHtml}</div>
       <div class="ai-input-row">
         <textarea id="aiInput" placeholder="Ask anything — paste an error, describe a concept you don't get, request a code review..." onkeydown="aiInputKey(event)"></textarea>
         <button id="aiSendBtn" onclick="aiSend()" type="button">Send</button>
