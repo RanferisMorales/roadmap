@@ -6,6 +6,23 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — More-menu organization (PUSH 13)
+
+### Changed
+- **More menu: 20 → 15 entries.** Consolidated 8 entries into 3 launchers:
+  - **🎯 Quiz Me** — bundles Definitions Quiz + Stage Concept Quiz + Random Interview (3 → 1)
+  - **⚙ Utilities** — bundles My Resources + Backup/Restore + First-visit Tour (3 → 1)
+  - **📊 Accountability & Schedule** — Schedule planner is now a button inside Accountability (2 → 1)
+- Same drill-down UX pattern as Career Toolkit. Each launcher opens a 3-card picker; clicking a card opens the underlying tool.
+
+### Why
+Per user feedback that the menu still felt crowded after PUSH 6 trim. Grouping related tools under intent-based launchers (quiz me / plan & track / utilities) makes the menu scannable at a glance while preserving every existing feature.
+
+### Tests
+199/199 passing (6 new PUSH 13 + 193 pre-existing). Updated 3 pre-existing tests to use the new navigation paths (Tour, Stage Quiz, Definitions Quiz).
+
+---
+
 ## 2026-05 — Skill Graph fixes (PUSH 12)
 
 ### Fixed

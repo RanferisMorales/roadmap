@@ -2779,26 +2779,21 @@ abbr.glossary-term:hover::after {
           <button onclick="closeMoreMenu(); openStudyGuide()">📋 How to Study (per phase)</button>
           <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
-          <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
-          <button onclick="closeMoreMenu(); openStageQuiz()">🧠 Stage Concept Quiz</button>
           <button onclick="closeMoreMenu(); openFlashcards()">🧠 Flashcards</button>
+          <button onclick="closeMoreMenu(); openQuizLauncher()">🎯 Quiz Me (Definitions / Stage / Interview)</button>
           <button onclick="closeMoreMenu(); openPracticeHub()">🎮 Practice Hub</button>
           <div class="more-menu-group" role="presentation"><span>Plan &amp; Track</span></div>
           <button onclick="closeMoreMenu(); openBootcamp()">🏫 Bootcamp (full curriculum)</button>
-          <button onclick="closeMoreMenu(); openSchedule()">📅 Schedule (dates only)</button>
-          <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability</button>
+          <button onclick="closeMoreMenu(); openAccountability()">📊 Accountability &amp; Schedule</button>
           <button onclick="closeMoreMenu(); openDifficultyReview()">🎯 Hard Topics</button>
           <div class="more-menu-group" role="presentation"><span>Build &amp; Career</span></div>
           <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
           <button onclick="closeMoreMenu(); openPortfolio()">📁 My Portfolio</button>
           <button onclick="closeMoreMenu(); openCareerToolkit()">💼 Career Toolkit (Salary / Resume / LinkedIn)</button>
-          <button onclick="closeMoreMenu(); openInterviewRandom()">🎲 Random Interview</button>
           <div class="more-menu-group" role="presentation"><span>Tools</span></div>
           <button onclick="closeMoreMenu(); openOmni()">🔎 Search everywhere <span style="color:var(--text-mute);font-size:11px;">(Ctrl/Cmd+K)</span></button>
           <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
-          <button onclick="closeMoreMenu(); openMyResources()">⭐ My Resources</button>
-          <button onclick="closeMoreMenu(); openBackup()">💾 Backup / Restore</button>
-          <button onclick="closeMoreMenu(); openTour()">👋 First-visit Tour</button>
+          <button onclick="closeMoreMenu(); openUtilities()">⚙ Utilities (Resources / Backup / Tour)</button>
         </div>
       </div>
       <button class="btn" onclick="openSettings()" id="settingsBtn" title="Settings">
@@ -19891,6 +19886,9 @@ function openAccountability() {
   `).join('');
 
   const html = `
+    <div style="margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <button type="button" class="phub-skill-pill" onclick="openSchedule()" title="Generate a timeline based on hours/week — separate from daily tracking">📅 Schedule planner →</button>
+    </div>
     <div class="accountability-grid">
       <div class="accountability-card">
         <h4>📅 Today <span class="meta">${today}</span></h4>
@@ -20805,6 +20803,55 @@ const SALARY_LOCATIONS = {
   'mid': { label: 'Mid-size US city',        mult: 0.85 },
   'eu':  { label: 'Western Europe',          mult: 0.75 },
 };
+
+function openQuizLauncher() {
+  const html = `
+    <p class="practice-intro">Three different ways to drill what you've learned. Use them together — terms vocab + concept reasoning + interview-style speaking.</p>
+    <div class="career-tk-grid">
+      <button type="button" class="career-tk-card" onclick="openDefQuiz()">
+        <div class="career-tk-icon">📝</div>
+        <div class="career-tk-title">Definitions Quiz</div>
+        <div class="career-tk-desc">4-choice multiple-choice over the glossary. By stage / by tier / acronyms-only. Best for vocabulary retention.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openStageQuiz()">
+        <div class="career-tk-icon">🧠</div>
+        <div class="career-tk-title">Stage Concept Quiz</div>
+        <div class="career-tk-desc">Scenario-based reasoning questions per stage. Tests judgment, not memorization. Distinct from definition drills.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openInterviewRandom()">
+        <div class="career-tk-icon">🎲</div>
+        <div class="career-tk-title">Random Interview</div>
+        <div class="career-tk-desc">3 randomly-picked interview questions from stages you've started. 5 minutes per question, audio recording optional.</div>
+      </button>
+    </div>
+    <p class="practice-tip">💡 Each tool opens in its own focused view. Close and return here to switch.</p>
+  `;
+  showPracticeModal('🎯 Quiz Me', html);
+}
+
+function openUtilities() {
+  const html = `
+    <p class="practice-intro">Workspace utilities — bookmarks, backup, and the welcome tour. Use when you need them; skip otherwise.</p>
+    <div class="career-tk-grid">
+      <button type="button" class="career-tk-card" onclick="openMyResources()">
+        <div class="career-tk-icon">⭐</div>
+        <div class="career-tk-title">My Resources</div>
+        <div class="career-tk-desc">In-app bookmarks. Pin specific topic links you want to revisit without re-browsing the roadmap.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openBackup()">
+        <div class="career-tk-icon">💾</div>
+        <div class="career-tk-title">Backup / Restore</div>
+        <div class="career-tk-desc">Export your progress + notes as JSON. Import on another device. Recommended every few weeks.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openTour()">
+        <div class="career-tk-icon">👋</div>
+        <div class="career-tk-title">First-visit Tour</div>
+        <div class="career-tk-desc">6-step walkthrough of the roadmap's main features. Re-takeable any time.</div>
+      </button>
+    </div>
+  `;
+  showPracticeModal('⚙ Utilities', html);
+}
 
 function openCareerToolkit() {
   const html = `
