@@ -6,6 +6,24 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Surface the AI Tutor (PUSH 20)
+
+### Changed
+- **🎓 AI Tutor pill** added to the intro jump row (alongside Skip to roadmap / How to study / Fundamentals / What's new). One click from anywhere at the top of the page.
+- **New AI Tutor explainer callout** in the intro section above the 2026 reality callout. Three columns:
+  - **How it works** — BYO Anthropic API key, lives only in your browser, paste once chat forever
+  - **What it costs** — $0.50-2/hr, $5 ≈ 6-12 hrs, Anthropic gives $5 free credits on signup, live cost shown in chat
+  - **What it can do** — 6 quick actions: Explain / Quiz me / I'm stuck / Plan my week / Help debug / Motivation; plus free-form chat
+- Big "Open AI Tutor →" CTA button in the callout opens the instructor directly.
+
+### Why
+User feedback: the AI Tutor was 3 clicks deep (More → Learn → 🎓 AI Instructor → Setup screen). For something positioned as a self-taught learner's "instructor replacement," that's too buried. Now it's a single click from the top of the home page, with an explainer that answers "what is this / what does it cost / what can it do" before you click in.
+
+### Tests
+214/214 still passing (one flaky timeout retry on a notes journal test — passes in isolation, not related to this change).
+
+---
+
 ## 2026-05 — Entry Criteria audit + intro reorg + stale counts (PUSH 19)
 
 ### Changed

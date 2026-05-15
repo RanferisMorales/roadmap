@@ -2124,6 +2124,59 @@ abbr.glossary-term:hover::after {
 .mentor-cta-links a { font-family: 'Patrick Hand', cursive; font-size: 12px; padding: 3px 9px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); text-decoration: none; white-space: nowrap; }
 .mentor-cta-links a:hover { background: var(--node-stage); transform: translate(-1px, -1px); }
 
+/* === AI TUTOR CALLOUT (explains the built-in AI Instructor) === */
+.ai-tutor-callout {
+  margin-top: 18px; padding: 14px 18px;
+  border: 2px solid var(--accent); border-radius: 12px;
+  background: linear-gradient(135deg, rgba(199,210,254,0.35), rgba(220,252,231,0.22));
+}
+:root[data-theme="dark"] .ai-tutor-callout {
+  background: linear-gradient(135deg, rgba(50,60,100,0.5), rgba(20,52,30,0.4));
+  border-color: #a5b4fc;
+}
+.ai-tutor-callout-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.ai-tutor-callout-head h3 {
+  margin: 0; font-family: 'Architects Daughter', cursive; font-size: 19px; color: var(--text);
+}
+.ai-tutor-callout-cta {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13.5px;
+  padding: 6px 14px; border: 2px solid var(--text); border-radius: 999px;
+  background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap;
+}
+.ai-tutor-callout-cta:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+:root[data-theme="dark"] .ai-tutor-callout-cta { color: #1a1a1a; }
+.ai-tutor-callout-body p {
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.55; color: var(--text);
+  margin: 0 0 10px;
+}
+.ai-tutor-callout-body p code {
+  font-family: ui-monospace, monospace; padding: 1px 5px; border-radius: 4px;
+  background: var(--bg); border: 1px solid var(--border); font-size: 12px;
+}
+.ai-tutor-callout-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px; margin-top: 8px;
+}
+.ai-tutor-callout-cell {
+  padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg);
+}
+.ai-tutor-callout-cell strong {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; color: var(--text);
+  display: block; margin-bottom: 4px;
+}
+.ai-tutor-callout-cell p {
+  font-family: 'Patrick Hand', cursive; font-size: 13px; line-height: 1.45; color: var(--text-dim);
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .ai-tutor-callout-head h3 { font-size: 16px; }
+  .ai-tutor-callout-body p { font-size: 13px; }
+  .ai-tutor-callout-cell p { font-size: 12.5px; }
+}
+
 /* === 2026 REALITY CALLOUT (intro section, between grid and fundamentals) === */
 .reality-callout {
   margin-top: 12px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;
@@ -2952,6 +3005,7 @@ abbr.glossary-term:hover::after {
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
       <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
       <span class="intro-jump-link" onclick="openStudyGuide('compass')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide('compass')}" style="cursor:pointer;">🧭 Fundamentals (168)</span>
+      <span class="intro-jump-link" onclick="openAiInstructor()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAiInstructor()}" style="cursor:pointer;">🎓 AI Tutor</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
     <h2>🎯 Is This Roadmap For You?</h2>
@@ -3001,6 +3055,31 @@ abbr.glossary-term:hover::after {
           <li><strong>Practice DSA 2-3 problems/week from Stage 2 onward</strong> — not a Stage 1 sprint you forget by interview time.</li>
           <li><strong>Open 🎓 AI Instructor early</strong> — uses your own Anthropic key, gives you a tutor that knows your roadmap state.</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- AI TUTOR CALLOUT — explains the AI Instructor so people understand what it is before clicking -->
+    <div class="ai-tutor-callout">
+      <div class="ai-tutor-callout-head">
+        <h3>🎓 You get a built-in AI Tutor (Claude)</h3>
+        <button type="button" class="ai-tutor-callout-cta" onclick="openAiInstructor()">Open AI Tutor →</button>
+      </div>
+      <div class="ai-tutor-callout-body">
+        <p>Self-taught learners hit walls. This roadmap ships with a built-in tutor: <strong>chat with Claude</strong> about any topic, get unstuck on bugs, have it quiz you, ask it to plan your week. It knows your <strong>current stage + topic + progress</strong> so answers are contextual, not generic.</p>
+        <div class="ai-tutor-callout-grid">
+          <div class="ai-tutor-callout-cell">
+            <strong>How it works</strong>
+            <p>You bring your own Anthropic API key (signup is free; $5 free credits to start). Your key lives only in your browser — never sent to anyone except <code>api.anthropic.com</code>. Click the button, paste your key once, chat forever.</p>
+          </div>
+          <div class="ai-tutor-callout-cell">
+            <strong>What it costs</strong>
+            <p>≈ <strong>$0.50 – $2.00 per hour</strong> of tutor use on Claude Sonnet. <strong>$5 of credit ≈ 6–12 hours</strong>. Live cost shown in the chat header so you never get surprised. Anthropic's $5 free signup credit is usually enough for your first few weeks.</p>
+          </div>
+          <div class="ai-tutor-callout-cell">
+            <strong>What it can do</strong>
+            <p>Six quick-actions baked in: <strong>📚 Explain current topic · 🎯 Quiz me · 🤔 I'm stuck · 📋 Plan my week · 🐛 Help debug · 💪 Motivation</strong>. Plus free-form chat for anything else.</p>
+          </div>
+        </div>
       </div>
     </div>
 
