@@ -6,6 +6,20 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Trim & Focus (UI consolidation, zero learning content removed)
+
+### Changed
+- **More menu: 23 → 19 entries**. Surface-area trim without removing features:
+  - **💼 Career Toolkit** — single entry that opens a launcher with the 3 end-of-roadmap generators (Salary / Resume Bullets / LinkedIn Post). Each underlying tool unchanged; just one less ambient entry.
+  - **📊 All-time spend (Cost Tracker)** — moved out of More menu and into the **🎓 AI Instructor** header, where the data being tracked is actually generated. Contextual placement.
+  - **🖨 Print** (header button) — removed. The actually-used print is **Bootcamp Print** inside the Bootcamp modal — that one stays.
+- "Built-in Tools" howto card refreshed to match the new layout.
+
+### Rationale
+Nothing in the learning material (267 topics / 638 links / 1,200+ glossary terms / 13 builds / 11 stages of TERMS) was touched. Only consolidated UI features whose menu real estate exceeded their per-use value.
+
+---
+
 ## 2026-05 — Study Guide
 
 ### Added

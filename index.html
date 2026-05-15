@@ -2050,6 +2050,14 @@ abbr.glossary-term:hover::after {
 .build-card .b-diff.intermediate { background: #fef3c7; color: #78350f; }
 .build-card .b-diff.advanced { background: #fee2e2; color: #7f1d1d; }
 
+/* === CAREER TOOLKIT === */
+.career-tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 8px 0 14px; }
+.career-tk-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; font-family: inherit; }
+.career-tk-card:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); background: var(--bg-soft); }
+.career-tk-icon { font-size: 28px; line-height: 1; }
+.career-tk-title { font-family: 'Architects Daughter', cursive; font-size: 17px; color: var(--text); }
+.career-tk-desc { font-family: 'Patrick Hand', cursive; font-size: 13px; line-height: 1.45; color: var(--text-mute); }
+
 /* === STUDY GUIDE (How to Work Each Phase) === */
 .study-stages { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 .study-stage { border: 2px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--bg); }
@@ -2714,10 +2722,6 @@ abbr.glossary-term:hover::after {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         <span id="themeLabel">Dark</span>
       </button>
-      <button class="btn" onclick="window.print()" title="Print or save as PDF">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print
-      </button>
       <button class="streak-pill zero" onclick="openStreak()" id="streakPill" title="Streak — click for heatmap" aria-label="Activity streak: 0 days. Click to open heatmap.">
         <span class="flame" aria-hidden="true">🔥</span><span id="streakNum">0</span><span class="sr-only" aria-hidden="true"> day streak</span>
       </button>
@@ -2747,11 +2751,8 @@ abbr.glossary-term:hover::after {
           <div class="more-menu-group" role="presentation"><span>Build &amp; Career</span></div>
           <button onclick="closeMoreMenu(); openBuilds()">🔨 Builds</button>
           <button onclick="closeMoreMenu(); openPortfolio()">📁 My Portfolio</button>
-          <button onclick="closeMoreMenu(); openResumeGen()">📄 Resume Bullets</button>
-          <button onclick="closeMoreMenu(); openLinkedInGen()">📢 LinkedIn Post</button>
-          <button onclick="closeMoreMenu(); openSalary()">💼 Salary</button>
+          <button onclick="closeMoreMenu(); openCareerToolkit()">💼 Career Toolkit (Salary / Resume / LinkedIn)</button>
           <button onclick="closeMoreMenu(); openInterviewRandom()">🎲 Random Interview</button>
-          <button onclick="closeMoreMenu(); openCostTracker()">💰 AI Spend</button>
           <div class="more-menu-group" role="presentation"><span>Tools</span></div>
           <button onclick="closeMoreMenu(); openOmni()">🔎 Search everywhere <span style="color:var(--text-mute);font-size:11px;">(Ctrl/Cmd+K)</span></button>
           <button onclick="closeMoreMenu(); openSkillGraph()">🕸 Skill Graph</button>
@@ -2954,7 +2955,7 @@ abbr.glossary-term:hover::after {
             <li><strong>🔨 Builds</strong> — 11 full step-by-step project guides with copy-paste code (portfolio site, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots).</li>
             <li><strong>🧠 Flashcards</strong> — SM-2 spaced repetition. Add custom cards per topic.</li>
             <li><strong>🕸 Skill Graph</strong> — layered DAG of all topics by stage. Click to open. Filter by tier or status.</li>
-            <li><strong>💼 Salary calculator</strong>, 💰 AI cost tracker, 📅 Schedule, 📁 Portfolio, 📄 Resume bullets, 📢 LinkedIn post, 🎲 Random interview, 🎯 Hard Topics review, ⭐ My Resources, 💾 Backup/Restore.</li>
+            <li><strong>💼 Career Toolkit</strong> (Salary / Resume bullets / LinkedIn post), 📅 Schedule, 📁 Portfolio, 🎲 Random interview, 🎯 Hard Topics review, ⭐ My Resources, 💾 Backup/Restore. Cost tracker moved into the 🎓 AI Instructor header (where it's actually relevant).</li>
           </ul>
         </div>
         <div class="howto-card">
@@ -18172,6 +18173,7 @@ function openAiInstructor() {
         <strong>🎓 AI Instructor</strong>
         <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)">${modelOptions}</select>
         <button class="phub-skill-pill" onclick="openAiInstructorSetup()" type="button">⚙ Settings</button>
+        <button class="phub-skill-pill" onclick="openCostTracker()" type="button" title="All-time AI spend tracker">📊 All-time spend</button>
         <button class="phub-skill-pill" onclick="aiClearHistory()" type="button">🗑 Clear</button>
         <span class="ai-cost">Session: ${costStr} · ${ai.totalTokensIn || 0} in / ${ai.totalTokensOut || 0} out</span>
       </div>
@@ -19462,6 +19464,31 @@ const SALARY_LOCATIONS = {
   'mid': { label: 'Mid-size US city',        mult: 0.85 },
   'eu':  { label: 'Western Europe',          mult: 0.75 },
 };
+
+function openCareerToolkit() {
+  const html = `
+    <p class="practice-intro">End-of-roadmap job hunt tools. Use these in Stage 8 (Job Hunt), not before — they need real completed-topic data to be useful.</p>
+    <div class="career-tk-grid">
+      <button type="button" class="career-tk-card" onclick="openSalary()">
+        <div class="career-tk-icon">💼</div>
+        <div class="career-tk-title">Salary Calculator</div>
+        <div class="career-tk-desc">Quick salary estimate by target role + location. Multipliers based on levels.fyi / Glassdoor data.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openResumeGen()">
+        <div class="career-tk-icon">📄</div>
+        <div class="career-tk-title">Resume Bullets</div>
+        <div class="career-tk-desc">Generate STAR-format resume bullets from your completed topics &amp; built projects.</div>
+      </button>
+      <button type="button" class="career-tk-card" onclick="openLinkedInGen()">
+        <div class="career-tk-icon">📢</div>
+        <div class="career-tk-title">LinkedIn Post</div>
+        <div class="career-tk-desc">Draft an "I just shipped X" or "Looking for my first junior FS role" post. Avoids generic learning-in-public clichés.</div>
+      </button>
+    </div>
+    <p class="practice-tip">💡 Each tool opens in its own focused view. Close and return here to switch tools.</p>
+  `;
+  showPracticeModal('💼 Career Toolkit', html);
+}
 
 function openSalary() {
   // Render once with defaults — fill in any previously-saved last selection later
