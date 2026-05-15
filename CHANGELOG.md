@@ -6,6 +6,18 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Fundamentals visibility (PUSH 7)
+
+### Added
+- **🧭 Fundamentals (168) pill** in the intro pill row — direct one-click access to the Fundamentals Compass tab. No more modal-diving.
+- **Fundamentals Callout** block in the intro section (right after the Yes/No/What/Warn grid) — visible proof of the "builds from the ground up" promise. Lists 8 fundamental categories with sample topics + where in the roadmap they live: CS Basics, Programming Fundamentals (Python+JS), Math & Logic, DSA, Learning Skills, Web Fundamentals, Backend Fundamentals, Production Fundamentals.
+- **Clickable "fundamentals" word** in the "Not for you, if you" card — the exact line that says "Want to skip fundamentals and jump straight to AI" now has the word linked to the Compass, plus a "see the 168 required topics →" inline link.
+
+### Why
+The intro was promising "builds from the ground up" but the proof was buried 3 clicks deep in the Study Guide → Fundamentals Compass tab. PUSH 7 makes the proof visible inline. Zero learning content added or removed — purely making existing content discoverable.
+
+---
+
 ## 2026-05 — Trim & Focus (UI consolidation, zero learning content removed)
 
 ### Changed

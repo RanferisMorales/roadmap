@@ -2050,6 +2050,28 @@ abbr.glossary-term:hover::after {
 .build-card .b-diff.intermediate { background: #fef3c7; color: #78350f; }
 .build-card .b-diff.advanced { background: #fee2e2; color: #7f1d1d; }
 
+/* === FUNDAMENTALS CALLOUT (intro section) === */
+.fundamentals-callout { margin-top: 18px; padding: 16px 18px; border: 2px solid var(--node-stage); border-radius: 12px; background: linear-gradient(135deg, rgba(255,235,160,0.32), rgba(220,252,231,0.22)); }
+:root[data-theme="dark"] .fundamentals-callout { background: linear-gradient(135deg, rgba(63,52,15,0.55), rgba(20,52,30,0.45)); border-color: #d4a300; }
+.fc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.fc-head h3 { margin: 0; font-family: 'Architects Daughter', cursive; font-size: 20px; color: var(--text); }
+.fc-cta { font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; padding: 6px 14px; border: 2px solid var(--text); border-radius: 999px; background: var(--node-stage); color: var(--text); cursor: pointer; white-space: nowrap; }
+.fc-cta:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+.fc-intro { font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5; color: var(--text); margin: 0 0 12px; }
+.fc-intro code { font-family: ui-monospace, monospace; padding: 1px 6px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border); font-size: 12px; }
+.fc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.fc-cat { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left; padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg); cursor: pointer; font-family: inherit; }
+.fc-cat:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); background: var(--bg-soft); }
+.fc-cat-title { font-family: 'Architects Daughter', cursive; font-size: 15px; color: var(--text); }
+.fc-cat-list { font-family: 'Patrick Hand', cursive; font-size: 12.5px; line-height: 1.4; color: var(--text); }
+.fc-cat-where { font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute); padding-top: 2px; border-top: 1px dashed var(--border); margin-top: 4px; width: 100%; }
+.fc-foot { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); margin: 12px 0 0; font-style: italic; }
+@media (max-width: 640px) {
+  .fc-head h3 { font-size: 16px; }
+  .fc-cat-title { font-size: 14px; }
+  .fc-cat-list { font-size: 11.5px; }
+}
+
 /* === CAREER TOOLKIT === */
 .career-tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 8px 0 14px; }
 .career-tk-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; padding: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; font-family: inherit; }
@@ -2813,6 +2835,7 @@ abbr.glossary-term:hover::after {
     <div class="intro-jump-row">
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
       <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
+      <span class="intro-jump-link" onclick="openStudyGuide('compass')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide('compass')}" style="cursor:pointer;">🧭 Fundamentals (168)</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
     <h2>🎯 Is This Roadmap For You?</h2>
@@ -2835,7 +2858,7 @@ abbr.glossary-term:hover::after {
           <li>Want to learn <strong>Vue, Angular, Svelte, Ruby, Java, .NET</strong> as your primary stack — this is opinionated TypeScript / React / Next / Node / Python / Postgres / Claude</li>
           <li>Want <strong>game development</strong>, <strong>embedded systems</strong>, or <strong>hardware</strong> — different specialties entirely</li>
           <li>Want to use <strong>OpenAI</strong> or other non-Anthropic LLMs — this roadmap is Claude/Anthropic-only by design (Voyage AI for embeddings)</li>
-          <li>Want to skip <strong>fundamentals</strong> and jump straight to AI — this builds from the ground up</li>
+          <li>Want to skip <strong><a href="#" onclick="event.preventDefault(); openStudyGuide('compass');" style="color:inherit;text-decoration:underline;cursor:pointer;" title="See the 168 required fundamentals">fundamentals</a></strong> and jump straight to AI — this builds from the ground up (<a href="#" onclick="event.preventDefault(); openStudyGuide('compass');" style="color:var(--accent);text-decoration:underline;cursor:pointer;">see the 168 required topics &rarr;</a>)</li>
           <li>Need <strong>guaranteed external accountability</strong> (boss/teacher checking on you weekly) — the built-in 📊 Accountability + 🎓 AI Instructor help, but self-discipline is still required</li>
         </ul>
         <p style="margin-top:8px;font-family:'Patrick Hand',cursive;font-size:13px;color:var(--text-dim);"><strong>📱 Mobile dev</strong> and <strong>🧪 Data Science / ML research</strong> are now available as <strong>elective stages 9 + 10</strong> — opt-in after the core path.</p>
@@ -2863,6 +2886,58 @@ abbr.glossary-term:hover::after {
           <li><strong>Open 🎓 AI Instructor early</strong> — uses your own Anthropic key, gives you a tutor that knows your roadmap state.</li>
         </ul>
       </div>
+    </div>
+
+    <!-- FUNDAMENTALS CALLOUT — answers "this builds from the ground up" with visible proof -->
+    <div class="fundamentals-callout">
+      <div class="fc-head">
+        <h3>🧭 Yes — fundamentals are built in (168 required topics)</h3>
+        <button class="fc-cta" type="button" onclick="openStudyGuide('compass')">See all 168 →</button>
+      </div>
+      <p class="fc-intro">When the card above says "builds from the ground up," here's what that actually means. Every <code>req</code>-tier topic below is mandatory in the roadmap — no skipping. Click any category to jump to those topics in the Fundamentals Compass.</p>
+      <div class="fc-grid">
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">💻 CS Basics</div>
+          <div class="fc-cat-list">How Computers Work · How the Internet Works · Binary &amp; Hex · Memory Hierarchy · OS basics</div>
+          <div class="fc-cat-where">Stage 1 · CS Basics branch</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">🐍 Programming Fundamentals</div>
+          <div class="fc-cat-list">Python from zero · JavaScript from zero · Variables, types, control flow · Functions, scope, closures · OOP · Async</div>
+          <div class="fc-cat-where">Stage 1 · Python + JS branches</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">🧮 Math &amp; Logic Fundamentals</div>
+          <div class="fc-cat-list">Boolean logic · Sets &amp; relations · Statistics &amp; probability · Discrete math · Polya problem-solving · Fermi estimation</div>
+          <div class="fc-cat-where">Stage 1 · Math &amp; Logic branch</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">🧠 Data Structures &amp; Algorithms</div>
+          <div class="fc-cat-list">Arrays, strings, hashmaps · Linked lists, stacks, queues · Trees &amp; graphs · Recursion · Big-O · Sorting &amp; searching</div>
+          <div class="fc-cat-where">Stage 1 · DSA branch (continuous through Stage 7)</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">📚 Learning Skills</div>
+          <div class="fc-cat-list">How to read official docs · Asking for help productively · Reading stack traces calmly · Debugging mindset</div>
+          <div class="fc-cat-where">Stage 1 · Learning Skills branch</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">🌐 Web Fundamentals</div>
+          <div class="fc-cat-list">Semantic HTML · CSS layout (Flex/Grid) · Vanilla JS · DOM &amp; events · HTTP, REST · Browser DevTools · A11y</div>
+          <div class="fc-cat-where">Stage 2 · all branches</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">⚙ Backend Fundamentals</div>
+          <div class="fc-cat-list">Raw SQL before ORMs · HTTP &amp; REST principles · Auth (sessions / JWT) · Migrations · Validation · Errors &amp; status codes</div>
+          <div class="fc-cat-where">Stage 4 · Backend / DB / Auth branches</div>
+        </button>
+        <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
+          <div class="fc-cat-title">🚀 Production Fundamentals</div>
+          <div class="fc-cat-list">Deploy to managed platforms · Structured logging · Error tracking · Rate limits · HTTPS · Backups · Observability</div>
+          <div class="fc-cat-where">Stage 7 · DevOps &amp; Security branches</div>
+        </button>
+      </div>
+      <p class="fc-foot">Beyond these 8 categories, there are <strong>80 more recommended</strong> topics that upgrade you from "competent" to "hireable" — see the Fundamentals Compass for the full picture.</p>
     </div>
   </div>
 
