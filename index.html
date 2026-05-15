@@ -1965,6 +1965,12 @@ abbr.glossary-term:hover::after {
   font-family: 'Patrick Hand', cursive; font-size: 13.5px; line-height: 1.5;
 }
 :root[data-theme="dark"] .ai-setup .ai-security { background: #422006; color: #fef3c7; border-color: #fbbf24; }
+.ai-setup .ai-cost-expectation {
+  background: #d1fae5; color: #064e3b; border: 2px solid #10b981; border-radius: 8px;
+  padding: 10px 14px; font-family: 'Patrick Hand', cursive; font-size: 13.5px; line-height: 1.5;
+}
+.ai-setup .ai-cost-expectation strong { font-family: 'Kalam', cursive; }
+:root[data-theme="dark"] .ai-setup .ai-cost-expectation { background: #064e3b; color: #d1fae5; border-color: #10b981; }
 .ai-setup .ai-actions { display: flex; gap: 8px; justify-content: flex-end; }
 .ai-setup .ai-actions button {
   padding: 8px 16px; background: var(--node-stage); color: #1a1a1a; border: 2px solid var(--border); border-radius: 8px;
@@ -2934,8 +2940,9 @@ abbr.glossary-term:hover::after {
       <div class="intro-card good">
         <h3>✓ Yes, if you</h3>
         <ul>
-          <li>Want to become a <strong>Full Stack + AI Engineer</strong> employable in 2026+</li>
+          <li>Are <strong>targeting Full Stack + AI Engineer roles</strong> in 2026+ (no employment guarantee — see Stage 8 market reality)</li>
           <li data-personal="timelineYesIf">Have <strong>16-25 months of focused learning time</strong> available at ~30 hrs/week — realistically <strong>24-36 months</strong> for most self-taught learners juggling life</li>
+          <li><strong>⚠ 2026 reality:</strong> Above is <em>time-to-content</em>. <strong>Time-to-first-offer adds 3-12 months</strong> in the current junior market (AI tooling has compressed entry-level hiring; expect 100+ applications, portfolio rounds, referrals required).</li>
           <li>Prefer <strong>one opinionated path</strong> over endless "choose your own adventure" tutorials</li>
           <li>Want a stack built around <strong>TypeScript, React, Next.js, Node, Python, Postgres, Anthropic Claude</strong></li>
           <li>Are okay being <strong>self-directed</strong> (no instructor will check on you)</li>
@@ -2960,7 +2967,7 @@ abbr.glossary-term:hover::after {
           <li data-personal="stats"><strong>11 stages</strong> (9 core + 2 electives), 58 branches, 266 topics, 687 curated links</li>
           <li><strong>~853 glossary entries</strong> — every key term defined inline + in a global searchable A-Z view</li>
           <li><strong>Built for self-teaching</strong> — no instructor, no cohort. But ships with a 🎓 <strong>built-in AI Instructor</strong> (chat with Claude as your tutor) and 📊 <strong>Accountability</strong> tracker</li>
-          <li><strong>Production-focused</strong> — System Design, DevOps, Security, Observability included</li>
+          <li><strong>Production-aware</strong> — covers System Design, DevOps, Security, Observability. (Builds are MVPs you'll harden on a real job — not turnkey production code.)</li>
           <li><strong>2026-current</strong> — Claude Sonnet 4.6, Voyage AI embeddings, MCP, agents, RAG that older roadmaps miss</li>
           <li><strong>11 full step-by-step Build guides</strong> with copy-paste code: portfolio, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots</li>
           <li><strong>🏫 Bootcamp mode</strong> compresses everything into 12/16/24/52/84-week schedules</li>
@@ -19695,6 +19702,15 @@ function openAiInstructorSetup() {
     <div class="ai-setup">
       <h3>${hasKey ? 'Update' : 'Set up'} your Anthropic API key</h3>
       <p>Your AI Instructor uses <strong>your own</strong> Anthropic API key to chat with Claude. The key is stored only in your browser (localStorage) and is only ever sent to <code>api.anthropic.com</code>. It is never sent anywhere else, never logged, never shared.</p>
+      <div class="ai-cost-expectation">
+        <strong>💰 What it costs you:</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0;">
+          <li><strong>~$0.50–2.00 per hour</strong> of tutor use on Claude Sonnet (most common pick)</li>
+          <li><strong>$5 ≈ 6–12 hours</strong> of tutoring → enough for a few weeks of typical use</li>
+          <li>Anthropic gives <strong>$5 free credits</strong> on signup, then pay-as-you-go</li>
+          <li>Live cost is shown in the chat header so you never get surprised</li>
+        </ul>
+      </div>
       <ol>
         <li>Go to <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a> and sign up (you get $5 free credits).</li>
         <li>Click "API Keys" → "Create Key", copy the value (starts with <code>sk-ant-</code>).</li>
@@ -21032,7 +21048,7 @@ function openCareerToolkit() {
 function openSalary() {
   // Render once with defaults — fill in any previously-saved last selection later
   const html = `
-    <p class="practice-intro">Quick salary estimate based on your target role, location, and current progress. Rough numbers — verify on levels.fyi or Glassdoor.</p>
+    <p class="practice-intro">Quick salary estimate based on your target role, location, and current progress. <strong>⚠ Baseline numbers reflect 2024 data — verify on levels.fyi or Glassdoor before negotiating. 2026 junior market has compressed entry-level offers ~10-20% in many regions.</strong></p>
     <div class="salary-form">
       <div>
         <label>Target role</label>

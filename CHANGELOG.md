@@ -6,6 +6,25 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Honesty pass: misleading-content fixes (PUSH 17)
+
+### Changed
+Per user audit request: identified and rewrote 4 specific claims that overstated certainty for the 2026 junior market.
+
+- **YES card line "employable in 2026+"** → "targeting Full Stack + AI Engineer roles in 2026+ (no employment guarantee — see Stage 8 market reality)". Removes the implied promise.
+- **New 2026 reality footnote** in the YES card: "Time-to-content is 21-29mo; time-to-first-offer adds 3-12 months in the current junior market (AI tooling has compressed entry-level hiring; expect 100+ applications, portfolio rounds, referrals required)". Reframes the existing timeline calc as time-to-content, not time-to-job.
+- **"Production-focused"** → "Production-aware — covers System Design, DevOps, Security, Observability. (Builds are MVPs you'll harden on a real job — not turnkey production code.)" Stops over-promising about what 13-15 builds deliver.
+- **AI Instructor setup screen** now opens with an explicit cost block: "$0.50-2.00/hr of tutor use on Claude Sonnet; $5 ≈ 6-12 hours; Anthropic gives $5 free credits on signup; live cost shown in chat header so you never get surprised." Removes the friction of "wait, what is this going to cost me?"
+- **Salary calculator intro** now warns: baseline numbers are 2024 data; 2026 junior market has compressed entry-level offers ~10-20% in many regions; verify on levels.fyi before negotiating.
+
+### Audit deliverable
+Full strong/weak/realistic/comparison audit was produced in conversation (vs roadmap.sh, Odin Project, freeCodeCamp, Codecademy, Boot.dev, Scrimba). AI Instructor architecture + security analysis documented. Static pre-rendered HTML regenerated to match.
+
+### Tests
+214/214 still passing. Pure copy + CSS additions, no API/behavior changes.
+
+---
+
 ## 2026-05 — Topic modal redesign with tabs (PUSH 16)
 
 ### Changed
