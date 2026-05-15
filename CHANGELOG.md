@@ -6,6 +6,21 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Per-stage / per-topic / per-build AI integrations (PUSH 25)
+
+User picked all 4. All shipped. Core helper `aiAskWithPrompt(prompt, persona)` opens the AI Instructor, switches persona, fills the input, and submits.
+
+### Added
+- **🎓 Ask AI button** inside the topic modal header. Click → AI Tutor opens with a pre-built prompt referencing the current topic's name, stage, description, and "why it matters". Auto-switches to Tutor persona.
+- **🤖 AI Quiz button** on every stage band. Click → AI generates 5 scenario-style quiz questions covering that stage's topics, then grades your answers with explanations. Switches to Interviewer persona.
+- **✓ AI Readiness button** on stages with exit criteria. Click → AI asks one focused question per exit-criterion and gives an honest verdict at the end (ready / needs work on X / not ready). Interviewer persona.
+- **🤖 AI review my code button** inside every Build detail view. Click → prompts you to paste your implementation, then AI does a line-by-line review against the Build spec (correctness / security / perf / readability / missed requirements). Switches to Code Reviewer persona.
+
+### Tests
+257/257 passing (10 new PUSH 25 + 247 pre-existing). Bonus: PUSH 24's persona system gets exercised end-to-end through these new entry points.
+
+---
+
 ## 2026-05 — AI Instructor: search, export, star, personas (PUSH 24)
 
 User picked all 4 upgrades. All shipped.

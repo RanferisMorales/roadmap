@@ -2392,6 +2392,13 @@ body.locked > .container, body.locked > footer { display: none !important; }
   background: var(--bg-card); color: var(--text); cursor: pointer;
 }
 .build-detail .bd-back:hover { background: var(--node-stage); }
+.build-detail .bd-ai-review {
+  font-family: 'Patrick Hand', cursive; font-size: 13px;
+  padding: 4px 10px; border: 2px solid var(--accent); border-radius: 6px;
+  background: var(--bg-card); color: var(--text); cursor: pointer;
+}
+.build-detail .bd-ai-review:hover { background: var(--accent); color: #fff; }
+:root[data-theme="dark"] .build-detail .bd-ai-review:hover { color: #1a1a1a; }
 .build-step { border: 2px solid var(--border); border-radius: 8px; background: var(--bg-card); overflow: hidden; }
 .build-step summary {
   padding: 10px 14px; cursor: pointer; user-select: none;
@@ -9091,6 +9098,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
       <button class="copy-link-btn" id="mCopyLink" onclick="copyTopicLink()" title="Copy a shareable link to this topic" aria-label="Copy a shareable link to this topic">🔗 Copy link</button>
       <button class="copy-link-btn" id="mFlashcardsBtn" onclick="openFlashcardsForTopic()" title="Study this topic with spaced-repetition flashcards" aria-label="Open flashcards for this topic" style="display:none;">🧠 Flashcards</button>
       <button class="copy-link-btn" id="mTryCodeBtn" onclick="openTryCode()" title="Open a code playground for this topic" aria-label="Open code playground for this topic" style="display:none;">💻 Try Code</button>
+      <button class="copy-link-btn" id="mAskAiBtn" onclick="aiAskAboutCurrentTopic()" title="Ask the AI Tutor about this topic" aria-label="Ask AI about this topic">🎓 Ask AI</button>
       <button class="modal-close" onclick="closeModal()" aria-label="Close topic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -13012,6 +13020,8 @@ function renderRoadmap() {
               <button class="stage-action-btn" onclick="openReferenceImpls(${stage.id})">⭐ Reference Code</button>
               ${QUIZZES[stage.id] ? `<button class="stage-action-btn quiz" onclick="openQuiz(${stage.id})">🎯 Quiz</button>` : ''}
               ${MOCK_INTERVIEWS[stage.id] ? `<button class="stage-action-btn interview" onclick="openInterview(${stage.id})">💬 Mock Interview</button>` : ''}
+              <button class="stage-action-btn" onclick="aiQuizStage(${stage.id})" title="AI generates 5 scenario quiz questions for this stage">🤖 AI Quiz</button>
+              ${stage.exit && stage.exit.length ? `<button class="stage-action-btn" onclick="aiCheckStageReadiness(${stage.id})" title="AI quizzes you against this stage's exit criteria">✓ AI Readiness</button>` : ''}
               <button class="stage-action-btn" onclick="exportStagePdf(${stage.id})" title="Print or save this stage as a study guide">📄 Export PDF</button>
             </div>
           </div>
@@ -18260,7 +18270,10 @@ function openBuild(id) {
   `).join('');
   const html = `
     <div class="build-detail">
-      <button type="button" class="bd-back" onclick="openBuilds()">← All builds</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button type="button" class="bd-back" onclick="openBuilds()">← All builds</button>
+        <button type="button" class="bd-ai-review" onclick="aiReviewBuild('${build.id}')" title="Paste your implementation; AI does a code review against this build's spec">🤖 AI review my code</button>
+      </div>
       <div class="bd-head">
         <h3>${escapeHtml(build.title)}</h3>
         <div class="b-meta">
@@ -20371,6 +20384,66 @@ function aiHighlightSnippet(content, q) {
   const prefix = start > 0 ? '…' : '';
   const suffix = end < text.length ? '…' : '';
   return `${prefix}${before}<mark>${match}</mark>${after}${suffix}`;
+}
+
+/* PUSH 25: Open the AI Instructor and submit a pre-built prompt as if the user typed it.
+   Optionally switches persona first. Used by per-topic / per-stage / per-build AI buttons. */
+function aiAskWithPrompt(prompt, persona) {
+  if (!state.aiInstructor.apiKey) {
+    if (!confirm('AI Instructor needs your Anthropic API key first. Set it up now?')) return;
+    openAiInstructorSetup();
+    return;
+  }
+  if (persona && AI_PERSONAS[persona]) {
+    state.aiInstructor.persona = persona;
+    save();
+  }
+  openAiInstructor();
+  // Wait a tick for the modal + input to mount, then fill + send
+  setTimeout(() => {
+    const input = document.getElementById('aiInput');
+    if (input) {
+      input.value = prompt;
+      aiSend();
+    }
+  }, 80);
+}
+
+/* PUSH 25: contextual AI button inside the topic modal. */
+function aiAskAboutCurrentTopic() {
+  if (!currentTopic) { alert('Open a topic first, then click Ask AI.'); return; }
+  const t = currentTopic.topic;
+  const prompt = `I'm currently on the topic "${t.name}" (Stage ${currentTopic.stageId}). It's described as: "${t.desc || ''}". Why it matters: "${t.why || ''}".\n\nCan you give me a brief intuitive explanation of this topic — the 1-paragraph version first, then we can dig deeper if I want? Match it to my current progress; don't use jargon I haven't learned yet.`;
+  closeModal();
+  aiAskWithPrompt(prompt, 'tutor');
+}
+
+/* PUSH 25: per-stage AI quiz generator. */
+function aiQuizStage(stageId) {
+  const stage = DATA.find(s => s.id === stageId);
+  if (!stage) return;
+  const topics = stage.branches.flatMap(b => b.topics.map(t => `${t.name} (${b.name})`)).join(', ');
+  const prompt = `I just finished Stage ${stage.id}: ${stage.title}. Generate exactly 5 scenario-style quiz questions to test my reasoning (not just memorization) across these topics: ${topics}. Format each question as:\n\nQ1: <scenario>\nA) ...\nB) ...\nC) ...\nD) ...\n\nDo NOT reveal the answers yet. After I respond with my picks, give the correct answers with explanations for each.`;
+  aiAskWithPrompt(prompt, 'interviewer');
+}
+
+/* PUSH 25: per-build AI code review. */
+function aiReviewBuild(buildId) {
+  const build = (typeof BUILDS !== 'undefined' ? BUILDS : []).find(b => b.id === buildId);
+  if (!build) { alert('Build not found.'); return; }
+  const code = prompt(`Paste your implementation of "${build.title}" for AI review:\n\n(Or click Cancel to skip.)`);
+  if (!code || !code.trim()) return;
+  const reviewPrompt = `Please code-review my implementation of the build "${build.title}".\n\nBuild spec — Stack: ${build.stack}. Difficulty: ${build.difficulty}. Description: ${build.desc}.\n\nMy code:\n\n\`\`\`\n${code}\n\`\`\`\n\nReview it line by line. Flag bugs (severity tagged), security issues, performance concerns, readability problems, and missed requirements vs the spec. End with one paragraph on what I did well.`;
+  aiAskWithPrompt(reviewPrompt, 'reviewer');
+}
+
+/* PUSH 25: stage exit-criteria readiness check. */
+function aiCheckStageReadiness(stageId) {
+  const stage = DATA.find(s => s.id === stageId);
+  if (!stage || !stage.exit || !stage.exit.length) { alert('No exit criteria defined for this stage.'); return; }
+  const exitList = stage.exit.map((c, i) => `${i + 1}. ${c}`).join('\n');
+  const prompt = `I think I'm done with Stage ${stage.id}: ${stage.title}. Quiz me to verify I can really exit this stage.\n\nThe formal exit criteria are:\n${exitList}\n\nAsk me ONE focused question per criterion. After I answer all of them, give me an honest verdict: ready to advance / needs work on [list] / not ready (with specific gaps to close).`;
+  aiAskWithPrompt(prompt, 'interviewer');
 }
 
 function aiShowStarred() {
