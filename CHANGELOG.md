@@ -6,6 +6,23 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Topic modal redesign with tabs (PUSH 16)
+
+### Changed
+- **Topic modal now has 3 tabs: 📖 Learn · 🧠 Drill · 🎮 Practice.** Each tab shows only one section group at a time:
+  - **📖 Learn** (default on open) — what it is · why it matters · resources
+  - **🧠 Drill** — key terms (with a count badge on the tab) and a flashcards hint
+  - **🎮 Practice** — practice resources (badge) + difficulty rating + notes
+- **Key Terms section is now collapsible** (`<details>` open by default) inside the Drill tab.
+- **Tab badges** show live counts of terms and practice resources for each topic — at a glance you see "🧠 Drill 5" and "🎮 Practice 3" before clicking in.
+- **Primary resource emphasis**: the `req`-tier "primary" resource for each topic now gets a "🚀 Start here" badge and accent-colored border. Alt and ref resources get standard styling. Picking what to read first takes one glance instead of three.
+- Modal resets to the Learn tab on every open, with focus management preserved.
+
+### Tests
+214/214 passing (7 new PUSH 16 + 207 pre-existing). Updated 8 pre-existing tests that referenced sections now living inside specific tabs (notes, difficulty stars, key terms section, practices section, role="tab" selectors scoped to practice modal).
+
+---
+
 ## 2026-05 — Topic reorder for prerequisite flow (PUSH 15)
 
 ### Changed
