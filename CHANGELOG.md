@@ -6,6 +6,26 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Honest fixes to misleading intro content (PUSH 27)
+
+User caught 9 misleading or awkward bullets across the 4 intro cards. All fixed.
+
+### Fixed
+1. **NO card — "3-month bootcamp" self-contradiction.** Old: "Bootcamp mode compresses to 12-24 weeks ... not 3 months" (12 weeks IS 3 months). New: "this is longer and deeper" — full stop.
+2. **NO card — OpenAI bullet had a YES-side feature mention.** Removed "Voyage AI for embeddings" from inside the NO disqualifier. Now just: "this roadmap is Claude-only by design".
+3. **NO card — "this builds from the ground up" awkward marketing-speak.** Rewrote to state the actual disqualifier: "Want to skip the fundamentals (programming, web, backend) and start at AI".
+4. **NO card — accountability bullet had self-promotional second half.** Removed "self-discipline still required even with the built-in trackers" — that's not a disqualifier.
+5. **YES card — "no guarantee" disclaimer.** Removed from the headline bullet; the amber 2026 reality callout already covers it honestly.
+6. **WHAT IS card — "2026-current" jargon.** Now: "Up to date for 2026".
+7. **WHAT IS card — "Production-aware ... builds are MVPs" awkward conjunction.** Rewrote: "Covers production patterns — System Design, DevOps, Security, Observability. (Example builds are MVPs, not production-grade systems.)" Clear separation of concept-coverage vs. example-builds.
+8. **WHAT IS card — "Self-teaching with a built-in..." reads weird.** Restored "Built for self-teaching" prefix for clarity.
+9. **WARN card — "Open AI Tutor early" was a feature highlight, not a warning.** Removed; the AI Tutor has its own dedicated callout right below the grid.
+
+### Tests
+251/251 still passing. No new tests needed (pure copy edits with no API changes).
+
+---
+
 ## 2026-05 — Trim & reorganize intro (PUSH 26)
 
 User feedback: "lots of misleading and unnecessary words; the yellow Fundamentals button doesn't belong there."
