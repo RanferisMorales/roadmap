@@ -170,13 +170,13 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
   margin: 0 0 18px 0; letter-spacing: -0.5px;
 }
 .intro-grid {
-  display: grid; gap: 14px;
+  display: grid; gap: 10px;
   grid-template-columns: repeat(2, 1fr);
 }
 @media (min-width: 1180px) { .intro-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 768px) { .intro-grid { grid-template-columns: 1fr; } }
 .intro-card {
-  border: 2px solid var(--border); border-radius: 10px; padding: 14px 16px;
+  border: 2px solid var(--border); border-radius: 10px; padding: 10px 12px;
   background: var(--bg-card);
 }
 .intro-card.good { border-color: #10b981; }
@@ -415,8 +415,8 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 .intro-callout ol { margin: 8px 0 0 24px; }
 .intro-callout li { margin-bottom: 6px; }
 .intro-card h3 {
-  font-family: 'Kalam', cursive; font-weight: 700; font-size: 17px;
-  margin: 0 0 10px 0; display: inline-block; padding: 3px 10px; border-radius: 6px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 15.5px;
+  margin: 0 0 6px 0; display: inline-block; padding: 2px 9px; border-radius: 6px;
 }
 .intro-card.good h3 { background: #d1fae5; color: #065f46; }
 .intro-card.bad h3 { background: #fee2e2; color: #991b1b; }
@@ -424,10 +424,10 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
 :root[data-theme="dark"] .intro-card.good h3 { background: #064e3b; color: #6ee7b7; }
 :root[data-theme="dark"] .intro-card.bad h3 { background: #7f1d1d; color: #fca5a5; }
 :root[data-theme="dark"] .intro-card.meta h3 { background: #4c1d95; color: #c4b5fd; }
-.intro-card ul { margin: 0; padding-left: 18px; }
+.intro-card ul { margin: 0; padding-left: 16px; }
 .intro-card li {
-  font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.5;
-  color: var(--text-dim); margin-bottom: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; line-height: 1.4;
+  color: var(--text-dim); margin-bottom: 4px;
 }
 .intro-card strong { color: var(--text); font-weight: 700; }
 
@@ -2062,10 +2062,15 @@ abbr.glossary-term:hover::after {
 .mentor-cta-links a:hover { background: var(--node-stage); transform: translate(-1px, -1px); }
 
 /* === FUNDAMENTALS CALLOUT (intro section) === */
-.fundamentals-callout { margin-top: 18px; padding: 16px 18px; border: 2px solid var(--node-stage); border-radius: 12px; background: linear-gradient(135deg, rgba(255,235,160,0.32), rgba(220,252,231,0.22)); }
+.fundamentals-callout { margin-top: 18px; padding: 12px 16px; border: 2px solid var(--node-stage); border-radius: 12px; background: linear-gradient(135deg, rgba(255,235,160,0.32), rgba(220,252,231,0.22)); }
 :root[data-theme="dark"] .fundamentals-callout { background: linear-gradient(135deg, rgba(63,52,15,0.55), rgba(20,52,30,0.45)); border-color: #d4a300; }
-.fc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-.fc-head h3 { margin: 0; font-family: 'Architects Daughter', cursive; font-size: 20px; color: var(--text); }
+.fundamentals-callout > summary { list-style: none; cursor: pointer; }
+.fundamentals-callout > summary::-webkit-details-marker { display: none; }
+.fundamentals-callout[open] > summary { margin-bottom: 8px; }
+.fundamentals-callout[open] .fc-expand-hint { display: none; }
+.fc-expand-hint { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); white-space: nowrap; }
+.fc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.fc-head h3 { margin: 0; font-family: 'Architects Daughter', cursive; font-size: 17px; color: var(--text); }
 .fc-cta { font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px; padding: 6px 14px; border: 2px solid var(--text); border-radius: 999px; background: var(--node-stage); color: var(--text); cursor: pointer; white-space: nowrap; }
 .fc-cta:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
 .fc-intro { font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5; color: var(--text); margin: 0 0 12px; }
@@ -2077,6 +2082,22 @@ abbr.glossary-term:hover::after {
 .fc-cat-list { font-family: 'Patrick Hand', cursive; font-size: 12.5px; line-height: 1.4; color: var(--text); }
 .fc-cat-where { font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute); padding-top: 2px; border-top: 1px dashed var(--border); margin-top: 4px; width: 100%; }
 .fc-foot { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); margin: 12px 0 0; font-style: italic; }
+
+/* === STICKY JUMP-TO-ROADMAP PILL (appears after scrolling past intro) === */
+.sticky-jump {
+  position: fixed; bottom: 20px; right: 20px; z-index: 50;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  padding: 8px 14px; border: 2px solid var(--text); border-radius: 999px;
+  background: var(--node-stage); color: var(--text); cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.sticky-jump.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.sticky-jump:hover { transform: translateY(-1px); box-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+@media (max-width: 640px) {
+  .sticky-jump { bottom: 14px; right: 14px; font-size: 12px; padding: 6px 12px; }
+}
 @media (max-width: 640px) {
   .fc-head h3 { font-size: 16px; }
   .fc-cat-title { font-size: 14px; }
@@ -2901,12 +2922,13 @@ abbr.glossary-term:hover::after {
       </div>
     </div>
 
-    <!-- FUNDAMENTALS CALLOUT — answers "this builds from the ground up" with visible proof -->
-    <div class="fundamentals-callout">
-      <div class="fc-head">
+    <!-- FUNDAMENTALS CALLOUT — collapsible by default; auto-opens for first-time visitors -->
+    <details class="fundamentals-callout" id="fcDetails">
+      <summary class="fc-head">
         <h3>🧭 Yes — fundamentals are built in (168 required topics)</h3>
-        <button class="fc-cta" type="button" onclick="openStudyGuide('compass')">See all 168 →</button>
-      </div>
+        <span class="fc-cta" onclick="event.preventDefault(); event.stopPropagation(); openStudyGuide('compass')" role="button" tabindex="0">See all 168 →</span>
+        <span class="fc-expand-hint">▾ click to expand the 8 categories</span>
+      </summary>
       <p class="fc-intro">When the card above says "builds from the ground up," here's what that actually means. Every <code>req</code>-tier topic below is mandatory in the roadmap — no skipping. Click any category to jump to those topics in the Fundamentals Compass.</p>
       <div class="fc-grid">
         <button type="button" class="fc-cat" onclick="openStudyGuide('compass')">
@@ -2951,7 +2973,7 @@ abbr.glossary-term:hover::after {
         </button>
       </div>
       <p class="fc-foot">Beyond these 8 categories, there are <strong>80 more recommended</strong> topics that upgrade you from "competent" to "hireable" — see the Fundamentals Compass for the full picture.</p>
-    </div>
+    </details>
   </div>
 
   <!-- HOW TO USE -->
@@ -8706,6 +8728,9 @@ abbr.glossary-term:hover::after {
     your progress saves automatically (<a href="#" onclick="event.preventDefault(); openBackup()" style="color: var(--accent); text-decoration: underline;">backup / restore</a>) · last updated <span id="lastUpdated">—</span><br />
     <span data-personal="footer">687 curated links · 11 stages (9 core + 2 electives) · 853 glossary entries · ~16–25 months core at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
   </footer>
+
+  <!-- STICKY JUMP-TO-ROADMAP PILL: appears after scrolling past the intro -->
+  <button type="button" class="sticky-jump" id="stickyJump" onclick="document.getElementById('stage-cluster-0')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" aria-label="Jump to Stage 0 (top of roadmap)">↓ Jump to Stage 0</button>
 </div>
 
 <!-- #22 QUICK-JUMP NAV -->
@@ -12225,6 +12250,22 @@ function initHowto() {
     el.classList.add('open');
     t.textContent = 'Hide ▲';
   }
+}
+
+/* PUSH 14: Sticky "Jump to Stage 0" pill — shows after scrolling past intro */
+function initStickyJump() {
+  const pill = document.getElementById('stickyJump');
+  const intro = document.getElementById('intro');
+  if (!pill || !intro) return;
+  const update = () => {
+    const introBottom = intro.getBoundingClientRect().bottom;
+    // Show pill once user has scrolled past the intro AND they're not already at the bottom
+    const nearBottom = (window.innerHeight + window.scrollY) >= document.body.scrollHeight - 100;
+    pill.classList.toggle('show', introBottom < 0 && !nearBottom);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
 }
 
 /* W4: Toggle "show all topics" expanded view per stage */
@@ -22460,6 +22501,7 @@ hydrate();
 checkOnboarding();
 // Quick UI that the user expects immediately
 initHowto();
+initStickyJump();  // PUSH 14: show "↓ Jump to Stage 0" pill after scrolling past intro
 refreshTodaysFocus();
 renderQuickJump();
 renderStreakPill();

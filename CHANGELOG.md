@@ -6,6 +6,22 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Intro trim (PUSH 14)
+
+### Changed
+- **Intro cards more compact**: padding 14×16 → 10×12, h3 17→15.5, li 15→13.5. Roughly 25% less vertical space without losing any content.
+- **🧭 Fundamentals Callout is now collapsible** (`<details>`, collapsed by default). The summary row (title + "See all 168 →" CTA) stays visible; the 8 category cards expand on click. "See all 168" still opens the Study Guide directly without expanding.
+- **Sticky "↓ Jump to Stage 0" pill** added — fixed bottom-right of the viewport. Hidden by default, fades in once the user scrolls past the intro, hides again at the bottom of the page. One click from anywhere → smooth-scrolls to stage-cluster-0.
+- How-to-Use auto-collapse for returning visitors was already in place (verified, no change needed).
+
+### Why
+Intro felt long before reaching the roadmap. PUSH 14 keeps every word of content but reduces vertical bloat: tighter cards + collapsible Fundamentals Callout + a permanent "skip to roadmap" escape hatch.
+
+### Tests
+207/207 passing (8 new PUSH 14 + 199 pre-existing). Updated 1 pre-existing PUSH 7 test to open the collapsible callout before clicking inside it.
+
+---
+
 ## 2026-05 — More-menu organization (PUSH 13)
 
 ### Changed
