@@ -6,6 +6,26 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — AI Instructor: search, export, star, personas (PUSH 24)
+
+User picked all 4 upgrades. All shipped.
+
+### Added
+- **🎓 Persona dropdown** in the AI header. 4 presets:
+  - **🎓 Tutor** (default) — Socratic, matches your level, explains intuitively
+  - **👯 Pair Programmer** — bias toward writing code with you, proposes next steps
+  - **🎤 Interviewer** — probing technical questions, digs into details, brief honest assessment after 5-7 Qs
+  - **🔍 Code Reviewer** — line-by-line review, severity-tagged findings, one paragraph on what you did well
+  Switching persona drops a small system note into the chat so you know the change happened.
+- **🔍 Search** button — opens a search modal that finds substring matches across the current chat AND all archived sessions. Each result shows session label, role, snippet with highlight, and a "Load this session →" button if it's archived.
+- **⬇ Export** button — downloads the current chat as a Markdown file (`roadmap-chat-YYYY-MM-DD.md`) with persona + model metadata, role-tagged sections, timestamps, and ⭐-marked starred messages.
+- **⭐ Star** icon on every assistant message — click to bookmark good explanations. **"⭐ Starred view"** (linked from the search modal) shows all starred messages across all sessions, full-rendered, with "Load this session" links.
+
+### Tests
+247/247 passing (12 new PUSH 24 + 235 pre-existing).
+
+---
+
 ## 2026-05 — AI Instructor: chat history & sessions (PUSH 23)
 
 User asked: "with the AI instructor I should be able to see my old chats."

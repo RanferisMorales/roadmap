@@ -1895,6 +1895,32 @@ abbr.glossary-term:hover::after {
 .ai-instructor-modal .ai-header strong { font-family: 'Kalam', cursive; font-weight: 700; }
 .ai-instructor-modal .ai-cost { color: var(--text-mute); margin-left: auto; font-size: 12px; }
 
+/* PUSH 24: ⭐ star button on assistant messages */
+.ai-star-btn {
+  background: none; border: none; padding: 0 4px; margin-left: 6px; cursor: pointer;
+  font-size: 14px; line-height: 1; opacity: 0.55; transition: opacity 0.12s, transform 0.1s;
+}
+.ai-star-btn:hover { opacity: 1; transform: scale(1.15); }
+.ai-star-btn.starred { opacity: 1; color: #f59e0b; }
+
+/* PUSH 24: search / starred results */
+.ai-search-row {
+  padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg);
+  margin-bottom: 8px;
+}
+.ai-search-meta {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 12px;
+}
+.ai-search-sess { font-family: 'Kalam', cursive; font-weight: 700; color: var(--text); }
+.ai-search-role { color: var(--text-mute); }
+.ai-search-snippet {
+  font-family: 'Patrick Hand', cursive; font-size: 13.5px; line-height: 1.5; color: var(--text);
+}
+.ai-search-snippet mark { background: #fef08a; color: #1a1a1a; padding: 0 2px; border-radius: 2px; }
+:root[data-theme="dark"] .ai-search-snippet mark { background: #ca8a04; color: #1a1a1a; }
+.ai-search-row .phub-skill-pill { margin-top: 8px; }
+
 /* PUSH 23: archived chat history picker */
 .ai-session-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .ai-session-row {
@@ -12448,7 +12474,8 @@ const DEFAULT_STATE = {
   aiInstructor: {
     apiKey: '',                  // user's own Anthropic API key (localStorage only)
     model: 'claude-haiku-4-5',   // default model — cheapest for tutoring
-    history: [],                 // CURRENT session: [{ role: 'user' | 'assistant', content: string, ts: ISO }]
+    persona: 'tutor',            // PUSH 24: 'tutor' | 'pair' | 'interviewer' | 'reviewer'
+    history: [],                 // CURRENT session: [{ role: 'user' | 'assistant', content: string, ts: ISO, starred?: bool }]
     sessions: [],                // PUSH 23: archived past chats: [{ id, title, createdAt, archivedAt, messages: [...] }]
     totalCost: 0,                // running cost in USD across all sessions
     totalTokensIn: 0,
@@ -12521,6 +12548,8 @@ try {
     state.aiInstructor.history = (parsed.aiInstructor && parsed.aiInstructor.history) || [];
     // PUSH 23: ensure sessions array exists for existing users
     state.aiInstructor.sessions = (parsed.aiInstructor && parsed.aiInstructor.sessions) || [];
+    // PUSH 24: ensure persona is set (default = 'tutor' for existing users)
+    state.aiInstructor.persona = (parsed.aiInstructor && parsed.aiInstructor.persona) || 'tutor';
     state.accountability = { ...DEFAULT_STATE.accountability, ...(parsed.accountability || {}) };
     state.accountability.sessions = (parsed.accountability && parsed.accountability.sessions) || {};
     state.accountability.checkins = (parsed.accountability && parsed.accountability.checkins) || [];
@@ -18804,8 +18833,34 @@ function renderBootcampDash() {
 }
 
 
+/* PUSH 24: AI persona presets. Each picks a different role-prompt; the rest of the
+   system prompt (roadmap context + learner profile + current topic) is appended below. */
+const AI_PERSONAS = {
+  tutor: {
+    label: '🎓 Tutor',
+    desc: 'Socratic teacher — asks questions, explains intuitively, matches your level',
+    role: 'You are an experienced senior engineer acting as a personal tutor for a self-taught Full Stack + AI Engineering learner.'
+  },
+  pair: {
+    label: '👯 Pair Programmer',
+    desc: 'Bias toward writing code WITH you — proposes next step, explains trade-offs as you go',
+    role: 'You are a senior engineer pair-programming with the learner. Bias toward writing concrete code together. When they describe a problem, suggest the next 1-2 lines to write rather than just explaining. Frame answers as "let\'s try X" not "you should X". Stop and ask "what should we tackle next?" when a chunk is done.'
+  },
+  interviewer: {
+    label: '🎤 Interviewer',
+    desc: 'Asks probing technical questions; digs into details; doesn\'t accept hand-wavy answers',
+    role: 'You are a technical interviewer at a top tech company. Conduct a focused interview by asking probing technical questions one at a time. Dig deeper when answers are vague or hand-wavy. After each answer, ask a follow-up that exposes whether they truly understand the concept. Track if they\'re weak/medium/strong on each topic raised. After 5-7 questions, give a brief honest assessment.'
+  },
+  reviewer: {
+    label: '🔍 Code Reviewer',
+    desc: 'Reviews code line-by-line; flags bugs, security, perf issues; suggests improvements',
+    role: 'You are a senior code reviewer. When the learner pastes code, review it line by line. Flag: (a) correctness bugs, (b) security issues, (c) performance problems, (d) readability concerns. Categorize each finding by severity (critical/major/minor/nit). End with one paragraph on what they did well — reviews shouldn\'t be only negative.'
+  }
+};
+
 function aiBuildSystemPrompt() {
   const p = state.profile || {};
+  const persona = AI_PERSONAS[state.aiInstructor.persona] || AI_PERSONAS.tutor;
   const stageProgress = DATA.map(s => {
     const total = s.branches.reduce((n, b) => n + b.topics.length, 0);
     const done = s.branches.reduce((n, b) => n + b.topics.filter(t => isComplete(s.id, t.id)).length, 0);
@@ -18815,7 +18870,7 @@ function aiBuildSystemPrompt() {
     ? `Currently viewing topic: "${currentTopic.topic?.name}" (Stage ${currentTopic.stageId}). desc: ${currentTopic.topic?.desc || ''}`
     : 'No specific topic open right now.';
   return [
-    'You are an experienced senior engineer acting as a personal tutor for a self-taught Full Stack + AI Engineering learner.',
+    persona.role,
     'You know this roadmap intimately: 11 stages = 9 core + 2 electives. Core: 0=Env, 1=Programming Fundamentals + Math, 2=Web Fundamentals, 3=Frontend/React/Next, 4=Backend/Hono/Postgres, 5=LLM Apps with Claude, 6=RAG/Agents/MCP, 7=Production/DevOps, 8=Job Hunt. Electives: 9=Mobile (React Native), 10=Data Science / ML Research.',
     '',
     `Learner profile: goal=${p.goal || 'unknown'}, skill=${p.skill || 'unknown'}, time=${p.time || 'unknown'}.`,
@@ -19998,15 +20053,18 @@ function openAiInstructor() {
   ).join('');
   const messagesHtml = ai.history.length === 0
     ? `<div class="ai-empty">Ask me anything about your roadmap, your code, an unfamiliar concept, or how to get unstuck. I have your current topic + progress in context.</div>`
-    : ai.history.map(m => aiRenderMessage(m)).join('');
+    : ai.history.map((m, i) => aiRenderMessage(m, i)).join('');
   const costStr = ai.totalCost < 0.01 ? '< $0.01' : `$${ai.totalCost.toFixed(3)}`;
   const html = `
     <div class="ai-instructor-modal" id="aiInstructorModal">
       <div class="ai-header">
         <strong>🎓 AI Instructor</strong>
-        <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)">${modelOptions}</select>
+        <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)" title="Pick a Claude model — cost vs. intelligence trade-off">${modelOptions}</select>
+        <select class="ai-model-select" id="aiPersona" onchange="aiSetPersona(this.value)" title="Switch the AI's role/style">${Object.entries(AI_PERSONAS).map(([k, p]) => `<option value="${k}" ${k === (ai.persona || 'tutor') ? 'selected' : ''}>${p.label}</option>`).join('')}</select>
         <button class="phub-skill-pill" onclick="aiNewSession()" type="button" title="Archive the current chat and start a new one">+ New chat</button>
         <button class="phub-skill-pill" onclick="aiOpenSessionPicker()" type="button" title="Browse archived chat sessions">📜 History (${(ai.sessions || []).length})</button>
+        <button class="phub-skill-pill" onclick="aiOpenSearch()" type="button" title="Search across all chat history">🔍 Search</button>
+        <button class="phub-skill-pill" onclick="aiExportCurrentChat()" type="button" title="Download the current chat as Markdown">⬇ Export</button>
         <button class="phub-skill-pill" onclick="openAiInstructorSetup()" type="button">⚙ Settings</button>
         <button class="phub-skill-pill" onclick="openCostTracker()" type="button" title="All-time AI spend tracker">📊 All-time spend</button>
         <span class="ai-cost">Session: ${costStr} · ${ai.totalTokensIn || 0} in / ${ai.totalTokensOut || 0} out</span>
@@ -20187,10 +20245,163 @@ function aiClearHistory() {
   openAiInstructor();
 }
 
-function aiRenderMessage(m) {
+/* PUSH 24: Set the AI persona (changes system prompt going forward).
+   Doesn't retroactively re-write past messages — the next message uses the new persona. */
+function aiSetPersona(personaKey) {
+  if (!AI_PERSONAS[personaKey]) return;
+  state.aiInstructor.persona = personaKey;
+  save();
+  // Show a small system-style message in the chat so the user knows the switch happened
+  state.aiInstructor.history.push({
+    role: 'assistant',
+    content: `_Persona switched to **${AI_PERSONAS[personaKey].label}** — ${AI_PERSONAS[personaKey].desc}. Your next message uses this persona._`,
+    ts: new Date().toISOString(),
+    isSystemNote: true
+  });
+  save();
+  openAiInstructor();
+}
+
+/* PUSH 24: Star/unstar an assistant message at index `idx` in the current history. */
+function aiToggleStar(idx) {
+  const ai = state.aiInstructor;
+  if (idx < 0 || idx >= ai.history.length) return;
+  const m = ai.history[idx];
+  if (m.role !== 'assistant') return;
+  m.starred = !m.starred;
+  save();
+  // Re-render just the star icon on that message (lighter than full re-open)
+  const row = document.querySelector(`.ai-msg[data-msg-idx="${idx}"] .ai-star-btn`);
+  if (row) {
+    row.textContent = m.starred ? '⭐' : '☆';
+    row.classList.toggle('starred', m.starred);
+    row.setAttribute('aria-label', m.starred ? 'Unstar this message' : 'Star this message');
+  }
+}
+
+/* PUSH 24: Export the current chat as a Markdown file. */
+function aiExportCurrentChat() {
+  const ai = state.aiInstructor;
+  if (!ai.history.length) { alert('No messages to export.'); return; }
+  const lines = [
+    `# AI Tutor Chat — ${new Date().toLocaleString()}`,
+    ``,
+    `Persona: ${AI_PERSONAS[ai.persona || 'tutor']?.label || 'Tutor'}`,
+    `Model: ${ai.model}`,
+    `Messages: ${ai.history.length}`,
+    ``,
+    `---`,
+    ``
+  ];
+  ai.history.forEach(m => {
+    const role = m.role === 'user' ? '👤 You' : '🤖 Claude';
+    const star = m.starred ? ' ⭐' : '';
+    lines.push(`## ${role}${star}`);
+    if (m.ts) lines.push(`_${new Date(m.ts).toLocaleString()}_`);
+    lines.push('');
+    lines.push(m.content);
+    lines.push('');
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `roadmap-chat-${new Date().toISOString().slice(0, 10)}.md`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* PUSH 24: Search across current + all archived sessions. */
+function aiOpenSearch() {
+  const html = `
+    <p class="practice-intro">Search across your current chat AND all archived sessions. Matches highlight the message in context.</p>
+    <input type="search" id="aiSearchInput" placeholder="Search messages…" autocomplete="off" spellcheck="false"
+           oninput="aiRenderSearchResults(this.value)"
+           style="width:100%; padding:10px 12px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-family:'Patrick Hand',cursive; font-size:14px; box-sizing:border-box; margin-bottom:10px;" />
+    <div id="aiSearchResults"></div>
+    <p class="practice-tip">💡 Tip: ⭐ starred messages also show up in <button type="button" onclick="aiShowStarred()" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;font-size:inherit;">⭐ Starred view</button>.</p>
+  `;
+  showPracticeModal('🔍 Search chat history', html);
+  setTimeout(() => document.getElementById('aiSearchInput')?.focus(), 30);
+}
+
+function aiRenderSearchResults(query) {
+  const results = document.getElementById('aiSearchResults');
+  if (!results) return;
+  const q = (query || '').trim().toLowerCase();
+  if (!q) { results.innerHTML = '<p class="practice-empty">Type to search.</p>'; return; }
+  const ai = state.aiInstructor;
+  const buckets = [];
+  // Current chat
+  ai.history.forEach((m, i) => {
+    if ((m.content || '').toLowerCase().includes(q)) {
+      buckets.push({ sessionLabel: '📍 Current chat', sessionId: null, msgIdx: i, msg: m });
+    }
+  });
+  // Archived sessions
+  (ai.sessions || []).forEach(sess => {
+    sess.messages.forEach((m, i) => {
+      if ((m.content || '').toLowerCase().includes(q)) {
+        buckets.push({ sessionLabel: '📜 ' + sess.title, sessionId: sess.id, msgIdx: i, msg: m });
+      }
+    });
+  });
+  if (!buckets.length) { results.innerHTML = '<p class="practice-empty">No matches across ' + (1 + (ai.sessions || []).length) + ' sessions.</p>'; return; }
+  results.innerHTML = `<p style="font-family:'Patrick Hand',cursive;font-size:12px;color:var(--text-mute);margin:0 0 8px;">${buckets.length} matches across ${new Set(buckets.map(b => b.sessionId || 'current')).size} sessions</p>` + buckets.slice(0, 50).map(b => {
+    const snippet = aiHighlightSnippet(b.msg.content, q);
+    return `<div class="ai-search-row">
+      <div class="ai-search-meta">
+        <span class="ai-search-sess">${escapeHtml(b.sessionLabel)}</span>
+        <span class="ai-search-role">${b.msg.role === 'user' ? '👤 You' : '🤖 Claude'}${b.msg.starred ? ' ⭐' : ''}</span>
+      </div>
+      <div class="ai-search-snippet">${snippet}</div>
+      ${b.sessionId ? `<button type="button" class="phub-skill-pill" onclick="aiLoadSession('${b.sessionId}')">Load this session →</button>` : ''}
+    </div>`;
+  }).join('') + (buckets.length > 50 ? `<p class="practice-empty">…and ${buckets.length - 50} more matches. Narrow your search.</p>` : '');
+}
+
+function aiHighlightSnippet(content, q) {
+  const text = content || '';
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx < 0) return escapeHtml(text.slice(0, 200));
+  const start = Math.max(0, idx - 60);
+  const end = Math.min(text.length, idx + q.length + 100);
+  const before = escapeHtml(text.slice(start, idx));
+  const match = escapeHtml(text.slice(idx, idx + q.length));
+  const after = escapeHtml(text.slice(idx + q.length, end));
+  const prefix = start > 0 ? '…' : '';
+  const suffix = end < text.length ? '…' : '';
+  return `${prefix}${before}<mark>${match}</mark>${after}${suffix}`;
+}
+
+function aiShowStarred() {
+  const ai = state.aiInstructor;
+  const starred = [];
+  ai.history.forEach((m, i) => { if (m.starred) starred.push({ sessionLabel: '📍 Current chat', sessionId: null, msg: m }); });
+  (ai.sessions || []).forEach(sess => {
+    sess.messages.forEach((m) => { if (m.starred) starred.push({ sessionLabel: '📜 ' + sess.title, sessionId: sess.id, msg: m }); });
+  });
+  const list = starred.length === 0
+    ? '<p class="practice-empty">No starred messages yet. Click the ☆ icon next to any AI response to bookmark it.</p>'
+    : starred.map(b => `<div class="ai-search-row">
+        <div class="ai-search-meta">
+          <span class="ai-search-sess">${escapeHtml(b.sessionLabel)}</span>
+          <span class="ai-search-role">🤖 Claude ⭐</span>
+        </div>
+        <div class="ai-search-snippet">${aiFormatMarkdown(b.msg.content)}</div>
+        ${b.sessionId ? `<button type="button" class="phub-skill-pill" onclick="aiLoadSession('${b.sessionId}')">Load this session →</button>` : ''}
+      </div>`).join('');
+  showPracticeModal(`⭐ Starred (${starred.length})`, `<p class="practice-intro">Your bookmarked AI explanations across all chats.</p>${list}`);
+}
+
+function aiRenderMessage(m, idx) {
   const body = aiFormatMarkdown(m.content);
-  return `<div class="ai-msg role-${m.role}">
-    <div class="ai-msg-role">${m.role === 'user' ? 'You' : 'Claude'}</div>
+  // PUSH 24: ⭐ star button on assistant messages so you can bookmark good explanations.
+  // idx is the message's position in state.aiInstructor.history. Falsy idx means "appended" — recompute later.
+  const starHtml = m.role === 'assistant'
+    ? `<button class="ai-star-btn ${m.starred ? 'starred' : ''}" onclick="aiToggleStar(${typeof idx === 'number' ? idx : -1})" type="button" aria-label="${m.starred ? 'Unstar' : 'Star'} this message" title="${m.starred ? 'Unstar' : 'Star this explanation'}">${m.starred ? '⭐' : '☆'}</button>`
+    : '';
+  return `<div class="ai-msg role-${m.role}" data-msg-idx="${typeof idx === 'number' ? idx : ''}">
+    <div class="ai-msg-role">${m.role === 'user' ? 'You' : 'Claude'}${starHtml}</div>
     <div class="ai-msg-body">${body}</div>
   </div>`;
 }
@@ -20261,7 +20472,7 @@ async function aiSend() {
   const log = document.getElementById('aiChatLog');
   if (log) {
     log.querySelector('.ai-empty')?.remove();
-    log.insertAdjacentHTML('beforeend', aiRenderMessage(ai.history[ai.history.length - 1]));
+    log.insertAdjacentHTML('beforeend', aiRenderMessage(ai.history[ai.history.length - 1], ai.history.length - 1));
     log.insertAdjacentHTML('beforeend', `<div class="ai-msg role-assistant" id="aiPendingMsg">
       <div class="ai-msg-role">Claude</div>
       <div class="ai-msg-body"><span class="ai-typing"><span></span><span></span><span></span></span></div>
