@@ -3149,29 +3149,29 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <button type="button" class="ai-tutor-callout-cta" onclick="openAiInstructor()">Open AI Tutor →</button>
       </div>
       <div class="ai-tutor-callout-body">
-        <p>Self-taught learners hit walls. This roadmap ships with a built-in tutor: <strong>chat with Claude</strong> about any topic, get unstuck on bugs, have it quiz you, ask it to plan your week. It knows your <strong>current stage + topic + progress</strong> so answers are contextual, not generic.</p>
+        <p>Chat with Claude about any topic — knows your <strong>current stage + topic + progress</strong> so answers are contextual.</p>
         <div class="ai-tutor-callout-grid">
           <div class="ai-tutor-callout-cell">
             <strong>How it works</strong>
-            <p>You bring your own Anthropic API key (signup is free; $5 free credits to start). Your key lives only in your browser — never sent to anyone except <code>api.anthropic.com</code>. Click the button, paste your key once, chat forever.</p>
+            <p>Bring your own Anthropic API key. Stored only in your browser; only sent to <code>api.anthropic.com</code>. Paste once, chat forever.</p>
           </div>
           <div class="ai-tutor-callout-cell">
             <strong>What it costs</strong>
-            <p>≈ <strong>$0.50 – $2.00 per hour</strong> of tutor use on Claude Sonnet. <strong>$5 of credit ≈ 6–12 hours</strong>. Live cost shown in the chat header so you never get surprised. Anthropic's $5 free signup credit is usually enough for your first few weeks.</p>
+            <p>≈ <strong>$0.50–$2.00/hr</strong> on Claude Sonnet. <strong>$5 ≈ 6–12 hrs</strong>. Anthropic's $5 signup credit usually covers your first few weeks.</p>
           </div>
           <div class="ai-tutor-callout-cell">
             <strong>What it can do</strong>
-            <p>Six quick-actions baked in: <strong>📚 Explain current topic · 🎯 Quiz me · 🤔 I'm stuck · 📋 Plan my week · 🐛 Help debug · 💪 Motivation</strong>. Plus free-form chat for anything else.</p>
+            <p>Six quick-actions: <strong>📚 Explain · 🎯 Quiz · 🤔 I'm stuck · 📋 Plan my week · 🐛 Debug · 💪 Motivation</strong>. Plus free-form chat.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2026 REALITY CALLOUT — pulled out of the YES card so it gets attention -->
+    <!-- 2026 REALITY CALLOUT — honest job-market addendum -->
     <div class="reality-callout">
       <div class="reality-callout-icon">⚠</div>
       <div class="reality-callout-body">
-        <strong>2026 junior market reality:</strong> The timeline in the "Yes, if you" card is <em>time-to-content</em>. <strong>Time-to-first-offer adds 3-12 months on top</strong> in the current market — AI tooling has compressed entry-level hiring, layoffs have flooded the pool, and you should expect <strong>100+ applications, portfolio rounds, and referrals required</strong>. Plan financially for the full <em>content + job-hunt</em> window, not just the content half.
+        <strong>2026 junior market reality:</strong> the YES timeline is <em>time-to-content</em>. <strong>Time-to-first-offer adds 3-12 months on top</strong>. Expect 100+ applications, portfolio rounds, and referrals. Plan financially for <em>content + job-hunt</em>, not content alone.
       </div>
     </div>
 
@@ -3462,7 +3462,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
           <div class="stage-band-info">
             <div class="super">~ 3 days ~</div>
             <h2>Environment Setup</h2>
-            <div class="desc">Install and configure the workstation. Zero learning here — just the toolchain that makes everything after this possible.</div>
+            <div class="desc">Install and configure your workstation: Terminal, Git/SSH, VS Code, Node, Python, <abbr class="glossary-term" data-term="uv" data-def="A modern Python package and project manager from Astral, written in Rust. Replaces pip + venv.">uv</abbr>/pnpm. You WILL learn here — these are real skills, not just clicks. Foundation for everything that follows.</div>
             <div class="stage-schedule-slot" data-stage-id="0"></div>
           </div>
           <div class="stage-band-meta">
@@ -8935,7 +8935,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
 
   <footer>
     your progress saves automatically (<a href="#" onclick="event.preventDefault(); openBackup()" style="color: var(--accent); text-decoration: underline;">backup / restore</a>) · last updated <span id="lastUpdated">—</span><br />
-    <span data-personal="footer">687 curated links · 11 stages (9 core + 2 electives) · 853 glossary entries · ~16–25 months core at 30 focused hrs/week (~2,200–3,200 hrs of content + ~1,500–2,500 hrs of building) · realistic total 24–36 months</span>
+    <span data-personal="footer">266 topics · 687 links · 853 glossary entries · 11 stages · 16-25 months ideal, 24-36 realistic</span>
   </footer>
 
   <!-- STICKY JUMP-TO-ROADMAP PILL: appears after scrolling past the intro -->
@@ -9112,7 +9112,7 @@ const L = (type, title, url) => ({ type, title, url });
 const DATA = [
   {
     id: 0, title: 'Environment Setup', weeks: '', duration: '3 days',
-    desc: 'Install and configure the workstation. Zero learning here — just the toolchain that makes everything after this possible.',
+    desc: 'Install and configure your workstation: Terminal, Git/SSH, VS Code, Node, Python, uv/pnpm. You WILL learn here — these are real skills, not just clicks. Foundation for everything that follows.',
     branches: [
       {
         name: 'Workstation',
