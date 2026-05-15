@@ -6,6 +6,25 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Topic reorder for prerequisite flow (PUSH 15)
+
+### Changed
+Reordered topics in 4 high-impact branches where the original sequence didn't match the actual prerequisite chain:
+
+- **Stage 1 / JavaScript** — moved **Closures & Scope** before Promises (closures explain how async callbacks capture variables; Promises make 10× more sense after closures click).
+- **Stage 1 / Python** — moved **Comprehensions & Iterators** before OOP (comprehensions are everyday syntax; OOP is heavier conceptually and used less often by beginners).
+- **Stage 4 / Auth** — moved **Password Hashing** before JWT/Session Auth (you can't implement login correctly without knowing how to store passwords first).
+- **Stage 7 / DevOps Fundamentals** — reordered Linux → SSH → DNS → HTTPS → Nginx (SSH is the access prerequisite, DNS is the domain prerequisite, HTTPS depends on DNS, Nginx config depends on all the above).
+
+Other branches I checked but left alone because the current order was already correct: Stage 5 LLM Basics (tokens foundation → economics → context → model), Stage 6 RAG Pipeline (load → chunk → retrieve → eval), Stage 6 Embeddings & Vectors (foundation → variants), and most of Stage 1 (Python core, CS Basics, DSA all already in good order).
+
+Static pre-rendered HTML regenerated to reflect the new order.
+
+### Tests
+207/207 still passing. No new test spec — the dynamic render reads DATA in array order, so reordering is purely a data change with no API surface to test.
+
+---
+
 ## 2026-05 — Intro trim (PUSH 14)
 
 ### Changed

@@ -3269,7 +3269,7 @@ abbr.glossary-term:hover::after {
   <div id="stages"></div>
   <div id="roadmap">
 
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="0" id="stage-cluster-0">
         <div class="stage-band">
           <div class="stage-num-big">00</div>
           <div class="stage-band-info">
@@ -3427,7 +3427,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="1" id="stage-cluster-1">
         <div class="stage-band">
           <div class="stage-num-big">01</div>
           <div class="stage-band-info">
@@ -3532,15 +3532,15 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
-          <div class="topic rec " data-tk="1::py-oop" onclick="openModal(1, 'py-oop')" role="button" tabindex="0" aria-label="Classes &amp; OOP — rec">
-            <div class="check" aria-hidden="true"></div>
-            <div class="name">Classes &amp; OOP</div>
-            <span class="tag rec" aria-hidden="true">rec</span>
-          </div>
-        
           <div class="topic rec " data-tk="1::py-comp" onclick="openModal(1, 'py-comp')" role="button" tabindex="0" aria-label="Comprehensions &amp; Iterators — rec">
             <div class="check" aria-hidden="true"></div>
             <div class="name">Comprehensions &amp; Iterators</div>
+            <span class="tag rec" aria-hidden="true">rec</span>
+          </div>
+        
+          <div class="topic rec " data-tk="1::py-oop" onclick="openModal(1, 'py-oop')" role="button" tabindex="0" aria-label="Classes &amp; OOP — rec">
+            <div class="check" aria-hidden="true"></div>
+            <div class="name">Classes &amp; OOP</div>
             <span class="tag rec" aria-hidden="true">rec</span>
           </div>
         </div>
@@ -3565,6 +3565,12 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
+          <div class="topic rec " data-tk="1::js-closures" onclick="openModal(1, 'js-closures')" role="button" tabindex="0" aria-label="Closures &amp; Scope — rec">
+            <div class="check" aria-hidden="true"></div>
+            <div class="name">Closures &amp; Scope</div>
+            <span class="tag rec" aria-hidden="true">rec</span>
+          </div>
+        
           <div class="topic req " data-tk="1::js-async" onclick="openModal(1, 'js-async')" role="button" tabindex="0" aria-label="Promises &amp; async/await — req">
             <div class="check" aria-hidden="true"></div>
             <div class="name">Promises &amp; async/await</div>
@@ -3575,12 +3581,6 @@ abbr.glossary-term:hover::after {
             <div class="check" aria-hidden="true"></div>
             <div class="name">ES Modules</div>
             <span class="tag req" aria-hidden="true">req</span>
-          </div>
-        
-          <div class="topic rec " data-tk="1::js-closures" onclick="openModal(1, 'js-closures')" role="button" tabindex="0" aria-label="Closures &amp; Scope — rec">
-            <div class="check" aria-hidden="true"></div>
-            <div class="name">Closures &amp; Scope</div>
-            <span class="tag rec" aria-hidden="true">rec</span>
           </div>
         </div>
         </div>
@@ -3824,15 +3824,15 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-why"><em>Why:</em> No project lives in one file. Virtual envs prevent global Python from becoming a graveyard.</div>
           <div class="all-topic-links"><a href="https://docs.python.org/3/tutorial/modules.html" target="_blank" rel="noopener">undefined</a>, <a href="https://docs.astral.sh/uv/guides/projects/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row rec">
+          <div class="all-topic-head"><span class="tag rec">rec</span><strong>Comprehensions &amp; Iterators</strong> <span class="branch-label">Python</span></div>
+          <div class="all-topic-desc">List/dict/set comprehensions, generators, the iteration protocol.</div>
+          <div class="all-topic-why"><em>Why:</em> Python becomes elegant once these click. Learn before OOP — you use comprehensions every day; OOP is more conceptual.</div>
+          <div class="all-topic-links"><a href="https://realpython.com/list-comprehension-python/" target="_blank" rel="noopener">undefined</a>, <a href="https://realpython.com/introduction-to-python-generators/" target="_blank" rel="noopener">undefined</a></div>
+        </div><div class="all-topic-row rec">
           <div class="all-topic-head"><span class="tag rec">rec</span><strong>Classes &amp; OOP</strong> <span class="branch-label">Python</span></div>
           <div class="all-topic-desc">Classes, instances, methods, inheritance, dunder methods.</div>
           <div class="all-topic-why"><em>Why:</em> You will see OOP everywhere in libraries.</div>
           <div class="all-topic-links"><a href="https://docs.python.org/3/tutorial/classes.html" target="_blank" rel="noopener">undefined</a>, <a href="https://realpython.com/python3-object-oriented-programming/" target="_blank" rel="noopener">undefined</a></div>
-        </div><div class="all-topic-row rec">
-          <div class="all-topic-head"><span class="tag rec">rec</span><strong>Comprehensions &amp; Iterators</strong> <span class="branch-label">Python</span></div>
-          <div class="all-topic-desc">List/dict/set comprehensions, generators, the iteration protocol.</div>
-          <div class="all-topic-why"><em>Why:</em> Python becomes elegant once these click.</div>
-          <div class="all-topic-links"><a href="https://realpython.com/list-comprehension-python/" target="_blank" rel="noopener">undefined</a>, <a href="https://realpython.com/introduction-to-python-generators/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Variables, Types, Functions</strong> <span class="branch-label">JavaScript</span></div>
           <div class="all-topic-desc">let/const, primitives, function declarations vs arrows, hoisting.</div>
@@ -3843,6 +3843,11 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-desc">Methods like map/filter/reduce, object literals, destructuring, spread.</div>
           <div class="all-topic-why"><em>Why:</em> You will use map/filter/reduce thousands of times. Master them now.</div>
           <div class="all-topic-links"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank" rel="noopener">undefined</a>, <a href="https://javascript.info/array" target="_blank" rel="noopener">undefined</a>, <a href="https://javascript.info/destructuring-assignment" target="_blank" rel="noopener">undefined</a></div>
+        </div><div class="all-topic-row rec">
+          <div class="all-topic-head"><span class="tag rec">rec</span><strong>Closures &amp; Scope</strong> <span class="branch-label">JavaScript</span></div>
+          <div class="all-topic-desc">Lexical scope, closures, the this keyword.</div>
+          <div class="all-topic-why"><em>Why:</em> Closures power most React patterns AND make async callbacks make sense. Learn before Promises.</div>
+          <div class="all-topic-links"><a href="https://javascript.info/closure" target="_blank" rel="noopener">undefined</a>, <a href="https://www.youtube.com/watch?v=3a0I8ICR1Vg" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Promises &amp; async/await</strong> <span class="branch-label">JavaScript</span></div>
           <div class="all-topic-desc">The event loop, promises, async functions, error handling in async code.</div>
@@ -3853,11 +3858,6 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-desc">import/export, default vs named, module resolution.</div>
           <div class="all-topic-why"><em>Why:</em> Modern <abbr class="glossary-term" data-term="JS" data-def="JavaScript — the programming language of the browser (and now everywhere).">JS</abbr> is module-based. Required for everything that comes next.</div>
           <div class="all-topic-links"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" target="_blank" rel="noopener">undefined</a>, <a href="https://javascript.info/modules-intro" target="_blank" rel="noopener">undefined</a></div>
-        </div><div class="all-topic-row rec">
-          <div class="all-topic-head"><span class="tag rec">rec</span><strong>Closures &amp; Scope</strong> <span class="branch-label">JavaScript</span></div>
-          <div class="all-topic-desc">Lexical scope, closures, the this keyword.</div>
-          <div class="all-topic-why"><em>Why:</em> Closures power most React patterns.</div>
-          <div class="all-topic-links"><a href="https://javascript.info/closure" target="_blank" rel="noopener">undefined</a>, <a href="https://www.youtube.com/watch?v=3a0I8ICR1Vg" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Terminal Navigation</strong> <span class="branch-label">CLI &amp; Git</span></div>
           <div class="all-topic-desc">cd, ls, mkdir, touch, cat, rm, pipes, redirection.</div>
@@ -4171,7 +4171,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="2" id="stage-cluster-2">
         <div class="stage-band">
           <div class="stage-num-big">02</div>
           <div class="stage-band-info">
@@ -4602,7 +4602,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="3" id="stage-cluster-3">
         <div class="stage-band">
           <div class="stage-num-big">03</div>
           <div class="stage-band-info">
@@ -5256,7 +5256,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="4" id="stage-cluster-4">
         <div class="stage-band">
           <div class="stage-num-big">04</div>
           <div class="stage-band-info">
@@ -5371,15 +5371,15 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
-          <div class="topic req " data-tk="4::auth-jwt" onclick="openModal(4, 'auth-jwt')" role="button" tabindex="0" aria-label="JWT &amp; Session Auth — req">
-            <div class="check" aria-hidden="true"></div>
-            <div class="name"><abbr class="glossary-term" data-term="JWT" data-def="JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.">JWT</abbr> &amp; Session Auth</div>
-            <span class="tag req" aria-hidden="true">req</span>
-          </div>
-        
           <div class="topic req " data-tk="4::auth-hash" onclick="openModal(4, 'auth-hash')" role="button" tabindex="0" aria-label="Password Hashing — req">
             <div class="check" aria-hidden="true"></div>
             <div class="name">Password Hashing</div>
+            <span class="tag req" aria-hidden="true">req</span>
+          </div>
+        
+          <div class="topic req " data-tk="4::auth-jwt" onclick="openModal(4, 'auth-jwt')" role="button" tabindex="0" aria-label="JWT &amp; Session Auth — req">
+            <div class="check" aria-hidden="true"></div>
+            <div class="name"><abbr class="glossary-term" data-term="JWT" data-def="JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.">JWT</abbr> &amp; Session Auth</div>
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
@@ -5575,15 +5575,15 @@ abbr.glossary-term:hover::after {
           <div class="all-topic-why"><em>Why:</em> Best TS-first <abbr class="glossary-term" data-term="ORM" data-def="Object-Relational Mapper — a library that maps DB rows to objects (Prisma, SQLAlchemy, Drizzle).">ORM</abbr>.</div>
           <div class="all-topic-links"><a href="https://www.prisma.io/docs" target="_blank" rel="noopener">undefined</a>, <a href="https://www.prisma.io/nextjs" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
-          <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="JWT" data-def="JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.">JWT</abbr> &amp; Session Auth</strong> <span class="branch-label">Node Backend</span></div>
-          <div class="all-topic-desc">Token-based auth, refresh tokens.</div>
-          <div class="all-topic-why"><em>Why:</em> Every app needs auth.</div>
-          <div class="all-topic-links"><a href="https://jwt.io/introduction" target="_blank" rel="noopener">undefined</a>, <a href="https://authjs.dev/" target="_blank" rel="noopener">undefined</a>, <a href="https://lucia-auth.com/" target="_blank" rel="noopener">undefined</a></div>
-        </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Password Hashing</strong> <span class="branch-label">Node Backend</span></div>
           <div class="all-topic-desc">argon2/bcrypt, salt + hash.</div>
-          <div class="all-topic-why"><em>Why:</em> Storing passwords wrong is a fireable offense.</div>
+          <div class="all-topic-why"><em>Why:</em> Storing passwords wrong is a fireable offense. Learn BEFORE <abbr class="glossary-term" data-term="JWT" data-def="JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.">JWT</abbr>/sessions — you can't implement login correctly without it.</div>
           <div class="all-topic-links"><a href="https://www.npmjs.com/package/argon2" target="_blank" rel="noopener">undefined</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">undefined</a></div>
+        </div><div class="all-topic-row req">
+          <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="JWT" data-def="JSON Web Token — a signed, URL-safe token carrying claims (user id, expiry). Common for stateless auth.">JWT</abbr> &amp; Session Auth</strong> <span class="branch-label">Node Backend</span></div>
+          <div class="all-topic-desc">Token-based auth, refresh tokens.</div>
+          <div class="all-topic-why"><em>Why:</em> Every app needs auth. Builds on hashing (you store the hashed password; auth verifies &amp; issues tokens).</div>
+          <div class="all-topic-links"><a href="https://jwt.io/introduction" target="_blank" rel="noopener">undefined</a>, <a href="https://authjs.dev/" target="_blank" rel="noopener">undefined</a>, <a href="https://lucia-auth.com/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>File Uploads &amp; Blob Storage</strong> <span class="branch-label">Node Backend</span></div>
           <div class="all-topic-desc">Handle multipart form uploads (Node: multer/Hono's parseBody; Python: python-multipart/FastAPI File). Validate type + size + magic-bytes. Store in S3-compatible blob storage (AWS S3, Cloudflare R2, Backblaze B2) — never in the DB. Serve via signed URLs.</div>
@@ -5852,7 +5852,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="5" id="stage-cluster-5">
         <div class="stage-band">
           <div class="stage-num-big">05</div>
           <div class="stage-band-info">
@@ -6340,7 +6340,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="6" id="stage-cluster-6">
         <div class="stage-band">
           <div class="stage-num-big">06</div>
           <div class="stage-band-info">
@@ -6861,7 +6861,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="7" id="stage-cluster-7">
         <div class="stage-band">
           <div class="stage-num-big">07</div>
           <div class="stage-band-info">
@@ -7113,9 +7113,9 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
-          <div class="topic req " data-tk="7::nginx" onclick="openModal(7, 'nginx')" role="button" tabindex="0" aria-label="Nginx &amp; Reverse Proxies — req">
+          <div class="topic req " data-tk="7::ssh" onclick="openModal(7, 'ssh')" role="button" tabindex="0" aria-label="SSH &amp; Server Management — req">
             <div class="check" aria-hidden="true"></div>
-            <div class="name">Nginx &amp; Reverse Proxies</div>
+            <div class="name"><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> &amp; Server Management</div>
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
@@ -7131,9 +7131,9 @@ abbr.glossary-term:hover::after {
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         
-          <div class="topic req " data-tk="7::ssh" onclick="openModal(7, 'ssh')" role="button" tabindex="0" aria-label="SSH &amp; Server Management — req">
+          <div class="topic req " data-tk="7::nginx" onclick="openModal(7, 'nginx')" role="button" tabindex="0" aria-label="Nginx &amp; Reverse Proxies — req">
             <div class="check" aria-hidden="true"></div>
-            <div class="name"><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> &amp; Server Management</div>
+            <div class="name">Nginx &amp; Reverse Proxies</div>
             <span class="tag req" aria-hidden="true">req</span>
           </div>
         </div>
@@ -7280,28 +7280,28 @@ abbr.glossary-term:hover::after {
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong>Linux Server Basics</strong> <span class="branch-label">DevOps Fundamentals</span></div>
           <div class="all-topic-desc"><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr>, file permissions, processes, systemd, log files, cron.</div>
-          <div class="all-topic-why"><em>Why:</em> Every cloud server is Linux. You will <abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> into them eventually.</div>
+          <div class="all-topic-why"><em>Why:</em> Every cloud server is Linux. Foundation for everything else in this branch.</div>
           <div class="all-topic-links"><a href="https://linuxcommand.org/tlcl.php" target="_blank" rel="noopener">undefined</a>, <a href="https://linuxjourney.com/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
-          <div class="all-topic-head"><span class="tag req">req</span><strong>Nginx &amp; Reverse Proxies</strong> <span class="branch-label">DevOps Fundamentals</span></div>
-          <div class="all-topic-desc">Reverse proxy, SSL termination, static file serving, load balancing config.</div>
-          <div class="all-topic-why"><em>Why:</em> Standard front-door for self-hosted apps. Required for VPS deployments.</div>
-          <div class="all-topic-links"><a href="https://nginx.org/en/docs/beginners_guide.html" target="_blank" rel="noopener">undefined</a>, <a href="https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> &amp; Server Management</strong> <span class="branch-label">DevOps Fundamentals</span></div>
+          <div class="all-topic-desc"><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> keys, agent forwarding, jumphosts, config files, ufw firewall basics.</div>
+          <div class="all-topic-why"><em>Why:</em> How you actually access the server. Password auth is dead — learn keys before anything else.</div>
+          <div class="all-topic-links"><a href="https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys" target="_blank" rel="noopener">undefined</a>, <a href="https://www.openssh.com/manual.html" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="DNS" data-def="Domain Name System — the distributed name-to-IP lookup system.">DNS</abbr> &amp; Domains</strong> <span class="branch-label">DevOps Fundamentals</span></div>
           <div class="all-topic-desc">A, AAAA, CNAME, MX records. <abbr class="glossary-term" data-term="DNS" data-def="Domain Name System — the distributed name-to-IP lookup system.">DNS</abbr> propagation. Apex vs subdomain.</div>
-          <div class="all-topic-why"><em>Why:</em> You need this the first time you deploy to your own domain.</div>
+          <div class="all-topic-why"><em>Why:</em> Point your domain at your server BEFORE configuring Nginx or <abbr class="glossary-term" data-term="HTTPS" data-def="HTTP over TLS — encrypted HTTP. The default for everything since ~2018.">HTTPS</abbr> — both depend on the hostname resolving.</div>
           <div class="all-topic-links"><a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">undefined</a>, <a href="https://howdns.works/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
           <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="HTTPS" data-def="HTTP over TLS — encrypted HTTP. The default for everything since ~2018.">HTTPS</abbr> &amp; <abbr class="glossary-term" data-term="TLS" data-def="Transport Layer Security — the encryption protocol behind HTTPS.">TLS</abbr> Certificates</strong> <span class="branch-label">DevOps Fundamentals</span></div>
           <div class="all-topic-desc">How <abbr class="glossary-term" data-term="TLS" data-def="Transport Layer Security — the encryption protocol behind HTTPS.">TLS</abbr> works, certificate authorities, Let's Encrypt, automated renewal.</div>
-          <div class="all-topic-why"><em>Why:</em> Required for any production site. Free with Let's Encrypt — no excuse.</div>
+          <div class="all-topic-why"><em>Why:</em> Required for any production site. Free with Let's Encrypt — no excuse. Requires <abbr class="glossary-term" data-term="DNS" data-def="Domain Name System — the distributed name-to-IP lookup system.">DNS</abbr> configured first.</div>
           <div class="all-topic-links"><a href="https://letsencrypt.org/getting-started/" target="_blank" rel="noopener">undefined</a>, <a href="https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/" target="_blank" rel="noopener">undefined</a></div>
         </div><div class="all-topic-row req">
-          <div class="all-topic-head"><span class="tag req">req</span><strong><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> &amp; Server Management</strong> <span class="branch-label">DevOps Fundamentals</span></div>
-          <div class="all-topic-desc"><abbr class="glossary-term" data-term="SSH" data-def="Secure Shell — encrypted remote-access protocol used for shells, git, and tunneling.">SSH</abbr> keys, agent forwarding, jumphosts, config files, ufw firewall basics.</div>
-          <div class="all-topic-why"><em>Why:</em> How you actually manage servers. Password auth is dead.</div>
-          <div class="all-topic-links"><a href="https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys" target="_blank" rel="noopener">undefined</a>, <a href="https://www.openssh.com/manual.html" target="_blank" rel="noopener">undefined</a></div>
+          <div class="all-topic-head"><span class="tag req">req</span><strong>Nginx &amp; Reverse Proxies</strong> <span class="branch-label">DevOps Fundamentals</span></div>
+          <div class="all-topic-desc">Reverse proxy, SSL termination, static file serving, load balancing config.</div>
+          <div class="all-topic-why"><em>Why:</em> Standard front-door for self-hosted apps. Comes LAST — needs Linux access, working <abbr class="glossary-term" data-term="DNS" data-def="Domain Name System — the distributed name-to-IP lookup system.">DNS</abbr>, and <abbr class="glossary-term" data-term="TLS" data-def="Transport Layer Security — the encryption protocol behind HTTPS.">TLS</abbr> certs all in place first.</div>
+          <div class="all-topic-links"><a href="https://nginx.org/en/docs/beginners_guide.html" target="_blank" rel="noopener">undefined</a>, <a href="https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching" target="_blank" rel="noopener">undefined</a></div>
         </div>
         </div>
         <div class="stage-extras-4">
@@ -7495,7 +7495,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="8" id="stage-cluster-8">
         <div class="stage-band">
           <div class="stage-num-big">08</div>
           <div class="stage-band-info">
@@ -8023,7 +8023,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="9" id="stage-cluster-9">
         <div class="stage-band">
           <div class="stage-num-big">09</div>
           <div class="stage-band-info">
@@ -8295,7 +8295,7 @@ abbr.glossary-term:hover::after {
         </div>
       </div>
     
-      <div class="stage-cluster">
+      <div class="stage-cluster" data-stage-id="10" id="stage-cluster-10">
         <div class="stage-band">
           <div class="stage-num-big">10</div>
           <div class="stage-band-info">
@@ -9041,19 +9041,19 @@ const DATA = [
               L('docs', 'Python Modules', 'https://docs.python.org/3/tutorial/modules.html'),
               L('docs', 'uv Project Workflow', 'https://docs.astral.sh/uv/guides/projects/')
             ]},
+          { id: 'py-comp', name: 'Comprehensions & Iterators', t: 'rec',
+            desc: 'List/dict/set comprehensions, generators, the iteration protocol.',
+            why: 'Python becomes elegant once these click. Learn before OOP — you use comprehensions every day; OOP is more conceptual.',
+            links: [
+              L('tutorial', 'Real Python — Comprehensions', 'https://realpython.com/list-comprehension-python/'),
+              L('tutorial', 'Real Python — Generators', 'https://realpython.com/introduction-to-python-generators/')
+            ]},
           { id: 'py-oop', name: 'Classes & OOP', t: 'rec',
             desc: 'Classes, instances, methods, inheritance, dunder methods.',
             why: 'You will see OOP everywhere in libraries.',
             links: [
               L('docs', 'Python Classes', 'https://docs.python.org/3/tutorial/classes.html'),
               L('tutorial', 'Real Python — OOP', 'https://realpython.com/python3-object-oriented-programming/')
-            ]},
-          { id: 'py-comp', name: 'Comprehensions & Iterators', t: 'rec',
-            desc: 'List/dict/set comprehensions, generators, the iteration protocol.',
-            why: 'Python becomes elegant once these click.',
-            links: [
-              L('tutorial', 'Real Python — Comprehensions', 'https://realpython.com/list-comprehension-python/'),
-              L('tutorial', 'Real Python — Generators', 'https://realpython.com/introduction-to-python-generators/')
             ]}
         ]
       },
@@ -9077,6 +9077,13 @@ const DATA = [
               L('tutorial', 'JavaScript.info — Arrays', 'https://javascript.info/array'),
               L('tutorial', 'JavaScript.info — Destructuring', 'https://javascript.info/destructuring-assignment')
             ]},
+          { id: 'js-closures', name: 'Closures & Scope', t: 'rec',
+            desc: 'Lexical scope, closures, the this keyword.',
+            why: 'Closures power most React patterns AND make async callbacks make sense. Learn before Promises.',
+            links: [
+              L('tutorial', 'JavaScript.info — Closures', 'https://javascript.info/closure'),
+              L('video', 'Closures in JS', 'https://www.youtube.com/watch?v=3a0I8ICR1Vg')
+            ]},
           { id: 'js-async', name: 'Promises & async/await', t: 'req',
             desc: 'The event loop, promises, async functions, error handling in async code.',
             why: 'Every API call, every database query, every file read in JS is async.',
@@ -9091,13 +9098,6 @@ const DATA = [
             links: [
               L('docs', 'MDN — Modules', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules'),
               L('tutorial', 'JavaScript.info — Modules', 'https://javascript.info/modules-intro')
-            ]},
-          { id: 'js-closures', name: 'Closures & Scope', t: 'rec',
-            desc: 'Lexical scope, closures, the this keyword.',
-            why: 'Closures power most React patterns.',
-            links: [
-              L('tutorial', 'JavaScript.info — Closures', 'https://javascript.info/closure'),
-              L('video', 'Closures in JS', 'https://www.youtube.com/watch?v=3a0I8ICR1Vg')
             ]}
         ]
       },
@@ -9902,20 +9902,20 @@ const DATA = [
               L('docs', 'Prisma Docs', 'https://www.prisma.io/docs'),
               L('tutorial', 'Prisma + Next.js', 'https://www.prisma.io/nextjs')
             ]},
+          { id: 'auth-hash', name: 'Password Hashing', t: 'req',
+            desc: 'argon2/bcrypt, salt + hash.',
+            why: 'Storing passwords wrong is a fireable offense. Learn BEFORE JWT/sessions — you can\'t implement login correctly without it.',
+            links: [
+              L('docs', 'argon2 npm', 'https://www.npmjs.com/package/argon2'),
+              L('docs', 'OWASP Password Storage', 'https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html')
+            ]},
           { id: 'auth-jwt', name: 'JWT & Session Auth', t: 'req',
             desc: 'Token-based auth, refresh tokens.',
-            why: 'Every app needs auth.',
+            why: 'Every app needs auth. Builds on hashing (you store the hashed password; auth verifies & issues tokens).',
             links: [
               L('docs', 'JWT.io', 'https://jwt.io/introduction'),
               L('docs', 'Auth.js', 'https://authjs.dev/'),
               L('docs', 'Lucia Auth', 'https://lucia-auth.com/')
-            ]},
-          { id: 'auth-hash', name: 'Password Hashing', t: 'req',
-            desc: 'argon2/bcrypt, salt + hash.',
-            why: 'Storing passwords wrong is a fireable offense.',
-            links: [
-              L('docs', 'argon2 npm', 'https://www.npmjs.com/package/argon2'),
-              L('docs', 'OWASP Password Storage', 'https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html')
             ]},
           { id: 'file-uploads', name: 'File Uploads & Blob Storage', t: 'req',
             desc: 'Handle multipart form uploads (Node: multer/Hono\'s parseBody; Python: python-multipart/FastAPI File). Validate type + size + magic-bytes. Store in S3-compatible blob storage (AWS S3, Cloudflare R2, Backblaze B2) — never in the DB. Serve via signed URLs.',
@@ -10716,38 +10716,38 @@ const DATA = [
         topics: [
           { id: 'linux', name: 'Linux Server Basics', t: 'req',
             desc: 'SSH, file permissions, processes, systemd, log files, cron.',
-            why: 'Every cloud server is Linux. You will SSH into them eventually.',
+            why: 'Every cloud server is Linux. Foundation for everything else in this branch.',
             links: [
               L('book', 'The Linux Command Line (free)', 'https://linuxcommand.org/tlcl.php'),
               L('practice', 'Linux Journey', 'https://linuxjourney.com/')
             ]},
-          { id: 'nginx', name: 'Nginx & Reverse Proxies', t: 'req',
-            desc: 'Reverse proxy, SSL termination, static file serving, load balancing config.',
-            why: 'Standard front-door for self-hosted apps. Required for VPS deployments.',
+          { id: 'ssh', name: 'SSH & Server Management', t: 'req',
+            desc: 'SSH keys, agent forwarding, jumphosts, config files, ufw firewall basics.',
+            why: 'How you actually access the server. Password auth is dead — learn keys before anything else.',
             links: [
-              L('docs', 'Nginx Beginner\'s Guide', 'https://nginx.org/en/docs/beginners_guide.html'),
-              L('tutorial', 'DigitalOcean — Nginx', 'https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching')
+              L('tutorial', 'DigitalOcean — SSH Essentials', 'https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys'),
+              L('docs', 'OpenSSH Manual', 'https://www.openssh.com/manual.html')
             ]},
           { id: 'dns', name: 'DNS & Domains', t: 'req',
             desc: 'A, AAAA, CNAME, MX records. DNS propagation. Apex vs subdomain.',
-            why: 'You need this the first time you deploy to your own domain.',
+            why: 'Point your domain at your server BEFORE configuring Nginx or HTTPS — both depend on the hostname resolving.',
             links: [
               L('tutorial', 'Cloudflare — DNS Fundamentals', 'https://www.cloudflare.com/learning/dns/what-is-dns/'),
               L('tutorial', 'How DNS Works (comic)', 'https://howdns.works/')
             ]},
           { id: 'https', name: 'HTTPS & TLS Certificates', t: 'req',
             desc: 'How TLS works, certificate authorities, Let\'s Encrypt, automated renewal.',
-            why: 'Required for any production site. Free with Let\'s Encrypt — no excuse.',
+            why: 'Required for any production site. Free with Let\'s Encrypt — no excuse. Requires DNS configured first.',
             links: [
               L('docs', 'Let\'s Encrypt Getting Started', 'https://letsencrypt.org/getting-started/'),
               L('tutorial', 'Cloudflare — How TLS Works', 'https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/')
             ]},
-          { id: 'ssh', name: 'SSH & Server Management', t: 'req',
-            desc: 'SSH keys, agent forwarding, jumphosts, config files, ufw firewall basics.',
-            why: 'How you actually manage servers. Password auth is dead.',
+          { id: 'nginx', name: 'Nginx & Reverse Proxies', t: 'req',
+            desc: 'Reverse proxy, SSL termination, static file serving, load balancing config.',
+            why: 'Standard front-door for self-hosted apps. Comes LAST — needs Linux access, working DNS, and TLS certs all in place first.',
             links: [
-              L('tutorial', 'DigitalOcean — SSH Essentials', 'https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys'),
-              L('docs', 'OpenSSH Manual', 'https://www.openssh.com/manual.html')
+              L('docs', 'Nginx Beginner\'s Guide', 'https://nginx.org/en/docs/beginners_guide.html'),
+              L('tutorial', 'DigitalOcean — Nginx', 'https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching')
             ]}
         ]
       }
