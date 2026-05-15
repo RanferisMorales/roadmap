@@ -3091,7 +3091,6 @@ body.locked > .container, body.locked > footer { display: none !important; }
     <div class="intro-jump-row">
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
       <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
-      <span class="intro-jump-link" onclick="openStudyGuide('compass')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide('compass')}" style="cursor:pointer;">🧭 Fundamentals (168)</span>
       <span class="intro-jump-link" onclick="openAiInstructor()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAiInstructor()}" style="cursor:pointer;">🎓 AI Tutor</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
@@ -3242,17 +3241,17 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <div class="howto-card" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(199,210,254,0.25), rgba(220,252,231,0.25));">
           <h3>🛠 Built-in Tools (click the ⋯ More button in the header)</h3>
           <ul style="columns: 2; column-gap: 24px;">
-            <li><strong>📋 How to Study (per phase)</strong> — opens a focused modal with three tabs: <em>Study Method</em> (the loop / anti-pattern / exit signal for each of the 11 stages), <em>Fundamentals Compass</em> (every required topic across the roadmap, one click to open), and <em>General Method</em> (universal patterns: daily/weekly structure, when stuck, how to use Key Terms, etc).</li>
-            <li><strong>🎓 AI Instructor</strong> — chat with Claude as your personal tutor (uses your own Anthropic key, stored only in browser). Knows your current topic + progress. Quick actions: Explain / Quiz me / I'm stuck / Plan my week / Help debug / Motivation.</li>
-            <li><strong>🏫 Bootcamp</strong> — compresses the roadmap into a 12 / 16 / 24 / 52 / 84-week structured curriculum. Each week shows topics + practice + project + a "mark complete" button. Calendar view of all weeks.</li>
-            <li><strong>📊 Accountability</strong> — daily commitment, hour tracker, 7-day calendar, weekly check-ins with mood, streak counter.</li>
-            <li><strong>📝 Definitions Quiz</strong> — 10-question multiple-choice drill over the 853-term glossary. By stage / by tier / acronyms-only. High-score tracking.</li>
-            <li><strong>📚 Glossary</strong> — searchable A-Z view of every term. Per-topic key terms shown inline in each modal.</li>
-            <li><strong>🎮 Practice Hub</strong> — 60+ curated practice platforms grouped by skill (LeetCode, Frontend Mentor, PortSwigger, OWASP Juice Shop, Anthropic Cookbook, etc.).</li>
-            <li><strong>🔨 Builds</strong> — 15 full step-by-step project guides with copy-paste code (portfolio, REST API, SaaS, AI chatbot, RAG app, 6 trading bots, browser extension, CLI tool, RN habit tracker, sklearn → DistilBERT sentiment classifier).</li>
-            <li><strong>🧠 Flashcards</strong> — SM-2 spaced repetition. Add custom cards per topic.</li>
-            <li><strong>🕸 Skill Graph</strong> — layered DAG of all topics by stage. Click to open. Filter by tier or status.</li>
-            <li><strong>💼 Career Toolkit</strong> (Salary / Resume bullets / LinkedIn post), 📅 Schedule, 📁 Portfolio, 🎲 Random interview, 🎯 Hard Topics review, ⭐ My Resources, 💾 Backup/Restore. Cost tracker moved into the 🎓 AI Instructor header (where it's actually relevant).</li>
+            <li><strong>📋 How to Study</strong> — per-phase loop + Fundamentals Compass + universal study patterns</li>
+            <li><strong>🎓 AI Tutor</strong> — chat with Claude as tutor. Knows your topic + progress. 6 quick actions</li>
+            <li><strong>🏫 Bootcamp</strong> — compresses to 12/16/24/52/84-week schedules; weekly topics + projects</li>
+            <li><strong>📊 Accountability</strong> — daily hours + weekly check-ins + streak</li>
+            <li><strong>📝 Definitions Quiz</strong> — 10-Q MCQ over the glossary. By stage / tier / acronyms</li>
+            <li><strong>📚 Glossary</strong> — A-Z search of every term</li>
+            <li><strong>🎮 Practice Hub</strong> — 60+ curated practice platforms grouped by skill</li>
+            <li><strong>🔨 Builds</strong> — 15 step-by-step project guides with copy-paste code</li>
+            <li><strong>🧠 Flashcards</strong> — SM-2 spaced repetition; add custom cards per topic</li>
+            <li><strong>🕸 Skill Graph</strong> — layered DAG of all topics; filter by tier / status</li>
+            <li><strong>💼 Career Toolkit</strong>, 📅 Schedule, 📁 Portfolio, 🎲 Random interview, 🎯 Hard Topics, ⭐ My Resources, 💾 Backup/Restore</li>
           </ul>
         </div>
         <div class="howto-card">
@@ -8040,7 +8039,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.</li><li>For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages</li><li>You can comfortably explain your projects technically</li><li>You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)</li><li>You're mentally prepared for rejection — most applications don't convert</li><li>⏱ Open-ended: ~120 hrs of structured prep + 100+ apps + 3-12 mo wall-clock time in the 2026 market. 💰 Free; optional $30-150/hr mentor/mock-interview.</li></ul>
+            <ul><li>Start Stage 8 activities (LinkedIn, portfolio, networking) during Stages 5-6, not after Stage 7. They have lead time.</li><li>For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages</li><li>You can comfortably explain your projects technically</li><li>You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)</li><li>You're mentally prepared for rejection — most applications don't convert</li><li>⏱ Open-ended: ~120 hrs of structured prep + 100+ apps + 3-12 mo wall-clock time in the 2026 market. 💰 Free; optional $30-150/hr mentor/mock-interview.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -8484,7 +8483,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>ELECTIVE — only if you want to build mobile apps</li><li>Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge</li><li>A Mac is required for iOS builds (Android works on any OS)</li><li>Willingness to deal with App Store review (1-2 week buffer for first submission)</li><li>⏱ Expect ~300 hrs focused work (~10-12 weeks). 💰 Apple Developer Program $99/yr (required to ship iOS) + Google Play one-time $25.</li></ul>
+            <ul><li>Elective — only if you want to build mobile apps</li><li>Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge</li><li>A Mac is required for iOS builds (Android works on any OS)</li><li>Willingness to deal with App Store review (1-2 week buffer for first submission)</li><li>⏱ Expect ~300 hrs focused work (~10-12 weeks). 💰 Apple Developer Program $99/yr (required to ship iOS) + Google Play one-time $25.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -8853,7 +8852,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>ELECTIVE — only if you want ML/research roles or to fine-tune models yourself</li><li>Stage 1 Python complete — comfortable with NumPy/Pandas patterns</li><li>Stage 5 <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> complete — you understand the application engineering side first</li><li>Math fundamentals (Stage 1 Math &amp; Logic branch) — statistics + probability</li><li>Patience: ML feedback loops are slower than web (training runs take hours/days)</li><li>⏱ Expect ~480 hrs focused work (14-20 weeks). 💰 Free with Kaggle/Colab GPUs for most learning; ~$10-50 if you do any cloud <abbr class="glossary-term" data-term="GPU" data-def="Graphics Processing Unit — the parallel compute hardware used for both graphics and ML inference/training.">GPU</abbr> fine-tuning.</li></ul>
+            <ul><li>Elective — only if you want ML/research roles or to fine-tune models yourself</li><li>Stage 1 Python complete — comfortable with NumPy/Pandas patterns</li><li>Stage 5 <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> complete — you understand the application engineering side first</li><li>Math fundamentals (Stage 1 Math &amp; Logic branch) — statistics + probability</li><li>Patience: ML feedback loops are slower than web (training runs take hours/days)</li><li>⏱ Expect ~480 hrs focused work (14-20 weeks). 💰 Free with Kaggle/Colab GPUs for most learning; ~$10-50 if you do any cloud <abbr class="glossary-term" data-term="GPU" data-def="Graphics Processing Unit — the parallel compute hardware used for both graphics and ML inference/training.">GPU</abbr> fine-tuning.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -11750,7 +11749,7 @@ const ENTRY_CRITERIA = {
     '⏱ Expect ~420-600 hrs focused work (14-20 weeks). 💰 ~$5-15/mo if you self-host a VPS; managed platforms free tier-friendly.'
   ],
   8: [
-    'Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.',
+    'Start Stage 8 activities (LinkedIn, portfolio, networking) during Stages 5-6, not after Stage 7. They have lead time.',
     'For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages',
     'You can comfortably explain your projects technically',
     'You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)',
@@ -11758,14 +11757,14 @@ const ENTRY_CRITERIA = {
     '⏱ Open-ended: ~120 hrs of structured prep + 100+ apps + 3-12 mo wall-clock time in the 2026 market. 💰 Free; optional $30-150/hr mentor/mock-interview.'
   ],
   9: [
-    'ELECTIVE — only if you want to build mobile apps',
+    'Elective — only if you want to build mobile apps',
     'Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge',
     'A Mac is required for iOS builds (Android works on any OS)',
     'Willingness to deal with App Store review (1-2 week buffer for first submission)',
     '⏱ Expect ~300 hrs focused work (~10-12 weeks). 💰 Apple Developer Program $99/yr (required to ship iOS) + Google Play one-time $25.'
   ],
   10: [
-    'ELECTIVE — only if you want ML/research roles or to fine-tune models yourself',
+    'Elective — only if you want ML/research roles or to fine-tune models yourself',
     'Stage 1 Python complete — comfortable with NumPy/Pandas patterns',
     'Stage 5 LLM complete — you understand the application engineering side first',
     'Math fundamentals (Stage 1 Math & Logic branch) — statistics + probability',
