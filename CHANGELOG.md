@@ -6,6 +6,29 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Trim & reorganize intro (PUSH 26)
+
+User feedback: "lots of misleading and unnecessary words; the yellow Fundamentals button doesn't belong there."
+
+### Removed
+- **Standalone Fundamentals Callout block** (the yellow expandable `<details>` with 8 category cards). Redundant: the **🧭 Fundamentals (168) pill** at the top of the intro jump row already opens the same Compass in one click. Dropped the HTML, the JS hook, the CSS, and the obsolete tests.
+- **Misleading "(see the 168 required topics →)" parenthetical** inside the "Not for you" card. The bullet now reads cleanly: "Want to skip <strong>fundamentals</strong> and jump straight to AI — this builds from the ground up."
+- **Duplicate "Is This Roadmap For You?" card** from the How-to-Use section. It was a verbose restating of the YES/NO/MAYBE info already in the 4-card grid above.
+- **Misplaced postscript** "📱 Mobile dev and 🧪 Data Science / ML research are available as elective stages 9+10" — was at the bottom of the "Not for you" card (wrong place; electives are an opt-in EXTENSION, not a "not for you"). The "What this is" card already mentions "11 stages (9 core + 2 electives: 📱 Mobile, 🧪 Data Science/ML)".
+- **Redundant "Honest about timelines" bullet** from the "What this is" card. The personalized YES line + the amber 2026 reality callout already cover timelines.
+
+### Changed (tightened)
+- **YES card**: 6 bullets, ~30% shorter. Removed filler ("over endless 'choose your own adventure' tutorials" → "instead of option-shopping"; "Are okay being self-directed (no instructor will check on you)" → "Are OK being self-directed").
+- **NO card**: 6 bullets, ~25% shorter. Each bullet states the disqualifier directly; explanations cut to essentials.
+- **WHAT IS card**: 8 bullets (was 9). Tighter wording throughout.
+- **WARN card** ("If you do nothing else"): 4 bullets, slightly tightened.
+- **Time Commitment** (in How-to-Use): 10 bullets → 5. Kept the load-bearing info (ideal/realistic range, hours/week oscillation reality, parallel job hunt, electives add on top, don't rush/drag).
+
+### Tests
+251/251 passing. Updated 3 PUSH 14 tests + 3 PUSH 7 tests to reflect the removed callout. Updated 1 OpenAI-guard test regex to match the new tightened "Not for you" bullet wording.
+
+---
+
 ## 2026-05 — Per-stage / per-topic / per-build AI integrations (PUSH 25)
 
 User picked all 4. All shipped. Core helper `aiAskWithPrompt(prompt, persona)` opens the AI Instructor, switches persona, fills the input, and submits.
