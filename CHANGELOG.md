@@ -6,6 +6,24 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Nice-to-haves (PUSH 8)
+
+### Added
+- **🔨 Build: React Native Habit Tracker** (Stage 9 — Mobile). 9 step-by-step instructions covering Expo scaffold, AsyncStorage data layer, FlatList vs ScrollView, daily push notifications, GitHub-style streak heatmap, EAS Build, TestFlight + Play Internal Track shipping, and OTA updates via EAS Update.
+- **🔨 Build: Sentiment Classifier — sklearn → HuggingFace** (Stage 10 — DS/ML). 8 step-by-step instructions covering env setup with uv, IMDb dataset exploration, TF-IDF + LogisticRegression baseline, DistilBERT fine-tuning, honest baseline-vs-deep-learning comparison, model saving/loading, Hugging Face Hub publishing, and writing the portfolio post.
+- **2 new Build categories** — `Mobile` and `Data Science / ML` filter pills in the Builds modal. Total builds: 13 → 15.
+- **👥 Contextual mentor CTAs** on Stages 4, 5, 6 — directly inside the stage band, surfaced exactly where they matter most (backend plateau, LLM field churn, eval rigor). Each links to free options (Reactiflux, Anthropic Discord, OSS) AND paid 1-on-1 (Codementor, MentorCruise) so cost isn't a blocker.
+- **Link-rot CI** — `scripts/check-links.mjs` + `.github/workflows/link-check.yml` in the deploy repo. Runs weekly, probes every external link, opens (or updates) a GitHub issue labeled `link-rot` if anything's broken. Excludes known bot-protected hosts (Stack Overflow, Cloudflare, LinkedIn, etc.) to avoid false positives.
+
+### Skipped (with reason)
+- **Server-side backup** — would require a backend or token-storage step that breaks the single-file no-credentials privacy model. localStorage + manual 💾 Backup/Restore remains the right tradeoff.
+- **Stages 9-10 depth boost** — audit revealed they're already at parity (100% TERMS coverage, 2.7 avg links per topic vs 2.0-2.1 for Stages 5-7). No real gap.
+
+### Tests
+181/181 passing (8 new PUSH 8 tests + 173 pre-existing).
+
+---
+
 ## 2026-05 — Fundamentals visibility (PUSH 7)
 
 ### Added

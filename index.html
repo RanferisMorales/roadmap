@@ -2038,6 +2038,8 @@ abbr.glossary-term:hover::after {
 .build-card.cat-site .b-cat { background: #d1fae5; color: #1a1a1a; }
 .build-card.cat-ai .b-cat { background: #ede9fe; color: #1a1a1a; }
 .build-card.cat-api .b-cat { background: #dbeafe; color: #1a1a1a; }
+.build-card.cat-mobile .b-cat { background: #fce7f3; color: #1a1a1a; }
+.build-card.cat-ml .b-cat { background: #fef3c7; color: #1a1a1a; }
 .build-card .b-desc { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5; }
 .build-card .b-meta { display: flex; gap: 8px; flex-wrap: wrap; font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); margin-top: 4px; }
 .build-card .b-meta strong { color: var(--text); font-family: 'Kalam', cursive; font-weight: 700; }
@@ -2049,6 +2051,15 @@ abbr.glossary-term:hover::after {
 .build-card .b-diff.beginner { background: #d1fae5; color: #064e3b; }
 .build-card .b-diff.intermediate { background: #fef3c7; color: #78350f; }
 .build-card .b-diff.advanced { background: #fee2e2; color: #7f1d1d; }
+
+/* === MENTOR CTA (contextual, on specific stages) === */
+.mentor-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(199,210,254,0.35), rgba(220,252,231,0.25)); border: 2px dashed var(--node-stage); border-radius: 8px; font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text); line-height: 1.5; }
+:root[data-theme="dark"] .mentor-cta { background: linear-gradient(135deg, rgba(50,60,100,0.45), rgba(20,52,30,0.35)); border-color: #d4a300; }
+.mentor-cta-why { flex: 1 1 200px; min-width: 0; }
+.mentor-cta-why strong { font-family: 'Kalam', cursive; font-weight: 700; }
+.mentor-cta-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.mentor-cta-links a { font-family: 'Patrick Hand', cursive; font-size: 12px; padding: 3px 9px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); text-decoration: none; white-space: nowrap; }
+.mentor-cta-links a:hover { background: var(--node-stage); transform: translate(-1px, -1px); }
 
 /* === FUNDAMENTALS CALLOUT (intro section) === */
 .fundamentals-callout { margin-top: 18px; padding: 16px 18px; border: 2px solid var(--node-stage); border-radius: 12px; background: linear-gradient(135deg, rgba(255,235,160,0.32), rgba(220,252,231,0.22)); }
@@ -10535,6 +10546,40 @@ const MILESTONES = [
   { stage: 10, num: 'M10', title: 'ML Practitioner (Elective)', desc: 'One classical ML project + one deep-learning model from scratch. Kaggle top 50% or replicated paper. Opt-in stage.' }
 ];
 
+/* Contextual mentor CTAs — surfaced only on stages where mentorship matters most */
+const MENTOR_CTAS = {
+  4: {
+    icon: '👥',
+    why: 'This is where self-taught learners plateau without senior eyes on their code. Get one PR reviewed per week — free options first.',
+    links: [
+      { label: 'Reactiflux #code-review (free)', url: 'https://www.reactiflux.com/' },
+      { label: 'Codementor ($30-150/hr)', url: 'https://www.codementor.io/' },
+      { label: 'MentorCruise ($150-300/mo)', url: 'https://mentorcruise.com/' },
+      { label: 'OSS contribute (free)', url: 'https://github.com/explore' }
+    ]
+  },
+  5: {
+    icon: '🎓',
+    why: 'The LLM field shifts monthly — a mentor here saves weeks of trying outdated patterns. Live communities > static tutorials in this stage.',
+    links: [
+      { label: 'Anthropic Discord (free)', url: 'https://discord.gg/anthropic' },
+      { label: 'Hugging Face Discord (free)', url: 'https://discord.com/invite/JfAtkvEtRb' },
+      { label: 'Codementor — ML/AI ($30-150/hr)', url: 'https://www.codementor.io/categories/ai-machine-learning-experts' },
+      { label: 'MentorCruise — ML ($150-300/mo)', url: 'https://mentorcruise.com/mentor/browse/?category=machine-learning' }
+    ]
+  },
+  6: {
+    icon: '🔭',
+    why: 'Evaluation is the hardest part of this stage — a mentor helps you build eval sets you can trust before optimizing. Don\'t iterate blind.',
+    links: [
+      { label: 'Anthropic Discord (free)', url: 'https://discord.gg/anthropic' },
+      { label: 'LangChain Discord (free)', url: 'https://discord.com/invite/langchain' },
+      { label: 'Anthropic Cookbook + issues (free)', url: 'https://github.com/anthropics/anthropic-cookbook' },
+      { label: 'MentorCruise — ML ($150-300/mo)', url: 'https://mentorcruise.com/mentor/browse/?category=machine-learning' }
+    ]
+  }
+};
+
 /* Entry criteria — what you need to know BEFORE starting each stage */
 const ENTRY_CRITERIA = {
   0: ['No prior knowledge required', 'A Windows/Mac/Linux computer with internet', 'Willingness to follow setup steps without skipping'],
@@ -11590,6 +11635,12 @@ function renderRoadmap() {
         </div>`;
       })
     ).join('');
+    const mentorCta = MENTOR_CTAS[stage.id];
+    const mentorHtml = mentorCta ? `
+      <div class="mentor-cta">
+        <div class="mentor-cta-why">${mentorCta.icon} <strong>${mentorCta.why}</strong></div>
+        <div class="mentor-cta-links">${mentorCta.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('')}</div>
+      </div>` : '';
     return `
       <div class="stage-cluster">
         <div class="stage-band">
@@ -11597,7 +11648,7 @@ function renderRoadmap() {
           <div class="stage-band-info">
             <div class="super">~ ${stage.weeks ? 'Weeks ' + stage.weeks + ' · ' : ''}${stage.duration} ~</div>
             <h2>${stage.title}</h2>
-            <div class="desc">${stage.desc}</div>
+            <div class="desc">${stage.desc}</div>${mentorHtml}
             <div class="stage-schedule-slot" data-stage-id="${stage.id}"></div>
           </div>
           <div class="stage-band-meta">
@@ -16244,6 +16295,357 @@ bun unlink</code></pre>
 <p>For Node, <a href="https://github.com/vercel/pkg" target="_blank" rel="noopener">vercel/pkg</a> does the same (now in maintenance mode; Bun is the modern path).</p>` }
     ]
 
+  },
+  {
+    id: `rn-habit-tracker`,
+    title: `React Native Habit Tracker (Mobile)`,
+    category: `mobile`,
+    difficulty: `intermediate`,
+    time: `8-14 hrs`,
+    stack: `React Native · Expo · TypeScript · AsyncStorage · Expo Notifications · EAS Build`,
+    desc: `Cross-platform mobile app. Track daily habits, get push reminders, view a streak heatmap. Ships to TestFlight (iOS) + Google Play internal track (Android) via EAS. Stage 9 build.`,
+    steps: [
+      { title: `Scaffold with Expo + TypeScript`, body: `<p>Use the official template — managed workflow is the right default for solo devs in 2026:</p>
+<pre><code>npx create-expo-app@latest habit-tracker --template
+# Pick: "Default (TypeScript)"
+cd habit-tracker
+npx expo start</code></pre>
+<p>Press <code>i</code> for iOS sim, <code>a</code> for Android emulator. Confirm the starter screen renders before touching anything. If you're on Windows, install <a href="https://expo.dev/go" target="_blank" rel="noopener">Expo Go</a> on your phone and scan the QR — instant device testing without Xcode.</p>
+<p><strong>Why managed workflow:</strong> EAS handles native modules (camera, notifications, biometrics) without writing Swift/Kotlin. Bare workflow is only worth it if you need a custom native module that doesn't exist as a config plugin.</p>` },
+      { title: `Define the data model + AsyncStorage layer`, body: `<p>Create <code>lib/habits.ts</code> — the single source of truth:</p>
+<pre><code>import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export type Habit = {
+  id: string;
+  name: string;
+  emoji: string;
+  createdAt: number;
+  // Map of YYYY-MM-DD → true if completed that day
+  completions: Record&lt;string, boolean&gt;;
+};
+
+const KEY = 'habits-v1';
+
+export async function loadHabits(): Promise&lt;Habit[]&gt; {
+  const raw = await AsyncStorage.getItem(KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+export async function saveHabits(habits: Habit[]) {
+  await AsyncStorage.setItem(KEY, JSON.stringify(habits));
+}
+
+export function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function streakFor(habit: Habit): number {
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const k = d.toISOString().slice(0, 10);
+    if (habit.completions[k]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}</code></pre>
+<p>Install:</p>
+<pre><code>npx expo install @react-native-async-storage/async-storage</code></pre>
+<p><strong>Why a flat <code>completions</code> map instead of an array of dates:</strong> O(1) lookup by date string, O(1) toggle, and JSON-serializes cleanly. Don't optimize this prematurely — for &lt; 10 years of data it's a few KB.</p>` },
+      { title: `Build the Today screen with FlatList`, body: `<p>Replace <code>app/(tabs)/index.tsx</code> (Expo Router file-based routing):</p>
+<pre><code>import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Habit, loadHabits, saveHabits, todayKey, streakFor } from '../../lib/habits';
+
+export default function Today() {
+  const [habits, setHabits] = useState&lt;Habit[]&gt;([]);
+
+  useEffect(() =&gt; { loadHabits().then(setHabits); }, []);
+
+  const toggle = async (id: string) =&gt; {
+    const today = todayKey();
+    const next = habits.map(h =&gt;
+      h.id === id
+        ? { ...h, completions: { ...h.completions, [today]: !h.completions[today] } }
+        : h
+    );
+    setHabits(next);
+    await saveHabits(next);
+  };
+
+  return (
+    &lt;FlatList
+      data={habits}
+      keyExtractor={h =&gt; h.id}
+      contentContainerStyle={{ padding: 16, gap: 12 }}
+      renderItem={({ item }) =&gt; {
+        const done = !!item.completions[todayKey()];
+        return (
+          &lt;TouchableOpacity
+            onPress={() =&gt; toggle(item.id)}
+            style={{
+              padding: 14, borderRadius: 12,
+              backgroundColor: done ? '#10b981' : '#f3f4f6',
+            }}
+          &gt;
+            &lt;Text style={{ fontSize: 18, color: done ? 'white' : 'black' }}&gt;
+              {item.emoji} {item.name} · 🔥 {streakFor(item)}
+            &lt;/Text&gt;
+          &lt;/TouchableOpacity&gt;
+        );
+      }}
+    /&gt;
+  );
+}</code></pre>
+<p><strong>Why FlatList not ScrollView:</strong> FlatList virtualizes — only renders visible rows. ScrollView keeps every row mounted. For 50+ habits ScrollView noticeably stutters on Android low-end devices. Use FlatList from day one even with 3 habits; refactoring later is annoying.</p>` },
+      { title: `Add an "Add Habit" screen`, body: `<p>Create <code>app/add.tsx</code>:</p>
+<pre><code>import { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { TextInput, Button, View } from 'react-native';
+import { loadHabits, saveHabits, Habit } from '../lib/habits';
+
+export default function AddHabit() {
+  const [name, setName] = useState('');
+  const [emoji, setEmoji] = useState('💪');
+  const router = useRouter();
+
+  const onSave = async () =&gt; {
+    if (!name.trim()) return;
+    const habits = await loadHabits();
+    const next: Habit = {
+      id: Date.now().toString(),
+      name: name.trim(), emoji,
+      createdAt: Date.now(),
+      completions: {},
+    };
+    await saveHabits([...habits, next]);
+    router.back();
+  };
+
+  return (
+    &lt;View style={{ padding: 16, gap: 12 }}&gt;
+      &lt;TextInput
+        placeholder="Habit name (e.g., Drink water)"
+        value={name} onChangeText={setName}
+        style={{ borderWidth: 1, padding: 12, borderRadius: 8 }}
+      /&gt;
+      &lt;TextInput
+        placeholder="Emoji"
+        value={emoji} onChangeText={setEmoji}
+        style={{ borderWidth: 1, padding: 12, borderRadius: 8 }}
+      /&gt;
+      &lt;Button title="Save" onPress={onSave} /&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+<p>Wire it up in <code>app/(tabs)/index.tsx</code> by adding a header button via <code>Stack.Screen options</code>, or a floating "+" button.</p>` },
+      { title: `Add daily push notifications`, body: `<p>Install and request permission once on first launch:</p>
+<pre><code>npx expo install expo-notifications</code></pre>
+<pre><code>// lib/notifications.ts
+import * as Notifications from 'expo-notifications';
+
+export async function scheduleDaily(hour = 20, minute = 0) {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== 'granted') return;
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Did you do your habits today?',
+      body: 'Tap to check in.',
+    },
+    trigger: { hour, minute, repeats: true },
+  });
+}</code></pre>
+<p>Call <code>scheduleDaily()</code> on mount in your root layout. Test on a <strong>real device</strong> — simulator doesn't deliver push reliably.</p>
+<p><strong>Common gotcha:</strong> on Android 13+ you also need <code>POST_NOTIFICATIONS</code> permission added in <code>app.json</code>:</p>
+<pre><code>{ "expo": { "android": { "permissions": ["POST_NOTIFICATIONS"] } } }</code></pre>` },
+      { title: `Streak heatmap (GitHub-style)`, body: `<p>Create <code>components/Heatmap.tsx</code> — show the last 90 days as a 7×13 grid:</p>
+<pre><code>import { View, Text } from 'react-native';
+import { Habit } from '../lib/habits';
+
+export function Heatmap({ habit }: { habit: Habit }) {
+  const days: { date: string; done: boolean }[] = [];
+  const d = new Date();
+  for (let i = 0; i &lt; 91; i++) {
+    const k = d.toISOString().slice(0, 10);
+    days.unshift({ date: k, done: !!habit.completions[k] });
+    d.setDate(d.getDate() - 1);
+  }
+  return (
+    &lt;View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 2, maxWidth: 7 * 18 }}&gt;
+      {days.map(d =&gt; (
+        &lt;View key={d.date} style={{
+          width: 16, height: 16, borderRadius: 3,
+          backgroundColor: d.done ? '#10b981' : '#e5e7eb',
+        }}/&gt;
+      ))}
+    &lt;/View&gt;
+  );
+}</code></pre>
+<p>Render it inside a habit detail screen. Tap-able cells could let you back-fill missed days.</p>` },
+      { title: `Configure EAS for cloud builds`, body: `<pre><code>npm install -g eas-cli
+eas login            # sign in / create Expo account
+eas build:configure  # creates eas.json</code></pre>
+<p>Edit <code>app.json</code> — give your app a proper <code>name</code>, <code>slug</code>, <code>bundleIdentifier</code> (iOS), <code>package</code> (Android), and <code>version</code>:</p>
+<pre><code>{
+  "expo": {
+    "name": "Habit Tracker",
+    "slug": "habit-tracker",
+    "version": "1.0.0",
+    "ios": { "bundleIdentifier": "com.yourname.habittracker" },
+    "android": { "package": "com.yourname.habittracker" }
+  }
+}</code></pre>
+<p>Now build:</p>
+<pre><code>eas build --profile preview --platform ios       # internal distribution (.ipa)
+eas build --profile preview --platform android   # internal distribution (.apk)</code></pre>
+<p>First iOS build will prompt to generate certificates — let EAS handle them. Builds run on Expo's servers (~10-20 min); you get a URL to install.</p>` },
+      { title: `Ship to TestFlight + Play Internal Track`, body: `<p><strong>iOS — TestFlight:</strong></p>
+<ol>
+  <li>You need an Apple Developer account ($99/yr).</li>
+  <li><code>eas build --platform ios --profile production</code></li>
+  <li><code>eas submit --platform ios</code> — uploads to App Store Connect.</li>
+  <li>In App Store Connect → TestFlight → add yourself as Internal Tester. Email arrives in ~10 min.</li>
+</ol>
+<p><strong>Android — Internal Testing track:</strong></p>
+<ol>
+  <li>You need a Google Play Console account ($25 one-time).</li>
+  <li><code>eas build --platform android --profile production</code></li>
+  <li><code>eas submit --platform android --track internal</code></li>
+  <li>In Play Console → Testing → Internal testing → add testers via email. Link arrives instantly.</li>
+</ol>
+<p>You now have a real shippable mobile app on both stores. That's the Stage 9 exit signal.</p>` },
+      { title: `Bonus: OTA updates via EAS Update`, body: `<p>For JS-only changes (no native modules added/changed), you can push updates instantly without re-submitting to the stores:</p>
+<pre><code>npx expo install expo-updates
+eas update:configure
+eas update --branch preview --message "fix streak bug"</code></pre>
+<p>Users on the preview build receive the update on next app launch. Don't push native changes this way — they'll crash. For Hermes/Reanimated/native module changes, do a full <code>eas build</code>.</p>
+<p><strong>Discipline:</strong> only ship to <code>preview</code> via OTA. Ship to <code>production</code> via real store releases so users have a stable, signed binary.</p>` }
+    ]
+  },
+  {
+    id: `sentiment-classifier`,
+    title: `Sentiment Classifier (sklearn → HuggingFace)`,
+    category: `ml`,
+    difficulty: `intermediate`,
+    time: `6-10 hrs`,
+    stack: `Python · pandas · scikit-learn · HuggingFace · DistilBERT · Hugging Face Hub`,
+    desc: `Train two sentiment classifiers on the IMDb dataset — a classical TF-IDF + LogisticRegression baseline, then fine-tune DistilBERT. Measure both. Deploy the winner. Stage 10 build.`,
+    steps: [
+      { title: `Set up the environment`, body: `<p>Use uv for fast, reproducible Python envs:</p>
+<pre><code>uv init sentiment-classifier
+cd sentiment-classifier
+uv add pandas scikit-learn datasets transformers accelerate torch
+uv add --dev jupyter ipykernel</code></pre>
+<p>Run <code>uv run jupyter notebook</code> and open a notebook. Notebook-first is correct for ML — you iterate on cells, you visualize, you save intermediate state. Move to a <code>.py</code> file only when the recipe stabilizes.</p>` },
+      { title: `Load and explore the IMDb dataset`, body: `<pre><code>from datasets import load_dataset
+ds = load_dataset("imdb")
+print(ds)
+# DatasetDict({ train: Dataset({label, text}, 25000), test: Dataset(..., 25000) })
+
+import pandas as pd
+df_train = ds['train'].to_pandas()
+df_test = ds['test'].to_pandas()
+df_train['label'].value_counts()  # 12500 / 12500 — balanced
+df_train['text'].str.len().describe()  # avg ~1300 chars</code></pre>
+<p><strong>Always explore before modeling.</strong> If you skip this and the model fails, you won't know if the bug is in your code or your data.</p>` },
+      { title: `Build the TF-IDF + LogisticRegression baseline`, body: `<p>This is the boring-but-strong baseline. Classical ML often beats deep learning on text classification with limited compute:</p>
+<pre><code>from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, classification_report
+
+pipe = Pipeline([
+    ('tfidf', TfidfVectorizer(max_features=20000, ngram_range=(1, 2), min_df=5)),
+    ('clf', LogisticRegression(max_iter=1000, C=1.0)),
+])
+
+pipe.fit(df_train['text'], df_train['label'])
+preds = pipe.predict(df_test['text'])
+print(f"Baseline accuracy: {accuracy_score(df_test['label'], preds):.4f}")
+print(classification_report(df_test['label'], preds))</code></pre>
+<p>You'll get ~89% accuracy in &lt; 60 seconds on a laptop. <strong>Always measure before deciding you need deep learning.</strong></p>` },
+      { title: `Fine-tune DistilBERT`, body: `<p>Now beat the baseline with a transformer. DistilBERT is 40% smaller, 60% faster than BERT, with 97% of the performance — the right starting point:</p>
+<pre><code>from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
+import numpy as np
+from sklearn.metrics import accuracy_score, f1_score
+
+MODEL = "distilbert-base-uncased"
+tok = AutoTokenizer.from_pretrained(MODEL)
+
+def tokenize(batch):
+    return tok(batch['text'], truncation=True, padding='max_length', max_length=256)
+
+tokenized = ds.map(tokenize, batched=True)
+
+# Take a small subset first to confirm training works end-to-end
+small_train = tokenized['train'].shuffle(seed=42).select(range(2000))
+small_test  = tokenized['test'].shuffle(seed=42).select(range(500))
+
+model = AutoModelForSequenceClassification.from_pretrained(MODEL, num_labels=2)
+
+def metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=-1)
+    return {
+        'accuracy': accuracy_score(labels, preds),
+        'f1': f1_score(labels, preds, average='binary'),
+    }
+
+args = TrainingArguments(
+    output_dir='./runs', num_train_epochs=2,
+    per_device_train_batch_size=16, per_device_eval_batch_size=32,
+    eval_strategy='epoch', learning_rate=2e-5, logging_steps=50,
+)
+
+trainer = Trainer(model=model, args=args,
+    train_dataset=small_train, eval_dataset=small_test,
+    tokenizer=tok, compute_metrics=metrics)
+
+trainer.train()</code></pre>
+<p><strong>Why a small subset first:</strong> a full epoch on 25K examples is ~30 min on a single GPU, hours on CPU. Always confirm the loop works on 2K examples first; if it works, scale up.</p>` },
+      { title: `Compare baseline vs fine-tuned model honestly`, body: `<p>Evaluate both on the same held-out test set. Don't cherry-pick:</p>
+<pre><code>baseline_acc = 0.89   # what TF-IDF got above
+# Fine-tuned accuracy reported by Trainer at epoch 2: ~0.92 on subset
+
+# Now scale up — full 25K training run
+full_train = tokenized['train']
+full_test = tokenized['test']
+trainer = Trainer(model=model, args=args,
+    train_dataset=full_train, eval_dataset=full_test,
+    tokenizer=tok, compute_metrics=metrics)
+trainer.train()
+# Expect ~0.93 accuracy after 2-3 epochs on full data</code></pre>
+<p><strong>Honest delta:</strong> ~4 points of accuracy for ~100x training cost. For some apps that's worth it (high-stakes moderation, search ranking); for others it isn't (a feature flag, an internal tool).</p>
+<p><strong>Watch for data leakage:</strong> if your model's accuracy is 99%+, you probably leaked test data into training. Print a few predictions on totally unseen text to sanity-check.</p>` },
+      { title: `Save and load your fine-tuned model`, body: `<pre><code>trainer.save_model('./sentiment-distilbert')
+tok.save_pretrained('./sentiment-distilbert')
+
+# Later, load and predict:
+from transformers import pipeline
+clf = pipeline('sentiment-analysis', model='./sentiment-distilbert', tokenizer='./sentiment-distilbert')
+clf("This movie was absolutely incredible.")
+# [{'label': 'LABEL_1', 'score': 0.998}]</code></pre>
+<p>Rename labels via <code>id2label</code> when training: <code>model.config.id2label = {0: 'negative', 1: 'positive'}</code> so output is human-readable.</p>` },
+      { title: `Push to Hugging Face Hub`, body: `<pre><code>huggingface-cli login   # paste your HF token from huggingface.co/settings/tokens
+
+# In Python:
+trainer.push_to_hub("yourname/imdb-sentiment-distilbert")
+# Creates a public model card + weights at huggingface.co/yourname/...</code></pre>
+<p>Anyone (you included) can now do:</p>
+<pre><code>pipeline('sentiment-analysis', model='yourname/imdb-sentiment-distilbert')</code></pre>
+<p>Add a <strong>model card</strong> (README.md in the repo) documenting: training data, hyperparams, eval results, limitations. This is the ML equivalent of an API spec — required for serious work.</p>` },
+      { title: `Write a portfolio post`, body: `<p>This is the Stage 10 exit signal — a written narrative of your experiment that demonstrates ML thinking, not just code:</p>
+<ol>
+  <li><strong>Problem:</strong> what you were trying to do, why it matters.</li>
+  <li><strong>Baseline:</strong> what you tried first, what it scored, how long it took.</li>
+  <li><strong>Upgrade:</strong> what you switched to, what changed, what the new score was.</li>
+  <li><strong>Honest tradeoff:</strong> cost vs gain. When would you ship which?</li>
+  <li><strong>What you'd do next:</strong> 3 specific improvements you didn't try (longer context, different base model, more epochs, data augmentation).</li>
+</ol>
+<p>Post on your portfolio site (Stage 8) + share on LinkedIn/HN. ML hiring managers care more about your reasoning than your final number.</p>
+<p><strong>Bonus:</strong> reproduce one paper's result from <a href="https://paperswithcode.com" target="_blank" rel="noopener">paperswithcode.com</a> using your trained model as the starting point. Reproducing > reading.</p>` }
+    ]
   }
 ];
 
@@ -16403,7 +16805,9 @@ const BUILD_CATEGORIES = [
   { key: `site`, label: `Websites` },
   { key: `api`, label: `APIs` },
   { key: `ai`, label: `AI Apps` },
-  { key: `bot`, label: `Trading / Finance` }
+  { key: `bot`, label: `Trading / Finance` },
+  { key: `mobile`, label: `Mobile` },
+  { key: `ml`, label: `Data Science / ML` }
 ];
 
 let __buildsFilter = { category: `all`, search: `` };
