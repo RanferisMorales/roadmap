@@ -6,6 +6,23 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Entry Criteria audit + intro reorg + stale counts (PUSH 19)
+
+### Changed
+- **All 11 stages' Entry Criteria now include time + cost expectations.** Previously only listed "what to know before starting"; now also tells you ⏱ how long this stage takes and 💰 what it costs (free, or specific dollar ranges for API credits / store fees / cloud GPU / Apple Dev / etc).
+- **Stage 1 entry criteria** explicitly flags it as "the BIG learning stage" — covers Python AND JavaScript AND DSA AND CS basics, ~240 focused hours.
+- **Stage 5/6 entry criteria** now warn about Anthropic + Voyage AI costs ($5-50 to complete with experiments).
+- **Stage 9 entry criteria** lists Apple Developer ($99/yr) + Google Play ($25 one-time) costs.
+- **Stage 10 entry criteria** lists cloud GPU costs ($10-50 for fine-tuning if Kaggle/Colab free GPUs aren't enough).
+- **Intro reorganization**: pulled the "2026 reality" footnote OUT of the YES card (it was making the card unbalanced vs the others) into its own standalone amber callout below the 4-card grid. More visible AND keeps the 4 cards balanced.
+- **Stale build count fixed in 4 places**: "11 full step-by-step Build guides" → "15" (matches actual count after PUSH 8 added the RN Habit Tracker and Sentiment Classifier).
+- Static pre-rendered HTML regenerated.
+
+### Tests
+214/214 still passing.
+
+---
+
 ## 2026-05 — Honesty pass: misleading-content fixes (PUSH 17)
 
 ### Changed

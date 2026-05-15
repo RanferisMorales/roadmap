@@ -2124,6 +2124,25 @@ abbr.glossary-term:hover::after {
 .mentor-cta-links a { font-family: 'Patrick Hand', cursive; font-size: 12px; padding: 3px 9px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); text-decoration: none; white-space: nowrap; }
 .mentor-cta-links a:hover { background: var(--node-stage); transform: translate(-1px, -1px); }
 
+/* === 2026 REALITY CALLOUT (intro section, between grid and fundamentals) === */
+.reality-callout {
+  margin-top: 12px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;
+  border: 2px solid #f59e0b; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(254,243,199,0.55), rgba(254,215,170,0.35));
+}
+:root[data-theme="dark"] .reality-callout {
+  background: linear-gradient(135deg, rgba(66,32,6,0.55), rgba(80,40,10,0.45)); border-color: #fbbf24;
+}
+.reality-callout-icon { font-size: 22px; line-height: 1.2; flex-shrink: 0; }
+.reality-callout-body {
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.reality-callout-body strong { font-family: 'Kalam', cursive; font-weight: 700; }
+@media (max-width: 640px) {
+  .reality-callout { padding: 10px 12px; gap: 8px; }
+  .reality-callout-body { font-size: 13px; }
+}
+
 /* === FUNDAMENTALS CALLOUT (intro section) === */
 .fundamentals-callout { margin-top: 18px; padding: 12px 16px; border: 2px solid var(--node-stage); border-radius: 12px; background: linear-gradient(135deg, rgba(255,235,160,0.32), rgba(220,252,231,0.22)); }
 :root[data-theme="dark"] .fundamentals-callout { background: linear-gradient(135deg, rgba(63,52,15,0.55), rgba(20,52,30,0.45)); border-color: #d4a300; }
@@ -2942,7 +2961,6 @@ abbr.glossary-term:hover::after {
         <ul>
           <li>Are <strong>targeting Full Stack + AI Engineer roles</strong> in 2026+ (no employment guarantee — see Stage 8 market reality)</li>
           <li data-personal="timelineYesIf">Have <strong>16-25 months of focused learning time</strong> available at ~30 hrs/week — realistically <strong>24-36 months</strong> for most self-taught learners juggling life</li>
-          <li><strong>⚠ 2026 reality:</strong> Above is <em>time-to-content</em>. <strong>Time-to-first-offer adds 3-12 months</strong> in the current junior market (AI tooling has compressed entry-level hiring; expect 100+ applications, portfolio rounds, referrals required).</li>
           <li>Prefer <strong>one opinionated path</strong> over endless "choose your own adventure" tutorials</li>
           <li>Want a stack built around <strong>TypeScript, React, Next.js, Node, Python, Postgres, Anthropic Claude</strong></li>
           <li>Are okay being <strong>self-directed</strong> (no instructor will check on you)</li>
@@ -2969,7 +2987,7 @@ abbr.glossary-term:hover::after {
           <li><strong>Built for self-teaching</strong> — no instructor, no cohort. But ships with a 🎓 <strong>built-in AI Instructor</strong> (chat with Claude as your tutor) and 📊 <strong>Accountability</strong> tracker</li>
           <li><strong>Production-aware</strong> — covers System Design, DevOps, Security, Observability. (Builds are MVPs you'll harden on a real job — not turnkey production code.)</li>
           <li><strong>2026-current</strong> — Claude Sonnet 4.6, Voyage AI embeddings, MCP, agents, RAG that older roadmaps miss</li>
-          <li><strong>11 full step-by-step Build guides</strong> with copy-paste code: portfolio, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots</li>
+          <li><strong>15 full step-by-step Build guides</strong> with copy-paste code: portfolio, REST API, SaaS, AI chatbot, RAG app, 6 trading bots (crypto/stock/DCA/grid/sentiment/arbitrage), browser extension, CLI tool, React Native habit tracker, sklearn → DistilBERT sentiment classifier</li>
           <li><strong>🏫 Bootcamp mode</strong> compresses everything into 12/16/24/52/84-week schedules</li>
           <li><strong>📝 Definitions Quiz</strong> drills you on terms by category until they stick</li>
           <li><strong>Honest about timelines</strong> — 16-25 months ideal, 24-36 realistic for most</li>
@@ -2983,6 +3001,14 @@ abbr.glossary-term:hover::after {
           <li><strong>Practice DSA 2-3 problems/week from Stage 2 onward</strong> — not a Stage 1 sprint you forget by interview time.</li>
           <li><strong>Open 🎓 AI Instructor early</strong> — uses your own Anthropic key, gives you a tutor that knows your roadmap state.</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- 2026 REALITY CALLOUT — pulled out of the YES card so it gets attention -->
+    <div class="reality-callout">
+      <div class="reality-callout-icon">⚠</div>
+      <div class="reality-callout-body">
+        <strong>2026 junior market reality:</strong> The timeline in the "Yes, if you" card is <em>time-to-content</em>. <strong>Time-to-first-offer adds 3-12 months on top</strong> in the current market — AI tooling has compressed entry-level hiring, layoffs have flooded the pool, and you should expect <strong>100+ applications, portfolio rounds, and referrals required</strong>. Plan financially for the full <em>content + job-hunt</em> window, not just the content half.
       </div>
     </div>
 
@@ -3126,7 +3152,7 @@ abbr.glossary-term:hover::after {
             <li><strong>📝 Definitions Quiz</strong> — 10-question multiple-choice drill over the 853-term glossary. By stage / by tier / acronyms-only. High-score tracking.</li>
             <li><strong>📚 Glossary</strong> — searchable A-Z view of every term. Per-topic key terms shown inline in each modal.</li>
             <li><strong>🎮 Practice Hub</strong> — 60+ curated practice platforms grouped by skill (LeetCode, Frontend Mentor, PortSwigger, OWASP Juice Shop, Anthropic Cookbook, etc.).</li>
-            <li><strong>🔨 Builds</strong> — 11 full step-by-step project guides with copy-paste code (portfolio site, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots).</li>
+            <li><strong>🔨 Builds</strong> — 15 full step-by-step project guides with copy-paste code (portfolio, REST API, SaaS, AI chatbot, RAG app, 6 trading bots, browser extension, CLI tool, RN habit tracker, sklearn → DistilBERT sentiment classifier).</li>
             <li><strong>🧠 Flashcards</strong> — SM-2 spaced repetition. Add custom cards per topic.</li>
             <li><strong>🕸 Skill Graph</strong> — layered DAG of all topics by stage. Click to open. Filter by tier or status.</li>
             <li><strong>💼 Career Toolkit</strong> (Salary / Resume bullets / LinkedIn post), 📅 Schedule, 📁 Portfolio, 🎲 Random interview, 🎯 Hard Topics review, ⭐ My Resources, 💾 Backup/Restore. Cost tracker moved into the 🎓 AI Instructor header (where it's actually relevant).</li>
@@ -3439,7 +3465,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>No prior programming experience required — but you WILL learn here. Stage 0 teaches Terminal, Git/SSH, VS Code, Node, Python, and uv/pnpm — these are real skills, not just clicks.</li><li>A Windows/Mac/Linux computer with internet</li><li>Willingness to follow setup steps without skipping</li><li>Expect ~16 hours of focused work (about 2-3 days at 6 hrs/day, or 1 week part-time)</li></ul>
+            <ul><li>No prior programming experience required — but you WILL learn here. Stage 0 teaches Terminal, Git/SSH, VS Code, Node, Python, and <abbr class="glossary-term" data-term="uv" data-def="A modern Python package and project manager from Astral, written in Rust. Replaces pip + venv.">uv</abbr>/pnpm — these are real skills, not just clicks.</li><li>A Windows/Mac/Linux computer with internet</li><li>Willingness to follow setup steps without skipping</li><li>⏱ Expect ~16 hrs focused work (2-3 days full-time, or 1 week part-time). 💰 Free.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -4047,7 +4073,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 0 complete — all tools installed and verified</li><li>You can open a terminal and run `node`, `python`, `git`</li></ul>
+            <ul><li>Stage 0 complete — all tools installed and verified</li><li>You can open a terminal and run `node`, `python`, `git`</li><li>⚠ This is the BIG learning stage: you learn Python AND JavaScript AND DSA AND CS basics. Do not skim.</li><li>⏱ Expect ~240 hrs focused work (8-12 weeks at 30 hrs/wk). 💰 Free — all resources are free books/docs/practice.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -4478,7 +4504,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 1 complete — comfortable writing Python and <abbr class="glossary-term" data-term="JS" data-def="JavaScript — the programming language of the browser (and now everywhere).">JS</abbr></li><li>You can use Git for branches, commits, and pushes</li><li>You understand functions, loops, lists, dicts, and error handling</li></ul>
+            <ul><li>Stage 1 complete — comfortable writing Python and <abbr class="glossary-term" data-term="JS" data-def="JavaScript — the programming language of the browser (and now everywhere).">JS</abbr></li><li>You can use Git for branches, commits, and pushes</li><li>You understand functions, loops, lists, dicts, and error handling</li><li>⏱ Expect ~180 hrs focused work (6-10 weeks). 💰 Free.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -5132,7 +5158,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 2 complete — you can build static <abbr class="glossary-term" data-term="HTML" data-def="HyperText Markup Language — the structural language of web pages.">HTML</abbr>/CSS sites</li><li>You understand <abbr class="glossary-term" data-term="HTTP" data-def="Hypertext Transfer Protocol — the request/response protocol of the web.">HTTP</abbr> methods, status codes, and how the browser fetches data</li><li>You can manipulate the <abbr class="glossary-term" data-term="DOM" data-def="Document Object Model — the browser's tree-shaped representation of an HTML page.">DOM</abbr> and use fetch()</li></ul>
+            <ul><li>Stage 2 complete — you can build static <abbr class="glossary-term" data-term="HTML" data-def="HyperText Markup Language — the structural language of web pages.">HTML</abbr>/CSS sites</li><li>You understand <abbr class="glossary-term" data-term="HTTP" data-def="Hypertext Transfer Protocol — the request/response protocol of the web.">HTTP</abbr> methods, status codes, and how the browser fetches data</li><li>You can manipulate the <abbr class="glossary-term" data-term="DOM" data-def="Document Object Model — the browser's tree-shaped representation of an HTML page.">DOM</abbr> and use fetch()</li><li>⏱ Expect ~360 hrs focused work (10-14 weeks). 💰 Free; optional Vercel free tier is enough for portfolio deploys.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -5728,7 +5754,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 3 complete — you have built a multi-page Next.js + <abbr class="glossary-term" data-term="TS" data-def="TypeScript — a typed superset of JavaScript that compiles to JS.">TS</abbr> app</li><li>You can write TypeScript with confidence (types, generics, narrowing)</li><li>You have deployed at least one frontend to Vercel</li></ul>
+            <ul><li>Stage 3 complete — you have built a multi-page Next.js + <abbr class="glossary-term" data-term="TS" data-def="TypeScript — a typed superset of JavaScript that compiles to JS.">TS</abbr> app</li><li>You can write TypeScript with confidence (types, generics, narrowing)</li><li>You have deployed at least one frontend to Vercel</li><li>⏱ Expect ~360 hrs focused work (12-16 weeks). 💰 Free locally; Railway/Fly free tiers cover hosting through this stage.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -6216,7 +6242,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 4 complete — you have built a full-stack app with auth</li><li>You understand <abbr class="glossary-term" data-term="REST" data-def="Representational State Transfer — an HTTP-based API style using resources, verbs (GET/POST/PUT/DELETE), and status codes.">REST</abbr>, <abbr class="glossary-term" data-term="SQL" data-def="Structured Query Language — the standard language for relational database queries.">SQL</abbr>, and async I/O</li><li>You can write a Postgres query without an <abbr class="glossary-term" data-term="ORM" data-def="Object-Relational Mapper — a library that maps DB rows to objects (Prisma, SQLAlchemy, Drizzle).">ORM</abbr> if needed</li></ul>
+            <ul><li>Stage 4 complete — you have built a full-stack app with auth</li><li>You understand <abbr class="glossary-term" data-term="REST" data-def="Representational State Transfer — an HTTP-based API style using resources, verbs (GET/POST/PUT/DELETE), and status codes.">REST</abbr>, <abbr class="glossary-term" data-term="SQL" data-def="Structured Query Language — the standard language for relational database queries.">SQL</abbr>, and async I/O</li><li>You can write a Postgres query without an <abbr class="glossary-term" data-term="ORM" data-def="Object-Relational Mapper — a library that maps DB rows to objects (Prisma, SQLAlchemy, Drizzle).">ORM</abbr> if needed</li><li>⏱ Expect ~240-360 hrs focused work (8-12 weeks). 💰 Anthropic <abbr class="glossary-term" data-term="API" data-def="Application Programming Interface — a contract for calling code (REST, GraphQL, gRPC, library SDKs).">API</abbr>: ~$5-30 to complete this stage with experiments.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -6737,7 +6763,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 5 complete — you have shipped at least one AI-powered web app</li><li>You understand prompts, tokens, streaming, and tool calling</li><li>You can debug an <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> integration when it returns unexpected output</li></ul>
+            <ul><li>Stage 5 complete — you have shipped at least one AI-powered web app</li><li>You understand prompts, tokens, streaming, and tool calling</li><li>You can debug an <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> integration when it returns unexpected output</li><li>⏱ Expect ~240-360 hrs focused work (8-12 weeks). 💰 Anthropic + Voyage AI embeddings: ~$10-50 for the <abbr class="glossary-term" data-term="RAG" data-def="Retrieval-Augmented Generation — an LLM pattern where you fetch relevant context (often via vector search) and stuff it into the prompt so the model can answer from up-to-date or private data.">RAG</abbr>/agent experiments.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -7371,7 +7397,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Stage 6 complete — you have built a <abbr class="glossary-term" data-term="RAG" data-def="Retrieval-Augmented Generation — an LLM pattern where you fetch relevant context (often via vector search) and stuff it into the prompt so the model can answer from up-to-date or private data.">RAG</abbr> app and an agent</li><li>You understand embeddings, retrieval, and evals at a conceptual level</li><li>You have at least one AI app deployed somewhere with users (even if just yourself)</li></ul>
+            <ul><li>Stage 6 complete — you have built a <abbr class="glossary-term" data-term="RAG" data-def="Retrieval-Augmented Generation — an LLM pattern where you fetch relevant context (often via vector search) and stuff it into the prompt so the model can answer from up-to-date or private data.">RAG</abbr> app and an agent</li><li>You understand embeddings, retrieval, and evals at a conceptual level</li><li>You have at least one AI app deployed somewhere with users (even if just yourself)</li><li>⏱ Expect ~420-600 hrs focused work (14-20 weeks). 💰 ~$5-15/mo if you self-host a VPS; managed platforms free tier-friendly.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -7899,7 +7925,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.</li><li>For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages</li><li>You can comfortably explain your projects technically</li><li>You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)</li><li>You're mentally prepared for rejection — most applications don't convert</li></ul>
+            <ul><li>Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.</li><li>For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages</li><li>You can comfortably explain your projects technically</li><li>You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)</li><li>You're mentally prepared for rejection — most applications don't convert</li><li>⏱ Open-ended: ~120 hrs of structured prep + 100+ apps + 3-12 mo wall-clock time in the 2026 market. 💰 Free; optional $30-150/hr mentor/mock-interview.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -8341,7 +8367,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>ELECTIVE — only if you want to build mobile apps</li><li>Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge</li><li>A Mac is required for iOS builds (Android works on any OS)</li><li>Willingness to deal with App Store review (1-2 week buffer for first submission)</li></ul>
+            <ul><li>ELECTIVE — only if you want to build mobile apps</li><li>Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge</li><li>A Mac is required for iOS builds (Android works on any OS)</li><li>Willingness to deal with App Store review (1-2 week buffer for first submission)</li><li>⏱ Expect ~300 hrs focused work (~10-12 weeks). 💰 Apple Developer Program $99/yr (required to ship iOS) + Google Play one-time $25.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -8708,7 +8734,7 @@ abbr.glossary-term:hover::after {
         <div class="stage-extras-4">
           <div class="extra-card entry">
             <span class="label">◇ Entry Criteria</span>
-            <ul><li>ELECTIVE — only if you want ML/research roles or to fine-tune models yourself</li><li>Stage 1 Python complete — comfortable with NumPy/Pandas patterns</li><li>Stage 5 <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> complete — you understand the application engineering side first</li><li>Math fundamentals (Stage 1 Math &amp; Logic branch) — statistics + probability</li><li>Patience: ML feedback loops are slower than web (training runs take hours/days)</li></ul>
+            <ul><li>ELECTIVE — only if you want ML/research roles or to fine-tune models yourself</li><li>Stage 1 Python complete — comfortable with NumPy/Pandas patterns</li><li>Stage 5 <abbr class="glossary-term" data-term="LLM" data-def="Large Language Model — a transformer-based model trained on massive text corpora (e.g., Claude, Gemini, Llama).">LLM</abbr> complete — you understand the application engineering side first</li><li>Math fundamentals (Stage 1 Math &amp; Logic branch) — statistics + probability</li><li>Patience: ML feedback loops are slower than web (training runs take hours/days)</li><li>⏱ Expect ~480 hrs focused work (14-20 weeks). 💰 Free with Kaggle/Colab GPUs for most learning; ~$10-50 if you do any cloud <abbr class="glossary-term" data-term="GPU" data-def="Graphics Processing Unit — the parallel compute hardware used for both graphics and ML inference/training.">GPU</abbr> fine-tuning.</li></ul>
           </div>
           <div class="extra-card exit">
             <span class="label">✓ Exit Criteria</span>
@@ -11549,19 +11575,79 @@ const MENTOR_CTAS = {
   }
 };
 
-/* Entry criteria — what you need to know BEFORE starting each stage */
+/* Entry criteria — what you need to know BEFORE starting each stage, plus time/cost expectations for what's ahead. */
 const ENTRY_CRITERIA = {
-  0: ['No prior programming experience required — but you WILL learn here. Stage 0 teaches Terminal, Git/SSH, VS Code, Node, Python, and uv/pnpm — these are real skills, not just clicks.', 'A Windows/Mac/Linux computer with internet', 'Willingness to follow setup steps without skipping', 'Expect ~16 hours of focused work (about 2-3 days at 6 hrs/day, or 1 week part-time)'],
-  1: ['Stage 0 complete — all tools installed and verified', 'You can open a terminal and run `node`, `python`, `git`'],
-  2: ['Stage 1 complete — comfortable writing Python and JS', 'You can use Git for branches, commits, and pushes', 'You understand functions, loops, lists, dicts, and error handling'],
-  3: ['Stage 2 complete — you can build static HTML/CSS sites', 'You understand HTTP methods, status codes, and how the browser fetches data', 'You can manipulate the DOM and use fetch()'],
-  4: ['Stage 3 complete — you have built a multi-page Next.js + TS app', 'You can write TypeScript with confidence (types, generics, narrowing)', 'You have deployed at least one frontend to Vercel'],
-  5: ['Stage 4 complete — you have built a full-stack app with auth', 'You understand REST, SQL, and async I/O', 'You can write a Postgres query without an ORM if needed'],
-  6: ['Stage 5 complete — you have shipped at least one AI-powered web app', 'You understand prompts, tokens, streaming, and tool calling', 'You can debug an LLM integration when it returns unexpected output'],
-  7: ['Stage 6 complete — you have built a RAG app and an agent', 'You understand embeddings, retrieval, and evals at a conceptual level', 'You have at least one AI app deployed somewhere with users (even if just yourself)'],
-  8: ['Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.', 'For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages', 'You can comfortably explain your projects technically', 'You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)', 'You\'re mentally prepared for rejection — most applications don\'t convert'],
-  9: ['ELECTIVE — only if you want to build mobile apps', 'Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge', 'A Mac is required for iOS builds (Android works on any OS)', 'Willingness to deal with App Store review (1-2 week buffer for first submission)'],
-  10: ['ELECTIVE — only if you want ML/research roles or to fine-tune models yourself', 'Stage 1 Python complete — comfortable with NumPy/Pandas patterns', 'Stage 5 LLM complete — you understand the application engineering side first', 'Math fundamentals (Stage 1 Math & Logic branch) — statistics + probability', 'Patience: ML feedback loops are slower than web (training runs take hours/days)']
+  0: [
+    'No prior programming experience required — but you WILL learn here. Stage 0 teaches Terminal, Git/SSH, VS Code, Node, Python, and uv/pnpm — these are real skills, not just clicks.',
+    'A Windows/Mac/Linux computer with internet',
+    'Willingness to follow setup steps without skipping',
+    '⏱ Expect ~16 hrs focused work (2-3 days full-time, or 1 week part-time). 💰 Free.'
+  ],
+  1: [
+    'Stage 0 complete — all tools installed and verified',
+    'You can open a terminal and run `node`, `python`, `git`',
+    '⚠ This is the BIG learning stage: you learn Python AND JavaScript AND DSA AND CS basics. Do not skim.',
+    '⏱ Expect ~240 hrs focused work (8-12 weeks at 30 hrs/wk). 💰 Free — all resources are free books/docs/practice.'
+  ],
+  2: [
+    'Stage 1 complete — comfortable writing Python and JS',
+    'You can use Git for branches, commits, and pushes',
+    'You understand functions, loops, lists, dicts, and error handling',
+    '⏱ Expect ~180 hrs focused work (6-10 weeks). 💰 Free.'
+  ],
+  3: [
+    'Stage 2 complete — you can build static HTML/CSS sites',
+    'You understand HTTP methods, status codes, and how the browser fetches data',
+    'You can manipulate the DOM and use fetch()',
+    '⏱ Expect ~360 hrs focused work (10-14 weeks). 💰 Free; optional Vercel free tier is enough for portfolio deploys.'
+  ],
+  4: [
+    'Stage 3 complete — you have built a multi-page Next.js + TS app',
+    'You can write TypeScript with confidence (types, generics, narrowing)',
+    'You have deployed at least one frontend to Vercel',
+    '⏱ Expect ~360 hrs focused work (12-16 weeks). 💰 Free locally; Railway/Fly free tiers cover hosting through this stage.'
+  ],
+  5: [
+    'Stage 4 complete — you have built a full-stack app with auth',
+    'You understand REST, SQL, and async I/O',
+    'You can write a Postgres query without an ORM if needed',
+    '⏱ Expect ~240-360 hrs focused work (8-12 weeks). 💰 Anthropic API: ~$5-30 to complete this stage with experiments.'
+  ],
+  6: [
+    'Stage 5 complete — you have shipped at least one AI-powered web app',
+    'You understand prompts, tokens, streaming, and tool calling',
+    'You can debug an LLM integration when it returns unexpected output',
+    '⏱ Expect ~240-360 hrs focused work (8-12 weeks). 💰 Anthropic + Voyage AI embeddings: ~$10-50 for the RAG/agent experiments.'
+  ],
+  7: [
+    'Stage 6 complete — you have built a RAG app and an agent',
+    'You understand embeddings, retrieval, and evals at a conceptual level',
+    'You have at least one AI app deployed somewhere with users (even if just yourself)',
+    '⏱ Expect ~420-600 hrs focused work (14-20 weeks). 💰 ~$5-15/mo if you self-host a VPS; managed platforms free tier-friendly.'
+  ],
+  8: [
+    'Start Stage 8 activities (LinkedIn, portfolio, networking) DURING Stages 5-6, not after Stage 7. These have lead time.',
+    'For applying to jobs: you have 3+ portfolio-worthy projects from earlier stages',
+    'You can comfortably explain your projects technically',
+    'You have at least Stage 5 complete (Stage 6-7 ideal but not required to start applying)',
+    'You\'re mentally prepared for rejection — most applications don\'t convert',
+    '⏱ Open-ended: ~120 hrs of structured prep + 100+ apps + 3-12 mo wall-clock time in the 2026 market. 💰 Free; optional $30-150/hr mentor/mock-interview.'
+  ],
+  9: [
+    'ELECTIVE — only if you want to build mobile apps',
+    'Stage 3 complete (React + Next.js + TypeScript) — RN reuses 80% of your React knowledge',
+    'A Mac is required for iOS builds (Android works on any OS)',
+    'Willingness to deal with App Store review (1-2 week buffer for first submission)',
+    '⏱ Expect ~300 hrs focused work (~10-12 weeks). 💰 Apple Developer Program $99/yr (required to ship iOS) + Google Play one-time $25.'
+  ],
+  10: [
+    'ELECTIVE — only if you want ML/research roles or to fine-tune models yourself',
+    'Stage 1 Python complete — comfortable with NumPy/Pandas patterns',
+    'Stage 5 LLM complete — you understand the application engineering side first',
+    'Math fundamentals (Stage 1 Math & Logic branch) — statistics + probability',
+    'Patience: ML feedback loops are slower than web (training runs take hours/days)',
+    '⏱ Expect ~480 hrs focused work (14-20 weeks). 💰 Free with Kaggle/Colab GPUs for most learning; ~$10-50 if you do any cloud GPU fine-tuning.'
+  ]
 };
 
 /* Project ideas — what to build at each stage */
@@ -19499,7 +19585,7 @@ const TOUR_STEPS = [
   {
     title: '👋 Welcome to your roadmap',
     body: `<p>You've found a single-file app that teaches you to be a Full Stack + AI Engineer.</p>
-<p>It's <strong>not just content</strong> — it ships with an AI tutor, a bootcamp scheduler, accountability tracking, a 853-entry glossary, 11 step-by-step build guides, and more. This 30-second tour shows you where things are.</p>
+<p>It's <strong>not just content</strong> — it ships with an AI tutor, a bootcamp scheduler, accountability tracking, a 853-entry glossary, 15 step-by-step build guides, and more. This 30-second tour shows you where things are.</p>
 <p><em>You can re-open this tour any time from the ⋯ More menu.</em></p>`
   },
   {
@@ -19520,7 +19606,7 @@ const TOUR_STEPS = [
 <li><strong>🏫 Bootcamp</strong> — get a 12-84 week structured curriculum with weekly topics + practice + project</li>
 <li><strong>📊 Accountability</strong> — daily hour commitment, weekly check-ins, streak counter</li>
 <li><strong>📝 Definitions Quiz</strong> — multiple-choice drill over the 853-entry glossary by category</li>
-<li><strong>🔨 Builds</strong> — 11 full step-by-step project guides with copy-paste code</li>
+<li><strong>🔨 Builds</strong> — 15 full step-by-step project guides with copy-paste code</li>
 </ul>`
   },
   {
