@@ -2049,6 +2049,54 @@ abbr.glossary-term:hover::after {
 .build-card .b-diff.beginner { background: #d1fae5; color: #064e3b; }
 .build-card .b-diff.intermediate { background: #fef3c7; color: #78350f; }
 .build-card .b-diff.advanced { background: #fee2e2; color: #7f1d1d; }
+
+/* === STUDY GUIDE (How to Work Each Phase) === */
+.study-stages { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.study-stage { border: 2px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--bg); }
+.study-stage-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.study-stage-head h3 { font-family: 'Architects Daughter', cursive; font-size: 18px; margin: 0; color: var(--text); }
+.study-stage-dur { font-family: 'Patrick Hand', cursive; font-size: 12px; padding: 1px 8px; border: 2px solid var(--border); border-radius: 999px; background: var(--bg-soft); color: var(--text-mute); white-space: nowrap; }
+.study-row { font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.55; color: var(--text); padding: 4px 0; }
+.study-row strong { font-family: 'Kalam', cursive; font-weight: 700; }
+.study-row.warn { color: #b45309; }
+.study-row.ok { color: #166534; }
+:root[data-theme="dark"] .study-row.warn { color: #fbbf24; }
+:root[data-theme="dark"] .study-row.ok { color: #4ade80; }
+.study-compass-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.study-compass-pill { font-family: 'Patrick Hand', cursive; font-size: 13px; padding: 4px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.study-compass-pill:hover { background: var(--node-stage); transform: translate(-1px, -1px); }
+.study-compass-pill .branch-label { color: var(--text-mute); font-size: 11px; font-family: 'Patrick Hand', cursive; }
+@media (max-width: 640px) {
+  .study-stage-head h3 { font-size: 16px; }
+  .study-row { font-size: 13px; }
+  .study-compass-pill { font-size: 12px; padding: 3px 8px; }
+}
+
+/* === STUDY GUIDE (How to Work Each Phase) === */
+.study-stages { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+.study-stage { border: 2px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--bg); }
+.study-stage-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.study-stage-head h3 { font-family: 'Architects Daughter', cursive; font-size: 18px; margin: 0; color: var(--text); }
+.study-stage-dur { font-family: 'Patrick Hand', cursive; font-size: 12px; padding: 1px 8px; border: 2px solid var(--border); border-radius: 999px; background: var(--bg-soft, var(--bg)); color: var(--text-mute); }
+.study-row { font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.55; color: var(--text); padding: 5px 0; }
+.study-row strong { font-family: 'Kalam', cursive; font-weight: 700; margin-right: 4px; }
+.study-row.warn { color: #92400e; }
+.study-row.ok { color: #166534; }
+[data-theme="dark"] .study-row.warn { color: #fbbf24; }
+[data-theme="dark"] .study-row.ok { color: #4ade80; }
+.study-compass-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.study-compass-pill { font-family: 'Patrick Hand', cursive; font-size: 13px; padding: 4px 10px; border: 2px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); cursor: pointer; }
+.study-compass-pill:hover { background: var(--node-stage); }
+.study-compass-pill .branch-label { color: var(--text-mute); font-size: 11px; margin-left: 4px; }
+.intro-study-link {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 999px;
+  background: #ede9fe; color: #1a1a1a; cursor: pointer; display: inline-block;
+}
+.intro-study-link:hover { background: #ddd6fe; }
+[data-theme="dark"] .intro-study-link { background: #4c1d95; color: #ede9fe; border-color: #7c3aed; }
+[data-theme="dark"] .intro-study-link:hover { background: #5b21b6; }
+@media (max-width: 640px) { .intro-study-link { font-size: 12px; padding: 3px 10px; } }
 .build-detail { display: grid; gap: 14px; }
 .build-detail .bd-head { display: grid; gap: 6px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
 .build-detail .bd-head h3 { font-family: 'Architects Daughter', cursive; font-size: 24px; }
@@ -2684,6 +2732,7 @@ abbr.glossary-term:hover::after {
         </button>
         <div class="more-menu" id="moreMenu" role="menu">
           <div class="more-menu-group" role="presentation"><span>Learn</span></div>
+          <button onclick="closeMoreMenu(); openStudyGuide()">📋 How to Study (per phase)</button>
           <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openDefQuiz()">📝 Definitions Quiz</button>
@@ -2762,6 +2811,7 @@ abbr.glossary-term:hover::after {
   <div class="intro-section" id="intro">
     <div class="intro-jump-row">
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
+      <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
     <h2>🎯 Is This Roadmap For You?</h2>
@@ -2894,6 +2944,7 @@ abbr.glossary-term:hover::after {
         <div class="howto-card" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(199,210,254,0.25), rgba(220,252,231,0.25));">
           <h3>🛠 Built-in Tools (click the ⋯ More button in the header)</h3>
           <ul style="columns: 2; column-gap: 24px;">
+            <li><strong>📋 How to Study (per phase)</strong> — opens a focused modal with three tabs: <em>Study Method</em> (the loop / anti-pattern / exit signal for each of the 11 stages), <em>Fundamentals Compass</em> (every required topic across the roadmap, one click to open), and <em>General Method</em> (universal patterns: daily/weekly structure, when stuck, how to use Key Terms, etc).</li>
             <li><strong>🎓 AI Instructor</strong> — chat with Claude as your personal tutor (uses your own Anthropic key, stored only in browser). Knows your current topic + progress. Quick actions: Explain / Quiz me / I'm stuck / Plan my week / Help debug / Motivation.</li>
             <li><strong>🏫 Bootcamp</strong> — compresses the roadmap into a 12 / 16 / 24 / 52 / 84-week structured curriculum. Each week shows topics + practice + project + a "mark complete" button. Calendar view of all weeks.</li>
             <li><strong>📊 Accountability</strong> — daily commitment, hour tracker, 7-day calendar, weekly check-ins with mood, streak counter.</li>
@@ -16119,6 +16170,157 @@ bun unlink</code></pre>
 
   }
 ];
+
+/* === STUDY GUIDE — Per-stage method + Fundamentals Compass === */
+const STUDY_METHODS = {
+  0: {
+    title: '00 — Environment Setup',
+    duration: '~3 days',
+    loop: 'Install → smoke-test → next tool. One install, one verification command, then move on. Don\'t customize anything yet.',
+    antiPattern: 'Spending a week on dotfiles, themes, terminal prompts, or VS Code extensions before you\'ve written a line of real code.',
+    exitSignal: 'Python REPL runs, `node -v` works, `git --version` works, you\'ve pushed one commit to a public repo, and you can open a fresh terminal and re-verify in under 60 seconds.'
+  },
+  1: {
+    title: '01 — Programming Fundamentals',
+    duration: '10–16 weeks',
+    loop: '1 concept (~30min reading) → code 5 small variations from scratch (no copy-paste) → 1 LeetCode Easy on the same pattern → repeat. Daily ~2h theory + 2h building. Python AND JS — both, not one.',
+    antiPattern: 'Tutorial hell — re-watching another 6-hour video instead of doing 20 minutes of writing your own code. If you can\'t close the video and rebuild what you just saw, you didn\'t learn it.',
+    exitSignal: 'You can solve a NeetCode 150 Easy in under 30min without looking anything up; you\'ve shipped one small Python or JS CLI to GitHub with a working README.'
+  },
+  2: {
+    title: '02 — Web Fundamentals',
+    duration: '6–10 weeks',
+    loop: 'Build the smallest possible version of a real page (no framework) → break it on purpose → fix it → then look at how a production site solves the same thing in DevTools.',
+    antiPattern: 'Reaching for React before you can write a working form with vanilla HTML/CSS/JS and submit it with `fetch()`.',
+    exitSignal: '3 static pages shipped publicly with semantic HTML, responsive CSS, and one with vanilla JS interaction (no jQuery, no framework). Lighthouse a11y ≥ 90 on each.'
+  },
+  3: {
+    title: '03 — Modern Frontend',
+    duration: '10–14 weeks',
+    loop: 'Read the React/Next docs section → rebuild the official example from a blank file → modify it to do something different → understand what your modification broke and why. TypeScript from day one, not "later".',
+    antiPattern: 'Copy-pasting boilerplates without understanding props, state, hooks, routing. "Cargo cult" components that work but you can\'t explain.',
+    exitSignal: 'A deployed Next.js app with 3+ pages, TypeScript strict mode, client + server components, one form with Zod validation, accessible Lighthouse score.'
+  },
+  4: {
+    title: '04 — Backend Engineering',
+    duration: '12–16 weeks',
+    loop: 'Design schema → migrate → seed → write endpoint → test with `curl` AND from a frontend → next entity. Raw SQL queries before ORMs. Understand JOINs before Prisma generates them for you.',
+    antiPattern: 'Skipping raw SQL and only learning Prisma/Drizzle. You will lose DB skills you never had — and you won\'t debug N+1 queries in prod.',
+    exitSignal: 'A deployed REST API with auth (sessions or JWT), Postgres with migrations, 5+ endpoints, integration tests, deployed to Railway/Fly/Render. Frontend talks to it from a different origin (CORS works).'
+  },
+  5: {
+    title: '05 — LLM Engineering',
+    duration: '8–12 weeks',
+    loop: 'Read an Anthropic Cookbook recipe → run it with your key → modify the prompt → measure cost & latency before/after → understand what broke when you changed it.',
+    antiPattern: 'Wrapping every problem in an LLM call. Most "AI features" are 90% plumbing (auth, storage, streaming, cost limits) and 10% prompt.',
+    exitSignal: 'A streaming chat app you deployed with your own API key flow (BYO-key UI), tool use working end-to-end, conversation history persisted, prompts evaluated against a small fixed set (not vibes).'
+  },
+  6: {
+    title: '06 — AI Engineering (RAG / Agents)',
+    duration: '10–14 weeks',
+    loop: 'Pick one technique (RAG / tools / memory / multi-step agent) → implement the smallest version → write an eval set FIRST → measure quality → only then optimize chunks, retrievers, prompts.',
+    antiPattern: 'Building agents before you have evals. You\'ll iterate blind, ship slop, and never know if your changes helped or hurt.',
+    exitSignal: 'A RAG app over your own documents with a measured eval set (≥20 questions, human-scored or LLM-judged), tool calls working, retrieval recall ≥ 70%.'
+  },
+  7: {
+    title: '07 — Production & DevOps',
+    duration: '14–20 weeks',
+    loop: 'Deploy first (Vercel/Railway/Fly) → measure (logs/observability) → harden ONE thing at a time: auth → rate limits → error handling → monitoring → backups → CI/CD.',
+    antiPattern: 'Self-hosting on a VPS before you\'ve shipped anything on a managed platform. You\'ll spend 3 months learning Nginx instead of shipping product.',
+    exitSignal: 'One app running for ≥30 days with structured logging, error tracking (Sentry/equiv.), a custom domain, HTTPS, and you\'ve debugged at least one real production issue (not test).'
+  },
+  8: {
+    title: '08 — Job Hunt',
+    duration: 'Run in parallel with Stages 5–7 (not after)',
+    loop: 'Apply (3–5/day) → log every response → analyze rejection patterns weekly → adjust ONE thing (resume bullet / portfolio project / outreach script) → repeat. Network in parallel.',
+    antiPattern: '"I\'m not ready yet" — applying IS the practice. Apply at 70% ready, not 100%. The 100% version of you only exists after rejections teach you what to fix.',
+    exitSignal: 'First interview offer, OR 100 applications with no callbacks (then stop and fix portfolio/resume before continuing — the leak is somewhere in the funnel, not in your effort).'
+  },
+  9: {
+    title: '09 — Mobile (Elective)',
+    duration: '10–12 weeks',
+    loop: 'Build one feature in React Native + Expo → test on a real device (yours or BrowserStack) → test platform differences (iOS vs Android) → ship to TestFlight / Play internal track early and often.',
+    antiPattern: 'Building only on simulator. Push notifications, deep links, camera, location, performance — none of these work right until you test on hardware.',
+    exitSignal: 'One app live in TestFlight + Google Play internal track with auth, push notifications working, and one native API (camera, location, or biometrics).'
+  },
+  10: {
+    title: '10 — Data Science / ML Research (Elective)',
+    duration: '14–20 weeks',
+    loop: 'Notebook exploration (pandas) → cleaner script → reusable pipeline → evaluation harness. Classical ML (sklearn/XGBoost) BEFORE deep learning. Train/test split before model.fit().',
+    antiPattern: 'Going straight to PyTorch + Transformers without understanding train/test splits, baselines, data leakage, and why your 99% accuracy is actually a leaky test set.',
+    exitSignal: 'Two Kaggle submissions (one classical ML, one deep learning) with a written post-mortem; one reproduced paper result; a portfolio notebook that reads like a tutorial others could learn from.'
+  }
+};
+
+const STUDY_GENERAL = [
+  { title: 'How to use any topic modal', body: 'Open the topic. Read <em>Why this matters</em>. Pick ONE resource — the top <code>req</code>-tagged one. Work through it. Build the smallest thing that proves you got it. Mark complete. Move on. Don\'t collect resources; finish them.' },
+  { title: 'How to use the Key Terms section', body: 'Required terms are non-negotiable — you should explain each in 1–2 sentences without looking. Recommended terms upgrade fluency. Flow: skim modal terms → drill in 📝 Definitions Quiz → revisit in 🧠 Flashcards weekly.' },
+  { title: 'How to know when to move on', body: 'Each stage has Exit Criteria at the bottom of its section. Hit them, then move on — even if it feels uncomfortable. Mastery comes from <em>revisiting</em> concepts in later stages, not from grinding one stage forever.' },
+  { title: 'What the 4 tiers actually mean', body: '<code>req</code> = must learn, no shortcuts. <code>rec</code> = strong upgrade, learn unless specific reason not to. <code>alt</code> = pick one from a group (the "(recommended)" suffix is the default). <code>opt</code> = skip without consequence, revisit only if curious.' },
+  { title: 'Daily structure that actually works', body: '~2h focused theory (1 topic max) + ~3h building (apply that topic to your project) + 1–2 LeetCode-style problems. Total hours matter less than completing the full loop every day you study.' },
+  { title: 'Weekly structure that actually works', body: 'Mon–Thu: theory + build. Fri: review what you forgot from the past 2 weeks using <strong>🎯 Hard Topics</strong> in More menu. Sat: ship something publicly (PR, blog post, tweet, demo). Sun: rest or read for fun — no exceptions on Sunday.' },
+  { title: 'When stuck, in order', body: '(1) Re-read the error message slowly. (2) Read the official docs for the failing function. (3) Search the exact error string. (4) Minimal reproduction in a fresh file. (5) Ask the 🎓 AI Instructor with the repro. (6) Post in Discord/Reddit with the repro + what you tried. Skip steps and you\'ll waste hours.' },
+  { title: 'How to use the Bootcamp vs this guide', body: 'This guide tells you HOW to study each phase (the loop). 🏫 Bootcamp tells you WHEN — a calendar of which topics to cover which week. Use both: this for method, Bootcamp for schedule.' }
+];
+
+function openStudyGuide(tab) {
+  const t = tab || 'method';
+  const tabsHtml = `
+    <div class="builds-toolbar" role="tablist" aria-label="Study guide tabs">
+      <button type="button" role="tab" aria-selected="${t === 'method'}" class="builds-pill ${t === 'method' ? 'active' : ''}" onclick="openStudyGuide('method')">📋 Study Method (per stage)</button>
+      <button type="button" role="tab" aria-selected="${t === 'compass'}" class="builds-pill ${t === 'compass' ? 'active' : ''}" onclick="openStudyGuide('compass')">🧭 Fundamentals Compass</button>
+      <button type="button" role="tab" aria-selected="${t === 'general'}" class="builds-pill ${t === 'general' ? 'active' : ''}" onclick="openStudyGuide('general')">📖 General Method</button>
+    </div>`;
+  let body = '';
+  if (t === 'method') {
+    body = `<p class="practice-intro">For each phase: the daily/weekly <strong>loop</strong>, the <strong>anti-pattern</strong> that kills learners here, and the minimum <strong>exit signal</strong> that proves you can move on. Read the one for your current stage. Re-read when you stall.</p>
+      <div class="study-stages">
+      ${Object.entries(STUDY_METHODS).map(([id, m]) => `
+        <div class="study-stage">
+          <div class="study-stage-head">
+            <h3>${escapeHtml(m.title)}</h3>
+            <span class="study-stage-dur">${escapeHtml(m.duration)}</span>
+          </div>
+          <div class="study-row"><strong>🔁 Loop:</strong> ${escapeHtml(m.loop)}</div>
+          <div class="study-row warn"><strong>⚠ Anti-pattern:</strong> ${escapeHtml(m.antiPattern)}</div>
+          <div class="study-row ok"><strong>✅ Exit signal:</strong> ${escapeHtml(m.exitSignal)}</div>
+        </div>
+      `).join('')}
+      </div>`;
+  } else if (t === 'compass') {
+    let totalReq = 0;
+    const compassHtml = DATA.map(stage => {
+      const reqTopics = [];
+      stage.branches.forEach(branch => {
+        branch.topics.forEach(topic => {
+          if (topic.t === 'req') reqTopics.push({ id: topic.id, name: topic.name, branch: branch.name });
+        });
+      });
+      if (!reqTopics.length) return '';
+      totalReq += reqTopics.length;
+      return `<div class="study-stage">
+        <div class="study-stage-head">
+          <h3>${String(stage.id).padStart(2, '0')} — ${escapeHtml(stage.title)}</h3>
+          <span class="study-stage-dur">${reqTopics.length} required</span>
+        </div>
+        <div class="study-compass-topics">
+          ${reqTopics.map(rt => `<button type="button" class="study-compass-pill" onclick="closePracticeModal(); openModal(${stage.id}, '${escapeHtml(rt.id)}')">${escapeHtml(rt.name)} <span class="branch-label">${escapeHtml(rt.branch)}</span></button>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+    body = `<p class="practice-intro">The <strong>required</strong> topics across every stage — the "if you only learn these, you survive" core. Pulled live from the roadmap (currently <strong>${totalReq}</strong> req topics). Click any to open it.</p>
+      <div class="study-stages">${compassHtml}</div>`;
+  } else {
+    body = `<p class="practice-intro">Eight method patterns that apply across every stage. Internalize these once, save thousands of wasted hours.</p>
+      <div class="study-stages">
+      ${STUDY_GENERAL.map(g => `<div class="study-stage">
+        <div class="study-stage-head"><h3>${escapeHtml(g.title)}</h3></div>
+        <div class="study-row">${g.body}</div>
+      </div>`).join('')}
+      </div>`;
+  }
+  showPracticeModal('📋 How to Work Each Phase', tabsHtml + body);
+}
 
 const BUILD_CATEGORIES = [
   { key: `all`, label: `All` },

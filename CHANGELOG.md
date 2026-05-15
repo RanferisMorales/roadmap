@@ -6,6 +6,20 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Study Guide
+
+### Added
+- **📋 How to Work Each Phase** modal — new top-level feature accessible from a pill at the top of the intro AND from the More menu (Learn group). Three tabs:
+  - **Study Method (per stage)** — for each of the 11 stages: the daily/weekly *loop*, the *anti-pattern* that kills learners in this stage, and the minimum *exit signal* that proves you can move on.
+  - **🧭 Fundamentals Compass** — every `req`-tier topic across the entire roadmap, grouped by stage, derived live from DATA. Click any to open its modal. Answers "if I only learn the absolute fundamentals, what are they?"
+  - **📖 General Method** — 8 universal patterns: daily/weekly study structure, how to use Key Terms, when-stuck escalation ladder, what the 4 tiers actually mean.
+
+### Changed
+- More menu count: 22 → 23 (added "📋 How to Study" at top of Learn group).
+- Intro jump-row now has 3 pills: Skip-to-roadmap / How-to-study / What's-new.
+
+---
+
 ## 2026-05 — Polish pass
 
 ### Added
