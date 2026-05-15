@@ -6,6 +6,24 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Flashcards 50× coverage (PUSH 11)
+
+### Changed
+- **Auto-generate flashcards from TERMS data.** Before: only 10 topics had hand-written starter cards (23 total cards, 3.8% coverage). Now: every topic with a TERMS entry (251 of 266 = 94.4%) automatically gets up to 5 flashcards generated from its term/definition pairs.
+- **~1,096 flashcards available** across the roadmap (was 23). 48× increase.
+- **Hand-written cards preserved.** The 10 special topics with curated "understanding" cards (terminal, git, cs-internet, cs-memory, cs-concurrency, py-syntax, html, css-fundamentals, ts-basics, react-hooks) still use their hand-written deeper questions instead of auto-generated definition drills.
+- **Auto-gen prioritizes req-tier terms** over rec/opt/alt (sort key is tier weight). Cap of 5 cards per topic to avoid overwhelming the daily review.
+- `ensureFlashcards(stageId, topicId)` now falls back to `TERMS[stageId:topicId]` when no STARTER_CARDS exist for a topic.
+- `openFlashcards()` now materializes the auto-generated decks alongside the hand-written ones.
+
+### Why this works
+Every term entry already has the shape of a flashcard: `name` (front: "Define: X") + `def` (back). 1,161 terms across the roadmap were sitting unused for spaced-repetition study — they're now ALL available.
+
+### Tests
+186/186 passing (5 new PUSH 11 tests + 181 pre-existing).
+
+---
+
 ## 2026-05 — Link enrichment (PUSH 10)
 
 ### Changed

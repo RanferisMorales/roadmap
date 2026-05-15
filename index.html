@@ -21480,11 +21480,28 @@ const STARTER_CARDS = {
 
 function fcKey(stageId, topicId) { return `${stageId}::${topicId}`; }
 
-// Initialize cards for a topic from STARTER_CARDS if none exist yet
+// Initialize cards for a topic. Priority order:
+//   1. Hand-written STARTER_CARDS (curated "understanding" cards)
+//   2. Auto-generated from TERMS (definition drills) — capped at 5 to avoid overload
+// This guarantees every topic with TERMS gets flashcards "for free".
 function ensureFlashcards(stageId, topicId) {
   const k = fcKey(stageId, topicId);
   if (state.flashcards[k]?.length) return state.flashcards[k];
-  const seed = STARTER_CARDS[k];
+
+  let seed = STARTER_CARDS[k];
+  if (!seed && typeof TERMS !== 'undefined') {
+    const termsKey = `${stageId}:${topicId}`;
+    const terms = TERMS[termsKey] || [];
+    if (terms.length) {
+      // Take up to 5 highest-priority terms (req > rec > opt > alt)
+      const tierWeight = { req: 0, rec: 1, opt: 2, alt: 3 };
+      seed = [...terms]
+        .sort((a, b) => (tierWeight[a.t] ?? 9) - (tierWeight[b.t] ?? 9))
+        .slice(0, 5)
+        .map(t => ({ f: `Define: ${t.name}`, b: t.def }));
+    }
+  }
+
   if (!seed) { state.flashcards[k] = []; return []; }
   state.flashcards[k] = seed.map((s, i) => ({
     id: `c_${k}_${i}`,
@@ -21532,11 +21549,23 @@ let __fcTopicScope = null;  // when set, only review this topic's cards
 
 function openFlashcards() {
   __fcTopicScope = null;
-  // Materialize starter decks once so they appear in the daily review
+  // Materialize starter decks once so they appear in the daily review.
+  // (1) Hand-written STARTER_CARDS — these are the 10 special "understanding" decks
   for (const k of Object.keys(STARTER_CARDS)) {
     if (!state.flashcards[k]?.length) {
       const [sid, tid] = k.split('::');
       ensureFlashcards(parseInt(sid), tid);
+    }
+  }
+  // (2) Auto-generated from TERMS — every topic that has terms gets a deck
+  if (typeof TERMS !== 'undefined') {
+    for (const tk of Object.keys(TERMS)) {
+      const colon = tk.indexOf(':');
+      if (colon < 0) continue;
+      const sid = parseInt(tk.slice(0, colon));
+      const tid = tk.slice(colon + 1);
+      const fk = fcKey(sid, tid);
+      if (!state.flashcards[fk]?.length) ensureFlashcards(sid, tid);
     }
   }
   startReview();
