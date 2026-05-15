@@ -1894,6 +1894,24 @@ abbr.glossary-term:hover::after {
 }
 .ai-instructor-modal .ai-header strong { font-family: 'Kalam', cursive; font-weight: 700; }
 .ai-instructor-modal .ai-cost { color: var(--text-mute); margin-left: auto; font-size: 12px; }
+
+/* PUSH 23: archived chat history picker */
+.ai-session-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.ai-session-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg); transition: background 0.12s, transform 0.1s;
+}
+.ai-session-row:hover { background: var(--bg-soft); transform: translate(-1px, -1px); }
+.ai-session-meta { flex: 1; min-width: 0; }
+.ai-session-title {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14.5px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ai-session-stats {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); margin-top: 2px;
+}
+.ai-session-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .ai-instructor-modal .ai-model-select {
   padding: 3px 8px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 5px;
   font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text); cursor: pointer;
@@ -12430,7 +12448,8 @@ const DEFAULT_STATE = {
   aiInstructor: {
     apiKey: '',                  // user's own Anthropic API key (localStorage only)
     model: 'claude-haiku-4-5',   // default model — cheapest for tutoring
-    history: [],                 // [{ role: 'user' | 'assistant', content: string, ts: ISO }]
+    history: [],                 // CURRENT session: [{ role: 'user' | 'assistant', content: string, ts: ISO }]
+    sessions: [],                // PUSH 23: archived past chats: [{ id, title, createdAt, archivedAt, messages: [...] }]
     totalCost: 0,                // running cost in USD across all sessions
     totalTokensIn: 0,
     totalTokensOut: 0,
@@ -12500,6 +12519,8 @@ try {
     state.projectCriteria = parsed.projectCriteria || {};
     state.aiInstructor = { ...DEFAULT_STATE.aiInstructor, ...(parsed.aiInstructor || {}) };
     state.aiInstructor.history = (parsed.aiInstructor && parsed.aiInstructor.history) || [];
+    // PUSH 23: ensure sessions array exists for existing users
+    state.aiInstructor.sessions = (parsed.aiInstructor && parsed.aiInstructor.sessions) || [];
     state.accountability = { ...DEFAULT_STATE.accountability, ...(parsed.accountability || {}) };
     state.accountability.sessions = (parsed.accountability && parsed.accountability.sessions) || {};
     state.accountability.checkins = (parsed.accountability && parsed.accountability.checkins) || [];
@@ -19984,9 +20005,10 @@ function openAiInstructor() {
       <div class="ai-header">
         <strong>🎓 AI Instructor</strong>
         <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)">${modelOptions}</select>
+        <button class="phub-skill-pill" onclick="aiNewSession()" type="button" title="Archive the current chat and start a new one">+ New chat</button>
+        <button class="phub-skill-pill" onclick="aiOpenSessionPicker()" type="button" title="Browse archived chat sessions">📜 History (${(ai.sessions || []).length})</button>
         <button class="phub-skill-pill" onclick="openAiInstructorSetup()" type="button">⚙ Settings</button>
         <button class="phub-skill-pill" onclick="openCostTracker()" type="button" title="All-time AI spend tracker">📊 All-time spend</button>
-        <button class="phub-skill-pill" onclick="aiClearHistory()" type="button">🗑 Clear</button>
         <span class="ai-cost">Session: ${costStr} · ${ai.totalTokensIn || 0} in / ${ai.totalTokensOut || 0} out</span>
       </div>
       <div class="ai-quick-actions">
@@ -20080,8 +20102,86 @@ function aiSetModel(modelId) {
   save();
 }
 
+/* PUSH 23: Picker UI listing all archived sessions. Each row → Load or Delete. */
+function aiOpenSessionPicker() {
+  const ai = state.aiInstructor;
+  const sessions = ai.sessions || [];
+  const list = sessions.length === 0
+    ? `<p class="practice-empty">No archived chats yet. Click <strong>+ New chat</strong> in the AI Instructor header to archive your current chat and start a fresh one.</p>`
+    : `<div class="ai-session-list">${sessions.map(s => `
+        <div class="ai-session-row">
+          <div class="ai-session-meta">
+            <div class="ai-session-title">${escapeHtml(s.title)}</div>
+            <div class="ai-session-stats">${s.messageCount || s.messages.length} messages · archived ${new Date(s.archivedAt).toLocaleDateString()}</div>
+          </div>
+          <div class="ai-session-actions">
+            <button class="phub-skill-pill" onclick="aiLoadSession('${s.id}')" type="button" title="Replace the current chat with this archived one">↩ Load</button>
+            <button class="phub-skill-pill" onclick="aiDeleteSession('${s.id}')" type="button" title="Permanently delete this archived chat">🗑</button>
+          </div>
+        </div>
+      `).join('')}</div>`;
+  const html = `
+    <p class="practice-intro">Past chat sessions, newest first. Loading a session replaces your current chat (the current one gets archived first if it has messages).</p>
+    ${list}
+    <p class="practice-tip">💡 Sessions are auto-titled from your first message. Capped at 50 archived chats to keep localStorage manageable.</p>
+  `;
+  showPracticeModal('📜 Chat History — ' + sessions.length + ' archived', html);
+}
+
+/* PUSH 23: New chat session. Archives the current chat (if it has any messages)
+   into state.aiInstructor.sessions, then clears history so the next message starts
+   a fresh conversation. Auto-titles the archived session from the first user message. */
+function aiNewSession() {
+  const ai = state.aiInstructor;
+  if (ai.history && ai.history.length) {
+    // Auto-title from first user message (truncate to 60 chars)
+    const firstUserMsg = ai.history.find(m => m.role === 'user');
+    const rawTitle = firstUserMsg ? firstUserMsg.content.trim().replace(/\s+/g, ' ') : 'Untitled chat';
+    const title = rawTitle.length > 60 ? rawTitle.slice(0, 57) + '…' : rawTitle;
+    const createdAt = ai.history[0]?.ts || new Date().toISOString();
+    ai.sessions = ai.sessions || [];
+    ai.sessions.unshift({  // newest first
+      id: 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      title,
+      createdAt,
+      archivedAt: new Date().toISOString(),
+      messageCount: ai.history.length,
+      messages: ai.history.slice()
+    });
+    // Cap archived sessions at 50 to avoid unbounded localStorage growth
+    if (ai.sessions.length > 50) ai.sessions = ai.sessions.slice(0, 50);
+  }
+  ai.history = [];
+  save();
+  openAiInstructor();
+}
+
+/* PUSH 23: Load an archived session — swaps it into the current history (and
+   archives the current history first if non-empty). */
+function aiLoadSession(sessionId) {
+  const ai = state.aiInstructor;
+  const sess = (ai.sessions || []).find(s => s.id === sessionId);
+  if (!sess) { alert('Session not found.'); return; }
+  // Archive whatever is currently in history first
+  if (ai.history && ai.history.length) aiNewSession();  // archives + clears
+  ai.history = sess.messages.slice();
+  // Remove the loaded session from archives — it's now the active one
+  ai.sessions = ai.sessions.filter(s => s.id !== sessionId);
+  save();
+  openAiInstructor();
+}
+
+function aiDeleteSession(sessionId) {
+  if (!confirm('Permanently delete this archived chat? Cannot be undone.')) return;
+  state.aiInstructor.sessions = (state.aiInstructor.sessions || []).filter(s => s.id !== sessionId);
+  save();
+  openAiInstructor();
+}
+
+/* Backward-compat: old "Clear" button now just confirms + clears current chat without archiving.
+   Use the New Chat button if you want to keep history. */
 function aiClearHistory() {
-  if (!confirm('Clear all chat history?')) return;
+  if (!confirm('Permanently clear the CURRENT chat without archiving? (Use "+ New chat" to keep history.)')) return;
   state.aiInstructor.history = [];
   save();
   openAiInstructor();

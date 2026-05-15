@@ -6,6 +6,25 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — AI Instructor: chat history & sessions (PUSH 23)
+
+User asked: "with the AI instructor I should be able to see my old chats."
+
+### Added
+- **Multi-session chat history.** Current chat lives in `state.aiInstructor.history`; archived past chats live in new `state.aiInstructor.sessions` array.
+- **+ New chat** button in the AI Instructor header — archives the current chat (auto-titled from first user message), clears history, starts fresh.
+- **📜 History (N)** button — opens a picker modal listing every archived session with **↩ Load** (restores into current chat) and **🗑** (permanently delete) actions per row. Counter shows total archived.
+- **Sessions are capped at 50** newest-first to keep localStorage manageable. Auto-title is truncated to 60 chars.
+- Sessions persist across reloads (lives in the same JSON localStorage blob that's already backed up + restored by the Backup feature).
+
+### Changed
+- Old 🗑 Clear button moved into Settings (was top-level header). New chat is now the primary way to "reset" — keeps history instead of destroying it.
+
+### Tests
+235/235 passing (9 new PUSH 23 + 226 pre-existing).
+
+---
+
 ## 2026-05 — Privacy / not-shareable (PUSH 22)
 
 User asked: "make sure the roadmap is not shareable." Audit + three concrete changes (with honest documentation of one limitation that code alone cannot fix).
