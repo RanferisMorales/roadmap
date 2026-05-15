@@ -6,6 +6,25 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Link enrichment (PUSH 10)
+
+### Changed
+- **Enriched all 25 single-link topics with 2 additional curated resources each.** Previously every topic had ≥1 link, but 25 topics had only the bare-minimum primary doc. Now every topic has at least 2-3 resources (primary doc + tutorial/practice/video alternative).
+  - Stage 0: `wsl`
+  - Stage 3: `ts-utility`, `next-actions`, `next-routes`
+  - Stage 4: `fastify`, `redis-queues`, `sqli`
+  - Stage 5: `model-selection`, `prompt-templates`, `streaming`, `cost-tracking`, `json-mode`, `tool-use`
+  - Stage 6: `qdrant`, `agent-loop`, `langchain`
+  - Stage 7: `prompt-versioning`, `vercel`, `aws-basics`, `rate-limit`
+  - Stage 8: `cover-letters`, `take-home`, `linkedin`, `remote-vs-office`, `startup-vs-bigtech`
+- **Total links: 637 → 687** (+50, all hand-picked).
+- **Avg per topic: 2.39 → 2.58.**
+- **Zero topics now have only 1 link.** Histogram: 138 topics with 2 links, 103 with 3 links, 23 with 4 links, 2 with 5 links.
+- Stats footer + intro count updated to reflect 687 links.
+- Static pre-rendered HTML regenerated to match.
+
+---
+
 ## 2026-05 — Audit fixes (PUSH 9)
 
 ### Changed
