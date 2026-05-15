@@ -8962,10 +8962,17 @@ abbr.glossary-term:hover::after {
 </div>
 
 <!-- marked.js for #23 — loaded async, feature degrades to plain text if CDN fails -->
-<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js" defer onerror="window.__markedFailed=true"></script>
+<!-- PUSH 21 security: SRI hash blocks execution if jsdelivr ever serves a compromised version -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"
+        integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi"
+        crossorigin="anonymous"
+        defer onerror="window.__markedFailed=true"></script>
 
 <!-- qrcode-generator for #17 backup — small standalone lib, exposes window.qrcode. Hidden if CDN fails. -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer onerror="window.__qrcodeFailed=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"
+        integrity="sha384-lQXOAyZwHXE55JFyrOMB7nY2Wv+m5ZWNtJcHrd1rceRQXAYNLak8ukN5TjBTcIwz"
+        crossorigin="anonymous"
+        defer onerror="window.__qrcodeFailed=true"></script>
 
 <!-- d3 was used for the old force-directed skill graph. The new layered DAG uses plain SVG, no CDN needed. -->
 
@@ -21446,9 +21453,12 @@ function openBackup() {
         <h4>📤 Export</h4>
         <p>Download a JSON file of your full state. Current size: ${sizeKb} KB.</p>
         <div class="row">
-          <button class="primary" onclick="exportBackup()">Download backup.json</button>
+          <button class="primary" onclick="exportBackup({ includeKey: false })">🔐 Download (key scrubbed) — safe to share</button>
         </div>
-        <div class="backup-info">Filename: roadmap-backup-${todayStr()}.json</div>
+        <div class="row" style="margin-top: 6px;">
+          <button onclick="if(confirm('This will include your Anthropic API key in the file. Anyone who gets the file can use your credit. Only do this if you trust where you\\'re sending it. Continue?')){ exportBackup({ includeKey: true }); }">⚠ Download WITH API key (less safe)</button>
+        </div>
+        <div class="backup-info">By default the API key is removed from the export. Use the second button only when transferring to your own device.</div>
       </div>
 
       <div class="backup-section">
@@ -21477,16 +21487,27 @@ function openBackup() {
   showPracticeModal('💾 Backup / Restore', html);
 }
 
-function exportBackup() {
+function exportBackup(opts) {
+  // PUSH 21 security: by default, scrub the Anthropic API key from the export so
+  // accidentally sharing your backup (Drive, Slack, etc.) doesn't leak the key.
+  // Opt-in to include via the "Include API key" toggle in the backup modal.
+  const includeKey = opts && opts.includeKey;
+  const scrubbedState = JSON.parse(JSON.stringify(state));
+  let scrubbed = false;
+  if (!includeKey && scrubbedState.aiInstructor && scrubbedState.aiInstructor.apiKey) {
+    scrubbedState.aiInstructor.apiKey = '';
+    scrubbed = true;
+  }
   const payload = {
     __version: 'roadmap-v3',
     exportedAt: new Date().toISOString(),
-    state: state,
+    apiKeyScrubbed: scrubbed,  // explicit flag so the importer knows
+    state: scrubbedState,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `roadmap-backup-${todayStr()}.json`;
+  a.download = `roadmap-backup-${todayStr()}${scrubbed ? '' : '-WITH-KEY'}.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }

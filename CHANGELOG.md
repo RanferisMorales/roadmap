@@ -6,6 +6,38 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Security hardening (PUSH 21)
+
+User asked: "how do we avoid the Anthropic key from being compromised? Is the whole roadmap built safely?" Honest audit found 2 real risks. Both fixed in this push.
+
+### Fixed
+- **HIGH: Backup export was including the API key in plaintext.** If you ever uploaded your `roadmap-backup.json` to Google Drive / shared it with a "back this up for me" friend / put it in a public bug report, your key was in there. Fixed:
+  - Default export now **scrubs the key** and emits an `apiKeyScrubbed: true` flag in the JSON.
+  - Backup modal shows two buttons: **🔐 Download (key scrubbed) — safe to share** (default, big primary button) vs **⚠ Download WITH API key (less safe)** (gated by a `confirm()` warning + filename suffix `-WITH-KEY.json` so you can tell at a glance).
+  - The unsafe export filename is suffixed so you can visually tell which file contains a key without opening it.
+- **MEDIUM: 2 CDN scripts (marked@12, qrcode@1.4.4) had no SRI integrity hashes.** A compromised jsdelivr edge could have served malicious code with full DOM + localStorage access (including the API key). Fixed:
+  - Added `integrity="sha384-..."` + `crossorigin="anonymous"` to both `<script>` tags.
+  - Browser now refuses to execute either script unless its bytes match the pinned SHA-384 hash. CDN compromise blocked.
+
+### Already in place (audit summary, no changes needed)
+- HTTPS-only (GitHub Pages forces it)
+- Origin-scoped localStorage (only this domain can read the key)
+- Direct browser → `api.anthropic.com` (no proxy in between to log keys)
+- Zero backend = no server-side attack surface
+- No analytics / tracking
+- Pinned dependency versions
+- `escapeHtml()` used throughout for rendering user-controlled strings
+
+### Known residual risks (inherent to BYO-key model)
+- Plaintext in localStorage — anyone with DevTools access on your browser can read it. Mitigated by "this is your machine; if someone else is on it, log them out first."
+- Self-XSS via markdown notes — if you paste malicious markdown into your own notes, it can run in your browser. Self-only impact.
+- API key persists across sessions — closing browser does not clear it. Use the **Settings → Remove key** button when on a shared device.
+
+### Tests
+219/219 passing (5 new PUSH 21 security tests + updated 1 existing backup test to match the new safe-by-default UI).
+
+---
+
 ## 2026-05 — Surface the AI Tutor (PUSH 20)
 
 ### Changed
