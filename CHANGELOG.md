@@ -6,6 +6,29 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Privacy / not-shareable (PUSH 22)
+
+User asked: "make sure the roadmap is not shareable." Audit + three concrete changes (with honest documentation of one limitation that code alone cannot fix).
+
+### Added
+- **🔒 Device passphrase (lock gate, opt-in).** Settings in Backup modal lets you set a passphrase. Once set, opening this page on this device shows a lock screen until the passphrase is entered. SHA-256(salt + passphrase) is stored in localStorage — never the passphrase itself.
+  - **Set / Change / Remove** flows all require entering the current passphrase (except initial set).
+  - **"Wipe local data & reset"** button on the lock screen — escape hatch if you forget the passphrase (deletes ALL roadmap data on this device).
+  - Honest limitation: this is **client-side gating**. Anyone with DevTools can bypass by clearing localStorage. Prevents casual access, not a determined attacker.
+- **🛡 Encrypted backup export (Web Crypto: PBKDF2 + AES-GCM).** New primary export option in the Backup modal. PBKDF2 250k iterations → AES-256-GCM. Without the passphrase, the file is useless. Import detects the `__encrypted` marker and prompts for the passphrase.
+  - Three export tiers visible side-by-side: **🛡 Encrypted** (recommended), **🔐 Plain key-scrubbed** (safe to share but no key included), **⚠ Plain WITH key** (gated by confirm; only for transferring to your own device).
+
+### Removed
+- **QR cross-device transfer** retired. Reason: a generated QR is line-of-sight observable — anyone glancing at your screen could photograph it. Use encrypted JSON export instead. Removed the `qrcode-generator` CDN script and the `renderBackupQR` function entirely. One less external dependency = one less supply-chain attack surface.
+
+### Documented
+- **URL privacy honest disclosure** added to the Backup modal: "This site URL is public. The lock gate above prevents casual use, but anyone can still View Source on the static HTML. For true URL privacy, fork the repo, set it to Private on GitHub, enable Pages on private repos (requires GitHub Pro ~$4/mo), and use the new URL."
+
+### Tests
+7 new PUSH 22 tests covering: QR fully gone, 3-tier backup UI, encryption round-trip, wrong-passphrase rejection, lock verify round-trip, lock gate shows on next load, no JS errors.
+
+---
+
 ## 2026-05 — Security hardening (PUSH 21)
 
 User asked: "how do we avoid the Anthropic key from being compromised? Is the whole roadmap built safely?" Honest audit found 2 real risks. Both fixed in this push.

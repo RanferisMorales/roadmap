@@ -2218,6 +2218,50 @@ abbr.glossary-term:hover::after {
 .fc-cat-where { font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute); padding-top: 2px; border-top: 1px dashed var(--border); margin-top: 4px; width: 100%; }
 .fc-foot { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); margin: 12px 0 0; font-style: italic; }
 
+/* === LOCK GATE (PUSH 22: client-side passphrase) === */
+.lock-gate {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg); align-items: center; justify-content: center;
+  padding: 20px;
+  display: none;  /* hidden by default — only shown when .show class is added */
+}
+.lock-gate.show { display: flex; }
+.lock-gate[hidden] { display: none !important; }
+.lock-card {
+  width: 100%; max-width: 420px; padding: 28px 26px;
+  background: var(--bg-card); border: 2.5px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow-soft); text-align: center;
+}
+.lock-card h2 {
+  font-family: 'Architects Daughter', cursive; font-size: 22px;
+  margin: 0 0 10px; color: var(--text);
+}
+.lock-card p {
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5;
+  color: var(--text-dim); margin: 0 0 14px;
+}
+.lock-card input {
+  width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text);
+  font-family: 'Patrick Hand', cursive; font-size: 15px; box-sizing: border-box;
+}
+.lock-card input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.lock-actions { margin-top: 12px; display: flex; justify-content: center; }
+.lock-submit {
+  padding: 10px 28px; border: 2px solid var(--text); border-radius: 999px;
+  background: var(--node-stage); color: var(--text);
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; cursor: pointer;
+}
+.lock-submit:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+.lock-error { min-height: 18px; margin-top: 10px; color: #b91c1c; font-family: 'Patrick Hand', cursive; font-size: 13px; }
+:root[data-theme="dark"] .lock-error { color: #fca5a5; }
+.lock-hint { margin-top: 14px; font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); }
+.lock-link {
+  background: none; border: none; color: var(--accent); cursor: pointer;
+  font-family: 'Patrick Hand', cursive; font-size: 12px; text-decoration: underline; padding: 0;
+}
+body.locked > .container, body.locked > footer { display: none !important; }
+
 /* === STICKY JUMP-TO-ROADMAP PILL (appears after scrolling past intro) === */
 .sticky-jump {
   position: fixed; bottom: 20px; right: 20px; z-index: 50;
@@ -2897,6 +2941,24 @@ abbr.glossary-term:hover::after {
 </style>
 </head>
 <body>
+
+<!-- PUSH 22: Client-side passphrase gate (opt-in). If user set a passphrase, this lock screen
+     blocks the app until they enter it. NOT cryptographic protection of the static content
+     (anyone can View Source), but it prevents casual use of the interactive app + your
+     localStorage data by anyone with the URL who doesn't know your passphrase. -->
+<div id="lockGate" class="lock-gate" hidden role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+  <div class="lock-card">
+    <h2 id="lockTitle">🔒 Private roadmap</h2>
+    <p>This roadmap is locked. Enter the passphrase to continue.</p>
+    <input type="password" id="lockInput" placeholder="Passphrase" autocomplete="off" spellcheck="false" />
+    <div class="lock-actions">
+      <button type="button" class="lock-submit" onclick="lockTryUnlock()">Unlock</button>
+    </div>
+    <div class="lock-error" id="lockError" role="status" aria-live="polite"></div>
+    <div class="lock-hint">Forgot it? <button type="button" class="lock-link" onclick="lockFactoryReset()">Wipe local data &amp; reset</button> (you lose all progress on this device).</div>
+  </div>
+</div>
+
 <div class="container">
 
   <!-- Skip-to-content for keyboard users -->
@@ -8968,11 +9030,9 @@ abbr.glossary-term:hover::after {
         crossorigin="anonymous"
         defer onerror="window.__markedFailed=true"></script>
 
-<!-- qrcode-generator for #17 backup — small standalone lib, exposes window.qrcode. Hidden if CDN fails. -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"
-        integrity="sha384-lQXOAyZwHXE55JFyrOMB7nY2Wv+m5ZWNtJcHrd1rceRQXAYNLak8ukN5TjBTcIwz"
-        crossorigin="anonymous"
-        defer onerror="window.__qrcodeFailed=true"></script>
+<!-- qrcode-generator removed in PUSH 22: QR cross-device transfer feature retired
+     for privacy (line-of-sight observability + photographable). One less CDN
+     dependency = one less attack surface. -->
 
 <!-- d3 was used for the old force-directed skill graph. The new layered DAG uses plain SVG, no CDN needed. -->
 
@@ -12452,6 +12512,92 @@ function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
   const lu = document.getElementById('lastUpdated');
   if (lu) lu.textContent = new Date().toLocaleString();
+}
+
+/* ============================================================
+   PUSH 22: Client-side passphrase gate
+   ============================================================
+   Stores SHA-256(salt + passphrase) in localStorage (NOT the passphrase itself).
+   On page load, if a hash exists, the lock screen blocks the app until the user
+   enters the matching passphrase. Honest limitation: anyone with DevTools can
+   bypass by clearing localStorage; this gate prevents CASUAL access, not a
+   determined attacker. For true URL privacy, fork the repo and make it private.
+*/
+const LOCK_KEY = 'roadmap-lock-hash';
+const LOCK_SALT_KEY = 'roadmap-lock-salt';
+
+async function lockHashPassphrase(passphrase, salt) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(salt + ':' + passphrase));
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+}
+
+function lockIsEnabled() { return !!localStorage.getItem(LOCK_KEY); }
+
+async function lockSetPassphrase(passphrase) {
+  if (!passphrase || passphrase.length < 8) throw new Error('Passphrase must be at least 8 characters.');
+  const salt = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+  const hash = await lockHashPassphrase(passphrase, salt);
+  localStorage.setItem(LOCK_SALT_KEY, salt);
+  localStorage.setItem(LOCK_KEY, hash);
+}
+
+async function lockRemovePassphrase(currentPassphrase) {
+  const ok = await lockVerify(currentPassphrase);
+  if (!ok) throw new Error('Wrong passphrase.');
+  localStorage.removeItem(LOCK_KEY);
+  localStorage.removeItem(LOCK_SALT_KEY);
+}
+
+async function lockVerify(passphrase) {
+  const salt = localStorage.getItem(LOCK_SALT_KEY);
+  const expected = localStorage.getItem(LOCK_KEY);
+  if (!salt || !expected) return false;
+  const actual = await lockHashPassphrase(passphrase, salt);
+  return actual === expected;
+}
+
+function lockShow() {
+  document.body.classList.add('locked');
+  const gate = document.getElementById('lockGate');
+  if (gate) {
+    gate.hidden = false;
+    gate.classList.add('show');
+    setTimeout(() => document.getElementById('lockInput')?.focus(), 50);
+  }
+}
+
+function lockHide() {
+  document.body.classList.remove('locked');
+  const gate = document.getElementById('lockGate');
+  if (gate) { gate.classList.remove('show'); gate.hidden = true; }
+}
+
+async function lockTryUnlock() {
+  const input = document.getElementById('lockInput');
+  const err = document.getElementById('lockError');
+  if (!input) return;
+  const ok = await lockVerify(input.value);
+  if (ok) { lockHide(); input.value = ''; }
+  else { err.textContent = 'Wrong passphrase.'; input.select(); }
+}
+
+function lockFactoryReset() {
+  if (!confirm('This will WIPE all roadmap data on this device (progress, notes, journal, settings, lock passphrase) and reload the page. There is no undo. Continue?')) return;
+  // Clear the main state + the lock keys. Don't touch other origins' storage.
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('roadmap'))
+    .forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+
+// Run before anything else renders, so the lock screen blocks the UI.
+if (lockIsEnabled()) {
+  document.addEventListener('DOMContentLoaded', () => {
+    lockShow();
+    const input = document.getElementById('lockInput');
+    input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') lockTryUnlock(); });
+  });
 }
 
 function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -21445,7 +21591,6 @@ function finishInterview() {
 function openBackup() {
   const sizeBytes = (localStorage.getItem(KEY) || '').length;
   const sizeKb = (sizeBytes / 1024).toFixed(1);
-  const qrAvailable = !!(window.qrcode || (typeof qrcode !== 'undefined')) && !window.__qrcodeFailed;
   const html = `
     <p class="practice-intro">Save or restore your entire roadmap state — progress, notes, journal, projects, schedule, settings, everything.</p>
     <div class="backup-grid">
@@ -21453,12 +21598,15 @@ function openBackup() {
         <h4>📤 Export</h4>
         <p>Download a JSON file of your full state. Current size: ${sizeKb} KB.</p>
         <div class="row">
-          <button class="primary" onclick="exportBackup({ includeKey: false })">🔐 Download (key scrubbed) — safe to share</button>
+          <button class="primary" onclick="promptEncryptedExport()">🛡 Encrypted export (most private) — passphrase required</button>
         </div>
         <div class="row" style="margin-top: 6px;">
-          <button onclick="if(confirm('This will include your Anthropic API key in the file. Anyone who gets the file can use your credit. Only do this if you trust where you\\'re sending it. Continue?')){ exportBackup({ includeKey: true }); }">⚠ Download WITH API key (less safe)</button>
+          <button onclick="exportBackup({ includeKey: false })">🔐 Plain export (key scrubbed) — safe to share</button>
         </div>
-        <div class="backup-info">By default the API key is removed from the export. Use the second button only when transferring to your own device.</div>
+        <div class="row" style="margin-top: 6px;">
+          <button onclick="if(confirm('This will include your Anthropic API key in the file IN PLAINTEXT. Anyone who gets the file can use your credit. Only do this if you trust where you\\'re sending it. Continue?')){ exportBackup({ includeKey: true }); }">⚠ Plain export WITH API key (least safe)</button>
+        </div>
+        <div class="backup-info">Recommended: encrypted export. Even if leaked, the file is useless without your passphrase. PBKDF2 + AES-GCM via Web Crypto API.</div>
       </div>
 
       <div class="backup-section">
@@ -21471,16 +21619,21 @@ function openBackup() {
       </div>
 
       <div class="backup-section">
-        <h4>📱 QR transfer (cross-device)</h4>
-        ${qrAvailable
-          ? `<p>Scan from another device to copy your state. Best for small states — QR codes can't fit huge backups.</p>
-             <div class="row">
-               <button onclick="renderBackupQR()">Generate QR</button>
-             </div>
-             <div class="backup-qr-row" id="backupQR"></div>
-             <div class="backup-warn" id="backupQRMsg"></div>`
-          : `<p>QR library unavailable (CDN blocked or offline). Use Export/Import to transfer instead.</p>`
-        }
+        <h4>🔒 Device passphrase (lock screen)</h4>
+        <p style="font-family:'Patrick Hand',cursive;font-size:13px;line-height:1.5;">When set, opening this page on this device shows a lock screen until you enter the passphrase. <strong>This is opt-in</strong> and lives only on this device.</p>
+        <div class="row" style="margin-top: 6px;">
+          ${lockIsEnabled()
+            ? `<button onclick="promptChangeLockPassphrase()">Change passphrase</button>
+               <button onclick="promptRemoveLockPassphrase()" style="margin-left:6px;">Remove passphrase</button>`
+            : `<button class="primary" onclick="promptSetLockPassphrase()">Set passphrase &amp; lock this device</button>`}
+        </div>
+        <div class="backup-info" style="margin-top:8px;"><strong>Status:</strong> ${lockIsEnabled() ? '🔒 Locked — passphrase required on next visit' : '🔓 Unlocked — no passphrase set'}</div>
+      </div>
+
+      <div class="backup-section">
+        <h4>🌐 Privacy posture (honest limitations)</h4>
+        <p style="font-family:'Patrick Hand',cursive;font-size:13px;line-height:1.5;"><strong>QR cross-device transfer removed</strong> (PUSH 22) — QR is line-of-sight observable; anyone glancing could photograph it. Use the encrypted JSON export above for cross-device transfer.</p>
+        <p style="font-family:'Patrick Hand',cursive;font-size:13px;line-height:1.5;"><strong>URL privacy:</strong> this site URL is <em>public</em>. The lock gate above prevents <em>casual</em> use by anyone hitting the URL, but technically anyone can still View Source and read the roadmap content. For true URL privacy, fork the repo, set it to <strong>Private</strong> on GitHub, enable GitHub Pages on private repos (requires <strong>GitHub Pro — $4/mo</strong>), and use the new URL.</p>
       </div>
     </div>
   `;
@@ -21490,7 +21643,7 @@ function openBackup() {
 function exportBackup(opts) {
   // PUSH 21 security: by default, scrub the Anthropic API key from the export so
   // accidentally sharing your backup (Drive, Slack, etc.) doesn't leak the key.
-  // Opt-in to include via the "Include API key" toggle in the backup modal.
+  // PUSH 22 security: optional passphrase encryption (AES-GCM via Web Crypto).
   const includeKey = opts && opts.includeKey;
   const scrubbedState = JSON.parse(JSON.stringify(state));
   let scrubbed = false;
@@ -21501,15 +21654,124 @@ function exportBackup(opts) {
   const payload = {
     __version: 'roadmap-v3',
     exportedAt: new Date().toISOString(),
-    apiKeyScrubbed: scrubbed,  // explicit flag so the importer knows
+    apiKeyScrubbed: scrubbed,
     state: scrubbedState,
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `roadmap-backup-${todayStr()}${scrubbed ? '' : '-WITH-KEY'}.json`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  const json = JSON.stringify(payload, null, 2);
+  const triggerDownload = (data, suffix, type) => {
+    const blob = new Blob([data], { type });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `roadmap-backup-${todayStr()}${suffix}.${type === 'application/json' ? 'json' : 'enc'}`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  if (opts && opts.passphrase) {
+    encryptBackup(json, opts.passphrase).then(enc => {
+      triggerDownload(JSON.stringify(enc, null, 2), '-encrypted', 'application/octet-stream');
+    }).catch(e => alert('Encryption failed: ' + (e.message || e)));
+  } else {
+    triggerDownload(json, scrubbed ? '' : '-WITH-KEY', 'application/json');
+  }
+}
+
+/* PUSH 22: AES-GCM encryption for backup files. PBKDF2 (250k iters) derives a key
+   from the user's passphrase; AES-GCM does the actual encryption. Result is a JSON
+   envelope { __encrypted:'aes-gcm-pbkdf2-sha256', salt, iv, ciphertext } that's
+   useless without the passphrase. */
+async function encryptBackup(plaintext, passphrase) {
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const baseKey = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const aesKey = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 250000, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt']
+  );
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesKey, enc.encode(plaintext));
+  const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  return {
+    __encrypted: 'aes-gcm-pbkdf2-sha256',
+    __iterations: 250000,
+    salt: b64(salt),
+    iv: b64(iv),
+    ciphertext: b64(ciphertext)
+  };
+}
+
+async function decryptBackup(envelope, passphrase) {
+  if (envelope.__encrypted !== 'aes-gcm-pbkdf2-sha256') throw new Error('Unknown encryption format');
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+  const b64dec = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const salt = b64dec(envelope.salt);
+  const iv = b64dec(envelope.iv);
+  const ciphertext = b64dec(envelope.ciphertext);
+  const baseKey = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const aesKey = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: envelope.__iterations || 250000, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+  const plaintextBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesKey, ciphertext);
+  return dec.decode(plaintextBuf);
+}
+
+/* PUSH 22: lock-gate set / change / remove flows (Backup modal UI) */
+async function promptSetLockPassphrase() {
+  const p1 = prompt('Set a device passphrase. Minimum 8 characters. You\'ll be asked for it every time this page loads on this device. There is NO recovery if you forget it — only "Wipe local data & reset" on the lock screen.');
+  if (!p1) return;
+  const p2 = prompt('Re-enter the passphrase to confirm:');
+  if (p1 !== p2) { alert('Passphrases did not match. Not saved.'); return; }
+  try {
+    await lockSetPassphrase(p1);
+    alert('✅ Device passphrase set. The lock screen will appear on next page load.');
+    closePracticeModal();
+    setTimeout(() => openBackup(), 50);  // re-open with updated status
+  } catch (e) { alert('Failed: ' + e.message); }
+}
+
+async function promptChangeLockPassphrase() {
+  const current = prompt('Enter your CURRENT passphrase:');
+  if (!current) return;
+  const ok = await lockVerify(current);
+  if (!ok) { alert('Wrong passphrase. Change cancelled.'); return; }
+  const p1 = prompt('Enter the NEW passphrase (min 8 characters):');
+  if (!p1) return;
+  const p2 = prompt('Re-enter the new passphrase:');
+  if (p1 !== p2) { alert('New passphrases did not match. Not changed.'); return; }
+  try {
+    await lockSetPassphrase(p1);
+    alert('✅ Passphrase changed.');
+    closePracticeModal();
+    setTimeout(() => openBackup(), 50);
+  } catch (e) { alert('Failed: ' + e.message); }
+}
+
+async function promptRemoveLockPassphrase() {
+  const current = prompt('Enter your current passphrase to remove the lock:');
+  if (!current) return;
+  try {
+    await lockRemovePassphrase(current);
+    alert('✅ Passphrase removed. The lock screen is disabled.');
+    closePracticeModal();
+    setTimeout(() => openBackup(), 50);
+  } catch (e) { alert('Failed: ' + e.message); }
+}
+
+/* PUSH 22: prompt for passphrase then export an encrypted backup */
+function promptEncryptedExport() {
+  const pass = prompt('Set a passphrase to encrypt this backup. You\'ll need the SAME passphrase to import it back. Pick something memorable — if you lose it, the backup is unrecoverable.');
+  if (!pass) return;
+  if (pass.length < 8) { alert('Passphrase must be at least 8 characters.'); return; }
+  const confirmPass = prompt('Re-enter the passphrase to confirm:');
+  if (pass !== confirmPass) { alert('Passphrases did not match. Export cancelled.'); return; }
+  exportBackup({ passphrase: pass });
 }
 
 function importBackupFile(input) {
@@ -21517,16 +21779,27 @@ function importBackupFile(input) {
   if (!file) return;
   const msg = document.getElementById('backupImportMsg');
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     try {
       const payload = JSON.parse(reader.result);
-      const incoming = payload.state || payload;  // tolerate raw-state files
+      // PUSH 22: encrypted backup support
+      let incoming;
+      if (payload.__encrypted === 'aes-gcm-pbkdf2-sha256') {
+        const pass = prompt('This backup is encrypted. Enter the passphrase:');
+        if (!pass) { msg.textContent = 'Import cancelled (no passphrase).'; return; }
+        let plaintext;
+        try { plaintext = await decryptBackup(payload, pass); }
+        catch (e) { msg.textContent = 'Decryption failed — wrong passphrase or corrupted file.'; return; }
+        const decoded = JSON.parse(plaintext);
+        incoming = decoded.state || decoded;
+      } else {
+        incoming = payload.state || payload;
+      }
       if (!incoming || typeof incoming !== 'object') throw new Error('Not a valid backup file.');
       if (!confirm('Replace your current state with this backup? Cannot be undone.')) {
         msg.textContent = 'Import cancelled.';
         return;
       }
-      // Backfill any missing namespaces from defaults
       const merged = { ...DEFAULT_STATE, ...incoming };
       merged.settings = { ...DEFAULT_SETTINGS, ...(incoming.settings || {}) };
       merged.streak = { ...DEFAULT_STATE.streak, ...(incoming.streak || {}) };
@@ -21541,29 +21814,7 @@ function importBackupFile(input) {
   reader.readAsText(file);
 }
 
-function renderBackupQR() {
-  const qr = window.qrcode || (typeof qrcode !== 'undefined' ? qrcode : null);
-  const msg = document.getElementById('backupQRMsg');
-  const wrap = document.getElementById('backupQR');
-  if (!qr) { msg.textContent = 'QR library not loaded.'; return; }
-  const payload = JSON.stringify(state);
-  if (payload.length > 2000) {
-    msg.textContent = `State is ${payload.length} bytes — too big to fit in one QR code (~2000 byte limit). Use file export instead.`;
-    wrap.innerHTML = '';
-    return;
-  }
-  try {
-    // qrcode-generator: pick typeNumber=0 (auto), errorCorrection='L' for max capacity
-    const q = qr(0, 'L');
-    q.addData(payload);
-    q.make();
-    // Render as an inline SVG — cleaner than canvas at any zoom
-    wrap.innerHTML = q.createSvgTag({ cellSize: 4, margin: 4 });
-    msg.textContent = `QR generated (${payload.length} bytes).`;
-  } catch (e) {
-    msg.textContent = 'QR generation failed: ' + e.message;
-  }
-}
+/* renderBackupQR removed in PUSH 22 — see backup modal "Privacy posture" for rationale */
 
 /* ============================================================
    #18 STAGE PDF export — print isolation
