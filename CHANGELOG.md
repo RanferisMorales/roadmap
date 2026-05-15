@@ -6,6 +6,22 @@ The roadmap is a single-file static HTML app (`roadmap_v3.html`). Versions are d
 
 ---
 
+## 2026-05 — Audit fixes (PUSH 9)
+
+### Changed
+- **Merged duplicate "System Design Interviews" topics.** Stage 7's `sd-interviews` (rec, in System Design branch) and Stage 8's `sd-interview-prep` (req, in Interview Prep branch) covered substantially the same content. Kept the Stage 8 version (req tier, more links) and enriched it with the unique link from Stage 7 (Tech Interview Handbook). Removed the Stage 7 duplicate from DATA, TERMS, and static HTML.
+- **Topic count: 267 → 266** (stats line in intro updated).
+- **Static pre-rendered HTML regenerated from live DATA.** Static was 56 topics behind (211 vs 267 = before merge). Now matches dynamic 1:1 (266/266 topics, 58/58 branches, 11/11 stages). Fixes SEO + no-JS fallback. Regeneration script lives at `scripts/regenerate-static.mjs` and uses Playwright to extract the rendered `#roadmap` innerHTML — run on demand whenever DATA changes.
+
+### Audit results (no action needed)
+- 0 duplicate topic IDs
+- 0 duplicate topic names (exact match)
+- 3 near-duplicate name pairs, of which 2 are intentional (Variables/Types across Python+JS; Responsive Design vs Testing it) and 1 was the System Design overlap we just merged.
+- All branch badge counts match actual topic counts (verified against user-reported screenshot of CS Basics=6, Python=7, JavaScript=5, CLI & Git=7).
+- Intro stats now accurate: 266 topics, 638 curated links, 58 branches, 11 stages.
+
+---
+
 ## 2026-05 — Nice-to-haves (PUSH 8)
 
 ### Added
