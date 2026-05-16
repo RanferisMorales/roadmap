@@ -3530,7 +3530,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <h3>What this is</h3>
         <ul>
           <li data-personal="stats"><strong>11 stages</strong> (9 core + 2 electives: 📱 Mobile, 🧪 Data Science/ML), 58 branches, 266 topics, 687 curated links</li>
-          <li><strong>853 glossary entries</strong> with global A-Z search</li>
+          <li><strong>1,231 glossary entries</strong> with global A-Z search</li>
           <li><strong>🎓 AI Teacher</strong> (Claude) — proactive 5-step lessons (Objectives → Lecture → Worked example → Practice → Quiz) with adaptive next-topic picker + mastery tracking</li>
           <li><strong>📓 Notebook</strong> — unified pages where you (or the AI Teacher) save lesson content, plus Markdown export</li>
           <li><strong>📊 Accountability</strong> tracker — daily hours, weekly check-ins, streak</li>
@@ -9348,7 +9348,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
 
   <footer>
     your progress saves automatically (<a href="#" onclick="event.preventDefault(); openBackup()" style="color: var(--accent); text-decoration: underline;">backup / restore</a>) · last updated <span id="lastUpdated">—</span><br />
-    <span data-personal="footer">266 topics · 687 links · 853 glossary entries · 11 stages · 16-25 months ideal, 24-36 realistic</span>
+    <span data-personal="footer">266 topics · 687 links · 1,231 glossary entries · 11 stages · 16-25 months ideal, 24-36 realistic</span>
   </footer>
 
   <!-- STICKY JUMP-TO-ROADMAP PILL: appears after scrolling past the intro -->
@@ -19330,13 +19330,13 @@ const WHATS_NEW = [
     '⚡ <strong>Perf pass</strong> — coalesced 89 sync localStorage writes into rAF-batched 1-per-frame. Throttled scroll handler. Pre-built omnisearch topic index (6× faster). Deferred URL hash updates so modals paint sooner.',
     '🏫 <strong>Bootcamp</strong> mode — compress the roadmap into 12 / 16 / 24 / 52 / 84-week schedules with week-by-week curriculum, calendar view, and completion tracking.',
     '📊 <strong>Accountability</strong> tracker — daily commitment, hour tracker, weekly check-ins with mood, streak counter.',
-    '📝 <strong>Definitions Quiz</strong> — 4-choice multiple-choice drill over 853 glossary entries. By stage, by tier, or acronyms-only.',
+    '📝 <strong>Definitions Quiz</strong> — 4-choice multiple-choice drill over 1,231 glossary entries. By stage, by tier, or acronyms-only.',
   ]},
   { date: '2026-04', items: [
     '📱 New <strong>Stage 9: Mobile Development</strong> elective — React Native + Expo, push notifications, App Store / Play Store distribution.',
     '🧪 New <strong>Stage 10: Data Science / ML Research</strong> elective — NumPy/Pandas, scikit-learn, PyTorch, Transformers, HuggingFace, fine-tuning.',
     '🧮 New <strong>Math &amp; Logic Fundamentals</strong> branch in Stage 1 — Boolean logic, sets, statistics, probability, Polya problem-solving, Fermi estimation.',
-    '📚 Massive <strong>Glossary expansion</strong> — now 853 entries (was 72). Per-topic Key Terms in every modal.',
+    '📚 Massive <strong>Glossary expansion</strong> — now 1,231 entries (was 72). Per-topic Key Terms in every modal.',
     '🎮 New <strong>Practice Hub</strong> + per-topic Practice section — 60+ curated practice resources grouped by skill.',
     '🔨 New <strong>Builds</strong> section — 11 full step-by-step project guides with copy-paste code: portfolio site, REST API, SaaS, AI chatbot, RAG app, crypto/stock/DCA/grid/sentiment/arbitrage trading bots.',
   ]},
@@ -20339,7 +20339,7 @@ const TOUR_STEPS = [
   {
     title: '👋 Welcome to your roadmap',
     body: `<p>You've found a single-file app that teaches you to be a Full Stack + AI Engineer.</p>
-<p>It's <strong>not just content</strong> — it ships with an AI tutor, a bootcamp scheduler, accountability tracking, a 853-entry glossary, 15 step-by-step build guides, and more. This 30-second tour shows you where things are.</p>
+<p>It's <strong>not just content</strong> — it ships with an AI Teacher (5-step lessons + chat), a Notebook, a bootcamp scheduler, accountability tracking, a 1,231-entry glossary, 15 step-by-step build guides, and more. This 30-second tour shows you where things are.</p>
 <p><em>You can re-open this tour any time from the ⋯ More menu.</em></p>`
   },
   {
@@ -20348,7 +20348,7 @@ const TOUR_STEPS = [
 <li><strong>11 stages</strong> (9 core + 2 electives: Mobile, DS/ML)</li>
 <li><strong>266 topics</strong> across 58 branches</li>
 <li><strong>687 curated learning links</strong></li>
-<li><strong>853 glossary entries</strong> — every key term defined</li>
+<li><strong>1,231 glossary entries</strong> — every key term defined</li>
 <li><strong>181 tests</strong> verifying the app works on every push</li>
 </ul>
 <p>Click any topic node to open its modal — you'll see what it is, why it matters, key terms, resources, and practice challenges.</p>`
@@ -20360,7 +20360,7 @@ const TOUR_STEPS = [
 <li><strong>📓 Notebook</strong> — unified pages, AI Teacher save integration, Markdown export</li>
 <li><strong>🏫 Bootcamp</strong> — get a 12-84 week structured curriculum with weekly topics + practice + project</li>
 <li><strong>📊 Accountability</strong> — daily hour commitment, weekly check-ins, streak counter</li>
-<li><strong>📝 Definitions Quiz</strong> — multiple-choice drill over the 853-entry glossary by category</li>
+<li><strong>📝 Definitions Quiz</strong> — multiple-choice drill over the 1,231-entry glossary by category</li>
 <li><strong>🔨 Builds</strong> — 15 full step-by-step project guides with copy-paste code</li>
 </ul>`
   },
@@ -20525,14 +20525,14 @@ function openAiInstructor() {
         <button onclick="aiQuickAction('debug')" type="button">🐛 Help me debug</button>
         <button onclick="aiQuickAction('motivate')" type="button">💪 I need motivation</button>
       </div>
-      <div class="ai-chat-log" id="aiChatLog" role="log" aria-live="polite" aria-label="AI Instructor conversation">${messagesHtml}</div>
+      <div class="ai-chat-log" id="aiChatLog" role="log" aria-live="polite" aria-label="AI Teacher chat conversation">${messagesHtml}</div>
       <div class="ai-input-row">
         <textarea id="aiInput" placeholder="Ask anything — paste an error, describe a concept you don't get, request a code review..." onkeydown="aiInputKey(event)"></textarea>
         <button id="aiSendBtn" onclick="aiSend()" type="button">Send</button>
       </div>
     </div>
   `;
-  showPracticeModal('🎓 AI Instructor', html);
+  showPracticeModal('💬 AI Teacher — Chat', html);
   setTimeout(() => {
     const log = document.getElementById('aiChatLog');
     if (log) log.scrollTop = log.scrollHeight;
@@ -20615,7 +20615,7 @@ function aiSaveKey() {
 }
 
 function aiRemoveKey() {
-  if (!confirm('Remove the saved API key? You will need to paste it again to use the AI Instructor.')) return;
+  if (!confirm('Remove the saved API key? You will need to paste it again to use the AI Teacher.')) return;
   state.aiInstructor.apiKey = '';
   state.aiInstructor.history = [];
   state.aiInstructor.totalCost = 0;
@@ -20635,7 +20635,7 @@ function aiOpenSessionPicker() {
   const ai = state.aiInstructor;
   const sessions = ai.sessions || [];
   const list = sessions.length === 0
-    ? `<p class="practice-empty">No archived chats yet. Click <strong>+ New chat</strong> in the AI Instructor header to archive your current chat and start a fresh one.</p>`
+    ? `<p class="practice-empty">No archived chats yet. Click <strong>+ New chat</strong> in the chat header to archive your current chat and start a fresh one.</p>`
     : `<div class="ai-session-list">${sessions.map(s => `
         <div class="ai-session-row">
           <div class="ai-session-meta">
@@ -20754,7 +20754,7 @@ function aiExportCurrentChat() {
   const ai = state.aiInstructor;
   if (!ai.history.length) { alert('No messages to export.'); return; }
   const lines = [
-    `# AI Tutor Chat — ${new Date().toLocaleString()}`,
+    `# AI Teacher — Chat export — ${new Date().toLocaleString()}`,
     ``,
     `Persona: ${AI_PERSONAS[ai.persona || 'tutor']?.label || 'Tutor'}`,
     `Model: ${ai.model}`,
@@ -20847,7 +20847,7 @@ function aiHighlightSnippet(content, q) {
    Optionally switches persona first. Used by per-topic / per-stage / per-build AI buttons. */
 function aiAskWithPrompt(prompt, persona) {
   if (!state.aiInstructor.apiKey) {
-    if (!confirm('AI Instructor needs your Anthropic API key first. Set it up now?')) return;
+    if (!confirm('AI Teacher needs your Anthropic API key first. Set it up now?')) return;
     openAiInstructorSetup();
     return;
   }
