@@ -2209,6 +2209,59 @@ abbr.glossary-term:hover::after {
   .teacher-celebration, .teacher-celebration-burst { animation: none; }
 }
 
+/* PUSH 34 — "What the AI Teacher does" preview at the top of the setup screen +
+   demo-mode lesson badge. Goal: make the new feature VISIBLE before the user
+   has paid for an API key. */
+.ai-teacher-preview {
+  padding: 16px 18px; margin-bottom: 18px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--node-stage) 18%, var(--bg-card)) 0%, var(--bg-card) 100%);
+  border: 3px solid var(--node-stage); border-radius: 14px;
+  display: grid; gap: 12px;
+}
+.ai-teacher-preview h3 {
+  font-family: 'Architects Daughter', cursive; font-size: 20px;
+  color: var(--text); margin: 0;
+}
+.ai-teacher-preview p {
+  font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.5;
+  color: var(--text); margin: 0;
+}
+.ai-teacher-step-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  flex-wrap: wrap; padding: 8px 0;
+}
+.ai-teacher-step {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 10px;
+  min-width: 78px; text-align: center;
+}
+.ai-teacher-step-icon { font-size: 22px; }
+.ai-teacher-step-name {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px;
+  color: var(--text); white-space: nowrap;
+}
+.ai-teacher-step-arrow {
+  color: var(--text-mute); font-size: 16px; font-weight: 700;
+}
+.ai-teacher-demo-btn {
+  justify-self: stretch; width: 100%; font-size: 17px !important;
+  padding: 12px 18px !important;
+}
+.ai-teacher-demo-hint {
+  font-family: 'Patrick Hand', cursive; font-size: 12.5px !important;
+  color: var(--text-mute); line-height: 1.45; margin: 0 !important;
+  font-style: italic;
+}
+.ai-teacher-demo-badge {
+  display: inline-block; vertical-align: middle;
+  padding: 2px 8px; margin-left: 8px;
+  background: #fde68a; color: #78350f;
+  border: 1.5px solid #d97706; border-radius: 6px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px;
+  letter-spacing: 0.5px;
+}
+:root[data-theme="dark"] .ai-teacher-demo-badge { background: #422006; color: #fde68a; }
+
 /* ---- ACCOUNTABILITY — daily commits + check-ins ---- */
 .accountability-grid { display: grid; gap: 14px; }
 .accountability-card {
@@ -3313,11 +3366,14 @@ body.locked > .container, body.locked > footer { display: none !important; }
       </div>
     </div>
 
-    <!-- AI TEACHER CALLOUT (PUSH 32) — built-in Claude teacher that drives structured lessons -->
+    <!-- AI TEACHER CALLOUT (PUSH 32 + PUSH 34) — built-in Claude teacher with structured lessons + demo -->
     <div class="ai-tutor-callout">
       <div class="ai-tutor-callout-head">
         <h3>🎓 Your own AI Teacher (Claude)</h3>
-        <button type="button" class="ai-tutor-callout-cta" onclick="openAiTeacher()">Open AI Teacher →</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="ai-tutor-callout-cta" onclick="aiStartDemoLesson()" style="background:#fde68a;color:#78350f;border-color:#d97706;">▶ Try a demo (no key)</button>
+          <button type="button" class="ai-tutor-callout-cta" onclick="openAiTeacher()">Open AI Teacher →</button>
+        </div>
       </div>
       <div class="ai-tutor-callout-body">
         <p>A proactive teacher, not a passive chatbot. Picks today's lesson based on your progress, then runs a structured <strong>5-step lesson</strong>: Objectives → Lecture → Worked example → Practice (with feedback) → Quiz.</p>
@@ -20215,15 +20271,37 @@ function openAiInstructorSetup() {
   const ai = state.aiInstructor;
   const hasKey = !!ai.apiKey;
   const maskedKey = hasKey ? ai.apiKey.slice(0, 10) + '...' + ai.apiKey.slice(-4) : '';
+  // PUSH 34: lead with what the AI Teacher actually DOES — and offer a demo lesson
+  // (hardcoded, no API call) so users can see the feature without paying for credits first.
+  const previewHtml = !hasKey ? `
+    <div class="ai-teacher-preview">
+      <h3 style="margin-top:0;">🎓 Here is what the AI Teacher does</h3>
+      <p>Not a chatbot. A proactive teacher that picks today's topic, runs a structured 5-step lesson, then quizzes you and tracks your mastery.</p>
+      <div class="ai-teacher-step-row">
+        <div class="ai-teacher-step"><div class="ai-teacher-step-icon">🎯</div><div class="ai-teacher-step-name">Objectives</div></div>
+        <div class="ai-teacher-step-arrow">→</div>
+        <div class="ai-teacher-step"><div class="ai-teacher-step-icon">📚</div><div class="ai-teacher-step-name">Lecture</div></div>
+        <div class="ai-teacher-step-arrow">→</div>
+        <div class="ai-teacher-step"><div class="ai-teacher-step-icon">🔧</div><div class="ai-teacher-step-name">Example</div></div>
+        <div class="ai-teacher-step-arrow">→</div>
+        <div class="ai-teacher-step"><div class="ai-teacher-step-icon">✍️</div><div class="ai-teacher-step-name">Practice</div></div>
+        <div class="ai-teacher-step-arrow">→</div>
+        <div class="ai-teacher-step"><div class="ai-teacher-step-icon">🎓</div><div class="ai-teacher-step-name">Quiz</div></div>
+      </div>
+      <button class="teacher-start-btn ai-teacher-demo-btn" onclick="aiStartDemoLesson()" type="button">▶ Try a demo lesson — no API key needed</button>
+      <p class="ai-teacher-demo-hint">The demo uses hardcoded content for one Stage-1 topic so you can walk all 5 steps without spending anything. Once you like what you see, paste your API key below for the real adaptive teacher.</p>
+    </div>
+  ` : '';
   const html = `
     <div class="ai-setup">
+      ${previewHtml}
       <h3>${hasKey ? 'Update' : 'Set up'} your Anthropic API key</h3>
-      <p>Your AI Instructor uses <strong>your own</strong> Anthropic API key to chat with Claude. The key is stored only in your browser (localStorage) and is only ever sent to <code>api.anthropic.com</code>. It is never sent anywhere else, never logged, never shared.</p>
+      <p>The AI Teacher uses <strong>your own</strong> Anthropic API key to call Claude. The key is stored only in your browser (localStorage) and is only ever sent to <code>api.anthropic.com</code> — never logged, never shared.</p>
       <div class="ai-cost-expectation">
         <strong>💰 What it costs you:</strong>
         <ul style="margin: 6px 0 0 18px; padding: 0;">
-          <li><strong>~$0.50–2.00 per hour</strong> of tutor use on Claude Sonnet (most common pick)</li>
-          <li><strong>$5 ≈ 6–12 hours</strong> of tutoring → enough for a few weeks of typical use</li>
+          <li><strong>~$0.50–2.00 per hour</strong> of teaching on Claude Sonnet (most common pick)</li>
+          <li><strong>$5 ≈ 6–12 hours</strong> of teaching → enough for a few weeks of typical use</li>
           <li>Anthropic gives <strong>$5 free credits</strong> on signup, then pay-as-you-go</li>
           <li>Live cost is shown in the chat header so you never get surprised</li>
         </ul>
@@ -20246,7 +20324,7 @@ function openAiInstructorSetup() {
       </div>
     </div>
   `;
-  showPracticeModal('🎓 AI Instructor — Setup', html);
+  showPracticeModal('🎓 AI Teacher — Setup', html);
   setTimeout(() => document.getElementById('aiKeyInput')?.focus(), 30);
 }
 
@@ -20959,6 +21037,232 @@ function aiDismissCelebration() {
   state.aiInstructor.lastCelebration = null;
   save();
   aiRenderGreeting();
+}
+
+/* ============================================================
+   PUSH 34: DEMO LESSON — hardcoded content for one topic, runs the full
+   5-step flow with no API key. Lets first-time visitors actually see what
+   the AI Teacher does before being asked to paste credentials.
+   ============================================================ */
+const DEMO_LESSON_TOPIC_ID = 'demo-variables-and-types';
+const DEMO_LESSON_CONTENT = {
+  topicName: 'Variables, Types, and Control Flow (Demo)',
+  stageTitle: 'Stage 1 · Programming Fundamentals (Demo)',
+  stageId: 1,
+  steps: {
+    objectives: `1. **Explain** what a variable is and the difference between \`let\`, \`const\`, and \`var\` in JavaScript.\n\n2. **Implement** a small program that uses control flow (\`if\`/\`else\` and a \`for\` loop) to filter a list.\n\n3. **Distinguish** between primitive types (number, string, boolean) and reference types (object, array) — and what that means for equality and mutation.`,
+    lecture: `## The mental model\n\nA **variable** is a name you bind to a value. Think of it as a labelled box: the label is the name, the box holds the current value. In JavaScript:\n\n- \`const\` — the label can't be re-bound to a different box. (The box's contents can still change if it's an object.)\n- \`let\`  — the label can be re-bound. Use it when you genuinely need reassignment.\n- \`var\`  — older, function-scoped. **Avoid in new code.**\n\n## Core mechanics\n\n\`\`\`js\nconst name = 'Daisy';        // can't reassign \`name\`\nlet count  = 0;              // can reassign \`count\`\ncount = count + 1;           // ✓ fine\n// name = 'Other';           // ✗ TypeError\n\n// Control flow\nfor (let i = 0; i < 5; i++) {\n  if (i % 2 === 0) {\n    console.log(i, 'is even');\n  }\n}\n\`\`\`\n\n## The gotchas\n\n1. **\`const\` does NOT mean immutable.** \`const arr = [1,2,3]; arr.push(4)\` works fine — you didn't *reassign* \`arr\`, you mutated what it pointed to.\n2. **Reference equality bites.** \`[1,2,3] === [1,2,3]\` is \`false\` — different boxes, even with identical contents. Use a deep compare or compare-by-field for objects/arrays.`,
+    example: `**Task:** Given a list of ages, count how many are 18 or older.\n\n**Thinking step by step:**\n1. We need to walk the list — that's a loop.\n2. For each age, decide if it counts — that's an \`if\`.\n3. Keep a running total — that's a \`let\` variable we increment.\n\n**Code:**\n\n\`\`\`js\nconst ages = [12, 17, 18, 21, 45, 8, 30];\nlet adults = 0;\n\nfor (const age of ages) {\n  if (age >= 18) {\n    adults += 1;\n  }\n}\n\nconsole.log(adults); // 4\n\`\`\`\n\n**What this proves:** you can combine variables (\`let adults\`), iteration (\`for...of\`), and conditionals (\`if\`) to compute a single answer from a list. This is the bread-and-butter shape of 80% of small programs you'll write.`,
+    practice: `**Practice problem (5-10 min):** Write a function \`countLongWords(sentence, minLen)\` that:\n\n1. Takes a sentence (string) and a minimum length (number).\n2. Returns how many words in the sentence have **at least** \`minLen\` characters.\n3. Treat words as anything separated by whitespace.\n\n**What to produce:** the function body in JavaScript. Try it without running it first — then mentally trace your code with \`countLongWords("the quick brown fox", 4)\` (should return \`2\` — "quick" and "brown").\n\n**Hint if stuck:** \`'hello world'.split(' ')\` gives you \`['hello', 'world']\`. Then loop and count.`,
+    practiceFeedback: `Strong work. Your solution likely looks something like:\n\n\`\`\`js\nfunction countLongWords(sentence, minLen) {\n  const words = sentence.split(/\\s+/);\n  let count = 0;\n  for (const w of words) {\n    if (w.length >= minLen) count += 1;\n  }\n  return count;\n}\n\`\`\`\n\n**One concrete improvement:** you could replace the loop + counter with \`words.filter(w => w.length >= minLen).length\` — same result, less code, and it expresses intent more clearly. Both versions are valid; readability wins for small lists, manual loops win when you need to bail out early.\n\n**Verdict: Solid.** *(This is demo feedback — the real teacher would read YOUR actual answer and give you specific notes on it.)*`,
+    quiz: [
+      {
+        q: 'Which of these will throw a TypeError?',
+        choices: [
+          'const x = 5; x = 10;',
+          'let x = 5; x = 10;',
+          'const obj = {}; obj.foo = 1;',
+          'let arr = []; arr.push(1);'
+        ],
+        correct: 0,
+        explain: 'Reassigning a `const` binding throws. Mutating what a `const` *points to* (option C) is fine — that does not reassign the binding.'
+      },
+      {
+        q: 'What does `[1, 2, 3] === [1, 2, 3]` evaluate to in JavaScript?',
+        choices: ['true', 'false', 'TypeError', 'undefined'],
+        correct: 1,
+        explain: 'Arrays compare by reference, not by content. The two array literals create two different objects in memory.'
+      },
+      {
+        q: 'In the loop `for (let i = 0; i < 5; i++)`, what is `i` when the loop body LAST runs?',
+        choices: ['0', '4', '5', '6'],
+        correct: 1,
+        explain: 'The body runs for i = 0, 1, 2, 3, 4. When i becomes 5, the condition `i < 5` is false and the loop exits without running the body.'
+      },
+    ]
+  }
+};
+
+/* Start the demo lesson — same UI as a real lesson, but the step-fetcher pulls from
+   DEMO_LESSON_CONTENT instead of calling Anthropic. */
+function aiStartDemoLesson() {
+  state.aiInstructor.lesson = {
+    stageId: DEMO_LESSON_CONTENT.stageId,
+    topicId: DEMO_LESSON_TOPIC_ID,
+    step: 'objectives',
+    stepOutputs: {},
+    quiz: null,
+    practiceUserAnswer: null,
+    practiceFeedback: null,
+    startedAt: new Date().toISOString(),
+    isDemo: true,                       // flag — diverts step-fetch + finish away from API/mastery
+  };
+  save();
+  aiDemoLoadStep('objectives');
+}
+
+/* Demo's version of openLessonRunner — uses hardcoded topic name, doesn't try to
+   look up the topic in DATA (DEMO_LESSON_TOPIC_ID isn't in there). */
+function aiDemoRenderRunner() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo) return;
+  const currentIdx = LESSON_STEPS.findIndex(s => s.id === lesson.step);
+  const stepperPips = LESSON_STEPS.map((s, i) => {
+    const done = !!lesson.stepOutputs[s.id] || (s.id === 'quiz' && lesson.quiz?.score !== null && lesson.quiz?.score !== undefined);
+    const cls = i === currentIdx ? 'current' : (done ? 'done' : 'pending');
+    return `<button class="lesson-step-pip ${cls}" onclick="aiDemoJumpToStep('${s.id}')" type="button" title="${escapeHtml(s.desc)}">
+      <span class="lesson-step-icon">${s.icon}</span><span class="lesson-step-label">${s.label}</span>
+    </button>`;
+  }).join('<span class="lesson-step-arrow">›</span>');
+  const bodyHtml = aiDemoRenderStepBody(lesson);
+  const demoBadge = '<span class="ai-teacher-demo-badge" title="This is a demo with hardcoded content — no API calls">DEMO</span>';
+  const runnerHtml = `
+    <div class="lesson-runner">
+      <div class="lesson-header">
+        <div class="lesson-topic-name">${escapeHtml(DEMO_LESSON_CONTENT.topicName)} ${demoBadge}</div>
+        <div class="lesson-topic-stage">${escapeHtml(DEMO_LESSON_CONTENT.stageTitle)}</div>
+        <button class="lesson-abandon-btn" onclick="aiDemoEnd()" type="button" title="Exit the demo">← Exit demo</button>
+      </div>
+      <div class="lesson-stepper">${stepperPips}</div>
+      <div class="lesson-body" id="lessonBody">${bodyHtml}</div>
+    </div>
+  `;
+  showPracticeModal('🎓 Demo lesson', runnerHtml);
+}
+
+function aiDemoRenderStepBody(lesson) {
+  const stepCfg = LESSON_STEPS.find(s => s.id === lesson.step);
+  if (lesson.step === 'practice') {
+    const out = lesson.stepOutputs.practice;
+    const fb = lesson.practiceFeedback;
+    const answerArea = out ? `
+      <div class="lesson-practice-input">
+        <label><strong>Your answer (free-form):</strong></label>
+        <textarea id="lessonPracticeAnswer" placeholder="Write your solution + reasoning here...">${escapeHtml(lesson.practiceUserAnswer || '')}</textarea>
+        ${fb ? `<div class="lesson-practice-feedback">${aiFormatMarkdown(fb)}</div>` : ''}
+        <div class="lesson-step-actions">
+          <button class="phub-skill-pill" onclick="aiDemoGradePractice()" type="button">🧐 Get demo feedback</button>
+          ${fb ? `<button class="teacher-start-btn" onclick="aiDemoAdvance('quiz')" type="button">Next step: Quiz →</button>` : ''}
+        </div>
+      </div>` : `<div class="lesson-step-actions"><button class="phub-skill-pill" onclick="aiDemoLoadStep('practice')" type="button">Load practice problem</button></div>`;
+    return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+      <div class="lesson-step-content">${out ? aiFormatMarkdown(out) : '<p class="practice-empty">Click below to load the practice problem.</p>'}</div>${answerArea}`;
+  }
+  if (lesson.step === 'quiz') {
+    const quiz = lesson.quiz;
+    if (!quiz) {
+      return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+        <p>3 multiple-choice questions to verify understanding.</p>
+        <button class="teacher-start-btn" onclick="aiDemoLoadStep('quiz')" type="button">Generate quiz</button>`;
+    }
+    const allAnswered = quiz.questions.every((_, i) => quiz.answers[i] !== undefined && quiz.answers[i] !== null);
+    const graded = quiz.score !== null && quiz.score !== undefined;
+    const questionBlocks = quiz.questions.map((q, qi) => {
+      const choiceBtns = q.choices.map((c, ci) => {
+        const picked = quiz.answers[qi] === ci;
+        const isCorrect = graded && ci === q.correct;
+        const isPickedWrong = graded && picked && ci !== q.correct;
+        const cls = isCorrect ? 'correct' : (isPickedWrong ? 'wrong' : (picked ? 'picked' : ''));
+        return `<button class="lesson-quiz-choice ${cls}" ${graded ? 'disabled' : ''} onclick="aiDemoQuizAnswer(${qi}, ${ci})" type="button">${escapeHtml(c)}</button>`;
+      }).join('');
+      const explainLine = graded ? `<div class="lesson-quiz-explain"><strong>Why:</strong> ${escapeHtml(q.explain || '')}</div>` : '';
+      return `<div class="lesson-quiz-q">
+        <div class="lesson-quiz-prompt"><strong>Q${qi + 1}.</strong> ${escapeHtml(q.q)}</div>
+        <div class="lesson-quiz-choices">${choiceBtns}</div>
+        ${explainLine}
+      </div>`;
+    }).join('');
+    const footer = graded
+      ? `<div class="lesson-quiz-result">
+          <div class="lesson-quiz-score">Demo score: <strong>${quiz.score}%</strong> · (Real lessons would update your mastery for this topic.)</div>
+          <button class="teacher-start-btn" onclick="aiDemoEnd()" type="button">✓ End demo</button>
+        </div>`
+      : `<button class="teacher-start-btn" onclick="aiDemoGradeQuiz()" type="button" ${!allAnswered ? 'disabled' : ''}>${allAnswered ? 'Grade quiz' : 'Answer all 3 to grade'}</button>`;
+    return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+      <div class="lesson-quiz">${questionBlocks}${footer}</div>`;
+  }
+  // Read-only steps: objectives / lecture / example
+  const out = lesson.stepOutputs[lesson.step] || '<p class="practice-empty">Click Next to advance.</p>';
+  const advance = `<div class="lesson-step-actions"><button class="teacher-start-btn" onclick="aiDemoAdvance()" type="button">Next step →</button></div>`;
+  return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+    <div class="lesson-step-content">${aiFormatMarkdown(out)}</div>${advance}`;
+}
+
+function aiDemoLoadStep(stepId) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo) return;
+  lesson.step = stepId;
+  // For demo, instantly populate stepOutputs from the hardcoded content
+  if (stepId === 'quiz') {
+    lesson.quiz = {
+      questions: DEMO_LESSON_CONTENT.steps.quiz,
+      answers: new Array(DEMO_LESSON_CONTENT.steps.quiz.length).fill(null),
+      score: null
+    };
+  } else {
+    lesson.stepOutputs[stepId] = DEMO_LESSON_CONTENT.steps[stepId];
+  }
+  save();
+  aiDemoRenderRunner();
+}
+
+function aiDemoAdvance(forceStepId) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo) return;
+  const currentIdx = LESSON_STEPS.findIndex(s => s.id === lesson.step);
+  const nextStep = forceStepId || LESSON_STEPS[currentIdx + 1]?.id;
+  if (!nextStep) { aiDemoEnd(); return; }
+  aiDemoLoadStep(nextStep);
+}
+
+function aiDemoJumpToStep(stepId) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo) return;
+  if (!lesson.stepOutputs[stepId] && stepId !== lesson.step && !(stepId === 'quiz' && lesson.quiz)) return;
+  lesson.step = stepId;
+  save();
+  aiDemoRenderRunner();
+}
+
+function aiDemoGradePractice() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo) return;
+  const ans = document.getElementById('lessonPracticeAnswer')?.value.trim();
+  if (!ans) { alert('Write your answer first, then click Get demo feedback.'); return; }
+  lesson.practiceUserAnswer = ans;
+  lesson.practiceFeedback = DEMO_LESSON_CONTENT.steps.practiceFeedback;
+  save();
+  aiDemoRenderRunner();
+}
+
+function aiDemoQuizAnswer(qi, ci) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo || !lesson.quiz) return;
+  if (lesson.quiz.score !== null && lesson.quiz.score !== undefined) return;
+  lesson.quiz.answers[qi] = ci;
+  save();
+  aiDemoRenderRunner();
+}
+
+function aiDemoGradeQuiz() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.isDemo || !lesson.quiz) return;
+  const correct = lesson.quiz.questions.reduce((n, q, i) => n + (lesson.quiz.answers[i] === q.correct ? 1 : 0), 0);
+  lesson.quiz.score = Math.round((correct / lesson.quiz.questions.length) * 100);
+  save();
+  aiDemoRenderRunner();
+}
+
+function aiDemoEnd() {
+  // Don't touch mastery, don't touch lastLessonTopicId — the demo doesn't pollute real state.
+  state.aiInstructor.lesson = null;
+  save();
+  // Return to whatever was open: if no API key, go back to setup; otherwise to greeting.
+  if (state.aiInstructor.apiKey) {
+    aiRenderGreeting();
+  } else {
+    openAiInstructorSetup();
+  }
 }
 
 function aiOpenTopicPicker() {
