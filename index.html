@@ -2209,6 +2209,164 @@ abbr.glossary-term:hover::after {
   .teacher-celebration, .teacher-celebration-burst { animation: none; }
 }
 
+/* PUSH 35 — Notebook: two-pane layout, sidebar w/ search + filters + page list,
+   main pane w/ title input + Markdown editor + tag chips + preview toggle.
+   The 📌 Save-to-notebook button in lesson runner has a "just saved" pulse. */
+.notebook-container {
+  display: grid; grid-template-columns: 280px 1fr; gap: 14px;
+  height: 70vh; min-height: 480px;
+}
+@media (max-width: 720px) {
+  .notebook-container { grid-template-columns: 1fr; height: 75vh; }
+}
+.notebook-sidebar {
+  display: grid; grid-template-rows: auto auto auto 1fr; gap: 8px;
+  padding: 10px 10px 4px;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.notebook-sidebar-head { display: flex; gap: 6px; }
+.notebook-new-btn, .notebook-export-btn {
+  padding: 8px 10px; background: var(--node-stage); color: #1a1a1a;
+  border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  cursor: pointer; flex: 1;
+}
+.notebook-export-btn { background: var(--bg); color: var(--text); flex: 0 0 auto; }
+.notebook-new-btn:hover, .notebook-export-btn:hover { filter: brightness(1.05); }
+.notebook-search {
+  padding: 8px 10px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text);
+}
+.notebook-filters { display: flex; gap: 4px; }
+.notebook-filters select {
+  flex: 1; min-width: 0; padding: 6px 8px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text);
+}
+.notebook-page-list {
+  overflow-y: auto; display: grid; gap: 4px; padding-right: 2px;
+}
+.notebook-empty {
+  padding: 14px 10px; text-align: center; color: var(--text-mute);
+  font-family: 'Patrick Hand', cursive; font-size: 13px;
+}
+.notebook-page-row {
+  display: grid; gap: 4px; padding: 8px 10px; text-align: left;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px;
+  cursor: pointer; color: var(--text);
+}
+.notebook-page-row:hover { border-color: var(--node-stage); }
+.notebook-page-row.current {
+  background: color-mix(in srgb, var(--node-stage) 18%, var(--bg));
+  border-color: var(--node-stage);
+}
+.notebook-page-row.pinned { border-color: #d97706; }
+.notebook-page-row-head { display: flex; align-items: center; gap: 6px; }
+.notebook-page-row-source { font-size: 14px; }
+.notebook-page-row-title {
+  flex: 1; font-family: 'Kalam', cursive; font-weight: 700; font-size: 13.5px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.notebook-page-row-pin { font-size: 12px; }
+.notebook-page-row-meta {
+  display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+  font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute);
+}
+.notebook-tag-chip {
+  padding: 1px 6px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 10.5px; color: var(--text);
+}
+.notebook-tag-chip.editable { cursor: pointer; }
+.notebook-tag-chip.editable:hover { background: #fee2e2; }
+:root[data-theme="dark"] .notebook-tag-chip.editable:hover { background: #7f1d1d; }
+.notebook-page-row-date { margin-left: auto; }
+
+.notebook-main {
+  display: grid; grid-template-rows: auto auto 1fr; gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.notebook-page-head {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.notebook-page-title, .notebook-page-title-readonly {
+  flex: 1; min-width: 0;
+  font-family: 'Architects Daughter', cursive; font-size: 22px;
+  padding: 6px 8px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  color: var(--text);
+}
+.notebook-page-title-readonly {
+  background: transparent; border: none; padding: 6px 0;
+}
+.notebook-page-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.notebook-icon-btn, .notebook-mode-btn {
+  padding: 5px 10px; background: var(--bg); border: 2px solid var(--border); border-radius: 7px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px; color: var(--text);
+  cursor: pointer;
+}
+.notebook-icon-btn.active, .notebook-mode-btn.active { background: var(--node-stage); color: #1a1a1a; border-color: var(--node-stage); }
+.notebook-icon-btn.danger:hover { background: #fee2e2; color: #7f1d1d; border-color: #dc2626; }
+.notebook-stage-badge {
+  padding: 3px 8px; background: var(--node-stage); color: #1a1a1a; border-radius: 999px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px;
+}
+.notebook-tags-row {
+  display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+  padding: 2px 0;
+}
+.notebook-tag-input {
+  padding: 4px 8px; background: var(--bg); border: 1.5px dashed var(--border); border-radius: 999px;
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text);
+  min-width: 100px;
+}
+.notebook-save-status {
+  margin-left: auto;
+  font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute);
+}
+.notebook-page-body {
+  width: 100%; resize: none;
+  padding: 12px 14px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 14px; line-height: 1.55; color: var(--text);
+  overflow-y: auto;
+}
+.notebook-page-preview {
+  padding: 12px 14px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.55; color: var(--text);
+  overflow-y: auto;
+}
+.notebook-page-preview pre { background: var(--bg-card); padding: 10px; border-radius: 6px; border: 1px solid var(--border); overflow-x: auto; font-family: 'Consolas', monospace; font-size: 13px; }
+.notebook-page-preview code { font-family: 'Consolas', monospace; font-size: 13px; background: var(--bg-card); padding: 1px 5px; border-radius: 3px; }
+.notebook-page-preview pre code { background: none; padding: 0; }
+.notebook-readonly-note {
+  padding: 8px 12px; background: #fef3c7; color: #78350f;
+  border-left: 4px solid #d97706; border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 13px;
+}
+:root[data-theme="dark"] .notebook-readonly-note { background: #422006; color: #fef3c7; }
+.notebook-empty-state {
+  display: grid; place-content: center; gap: 10px; padding: 30px;
+  text-align: center; color: var(--text-mute);
+}
+.notebook-empty-state h3 { font-family: 'Architects Daughter', cursive; font-size: 22px; color: var(--text); }
+.notebook-empty-state p { font-family: 'Patrick Hand', cursive; font-size: 15px; }
+.notebook-stats { font-style: italic; }
+
+/* 📌 Save-to-notebook button + "just saved" pulse on the AI Teacher runner */
+.notebook-save-btn { white-space: nowrap; }
+.notebook-save-btn.just-saved {
+  background: #d1fae5; color: #064e3b; border-color: #10b981;
+  animation: notebook-save-pulse 0.6s ease-out;
+}
+:root[data-theme="dark"] .notebook-save-btn.just-saved { background: #064e3b; color: #d1fae5; }
+@keyframes notebook-save-pulse {
+  0%   { transform: scale(0.92); }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .notebook-save-btn.just-saved { animation: none; } }
+
 /* PUSH 34 — "What the AI Teacher does" preview at the top of the setup screen +
    demo-mode lesson badge. Goal: make the new feature VISIBLE before the user
    has paid for an API key. */
@@ -3246,6 +3404,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
           <div class="more-menu-group" role="presentation"><span>Learn</span></div>
           <button onclick="closeMoreMenu(); openStudyGuide()">📋 How to Study (per phase)</button>
           <button onclick="closeMoreMenu(); openAiTeacher()">🎓 AI Teacher</button>
+          <button onclick="closeMoreMenu(); openNotebook()">📓 Notebook</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openFlashcards()">🧠 Flashcards</button>
           <button onclick="closeMoreMenu(); openQuizLauncher()">🎯 Quiz Me (Definitions / Stage / Interview)</button>
@@ -3317,6 +3476,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
       <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
       <span class="intro-jump-link" onclick="openAiTeacher()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAiTeacher()}" style="cursor:pointer;">🎓 AI Teacher</span>
+      <span class="intro-jump-link" onclick="openNotebook()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openNotebook()}" style="cursor:pointer;">📓 Notebook</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
     <h2>🎯 Is This Roadmap For You?</h2>
@@ -12650,6 +12810,14 @@ const DEFAULT_STATE = {
   },
   // ── PUSH 32: per-topic mastery (drives adaptive next-topic picker) ──
   mastery: {},                   // { "stageId::topicId": { lessons: int, quizScores: [int 0-100], lastQuizScore: int, masteryPct: int 0-100, lastSeen: ISO } }
+  // ── PUSH 35: digital Notebook — unified pages with AI Teacher integration ──
+  notebook: {
+    pages: [],                   // [{ id, title, body, tags: [], stageId, topicId, source: 'user'|'teacher'|'topic-note', pinned: bool, createdAt, updatedAt }]
+    currentPageId: null,         // which page is open in the editor
+    searchQuery: '',
+    filterStageId: null,         // null = all stages
+    filterTag: null,
+  },
   // ── Accountability (daily commits + weekly check-ins) ──
   accountability: {
     dailyGoalHours: 0,           // user's daily hour commitment (set by user)
@@ -12724,6 +12892,9 @@ try {
     state.accountability.checkins = (parsed.accountability && parsed.accountability.checkins) || [];
     state.bootcamp = { ...DEFAULT_STATE.bootcamp, ...(parsed.bootcamp || {}) };
     state.bootcamp.weekCompleted = (parsed.bootcamp && parsed.bootcamp.weekCompleted) || {};
+    // PUSH 35: notebook
+    state.notebook = { ...DEFAULT_STATE.notebook, ...(parsed.notebook || {}) };
+    state.notebook.pages = (parsed.notebook && Array.isArray(parsed.notebook.pages)) ? parsed.notebook.pages : [];
   }
 } catch (e) {}
 
@@ -21265,6 +21436,476 @@ function aiDemoEnd() {
   }
 }
 
+/* ============================================================
+   PUSH 35: NOTEBOOK — unified digital notebook for the entire roadmap
+   ============================================================
+   A real notebook surface with:
+   - Free-form pages (Markdown, titles, tags, pin)
+   - Aggregated view of all per-topic notes (state.notes) as read-only entries
+   - AI Teacher integration: 📌 Save to Notebook button on each completed lesson
+     step writes the step's content as a new page tagged with stage + topic
+   - Search across everything, filter by stage / tag
+   - Export all pages as a single Markdown file */
+
+function notebookGenId() {
+  return 'nb_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+function notebookAllPages() {
+  // Combine real pages + a virtual read-only page per existing topic-note.
+  const pages = (state.notebook.pages || []).slice();
+  const topicNotes = state.notes || {};
+  Object.entries(topicNotes).forEach(([key, body]) => {
+    if (!body || !body.trim()) return;
+    const [stageIdStr, topicId] = key.split('::');
+    const stageId = Number(stageIdStr);
+    const stage = DATA.find(s => s.id === stageId);
+    const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === topicId);
+    pages.push({
+      id: 'topicnote::' + key,
+      title: topic ? `📌 ${topic.name}` : `📌 ${key}`,
+      body,
+      tags: ['topic-note'],
+      stageId,
+      topicId,
+      source: 'topic-note',
+      pinned: false,
+      readonly: true,
+      createdAt: null,
+      updatedAt: null,
+    });
+  });
+  return pages;
+}
+
+function notebookGetPage(id) {
+  return notebookAllPages().find(p => p.id === id) || null;
+}
+
+function notebookCreatePage(opts) {
+  opts = opts || {};
+  const page = {
+    id: notebookGenId(),
+    title: opts.title || 'Untitled page',
+    body: opts.body || '',
+    tags: opts.tags || [],
+    stageId: opts.stageId ?? null,
+    topicId: opts.topicId ?? null,
+    source: opts.source || 'user',
+    pinned: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  state.notebook.pages = state.notebook.pages || [];
+  state.notebook.pages.unshift(page);
+  state.notebook.currentPageId = page.id;
+  save();
+  return page.id;
+}
+
+function notebookUpdatePage(id, partial) {
+  const page = (state.notebook.pages || []).find(p => p.id === id);
+  if (!page) return;
+  Object.assign(page, partial, { updatedAt: new Date().toISOString() });
+  save();
+}
+
+function notebookDeletePage(id) {
+  state.notebook.pages = (state.notebook.pages || []).filter(p => p.id !== id);
+  if (state.notebook.currentPageId === id) state.notebook.currentPageId = null;
+  save();
+}
+
+function notebookTogglePin(id) {
+  const page = (state.notebook.pages || []).find(p => p.id === id);
+  if (!page) return;
+  page.pinned = !page.pinned;
+  page.updatedAt = new Date().toISOString();
+  save();
+}
+
+function notebookAllTags() {
+  const all = notebookAllPages().flatMap(p => p.tags || []);
+  return Array.from(new Set(all)).sort();
+}
+
+function notebookFilteredPages() {
+  const nb = state.notebook;
+  const q = (nb.searchQuery || '').trim().toLowerCase();
+  const stageFilter = nb.filterStageId;
+  const tagFilter = nb.filterTag;
+  return notebookAllPages()
+    .filter(p => {
+      if (stageFilter !== null && stageFilter !== undefined && p.stageId !== stageFilter) return false;
+      if (tagFilter && !(p.tags || []).includes(tagFilter)) return false;
+      if (q) {
+        const haystack = `${p.title}\n${p.body}\n${(p.tags || []).join(' ')}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      // Pinned first
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      // Then by updatedAt desc (read-only topic notes get sorted to the bottom)
+      if (!a.updatedAt && b.updatedAt) return 1;
+      if (a.updatedAt && !b.updatedAt) return -1;
+      if (!a.updatedAt && !b.updatedAt) return a.title.localeCompare(b.title);
+      return (b.updatedAt || '').localeCompare(a.updatedAt || '');
+    });
+}
+
+function openNotebook() {
+  // Make sure state.notebook exists for older saved states
+  state.notebook = state.notebook || { pages: [], currentPageId: null, searchQuery: '', filterStageId: null, filterTag: null };
+  if (!Array.isArray(state.notebook.pages)) state.notebook.pages = [];
+  notebookRender();
+}
+
+function notebookRender() {
+  const nb = state.notebook;
+  const pages = notebookFilteredPages();
+  const current = nb.currentPageId ? notebookGetPage(nb.currentPageId) : null;
+
+  // Sidebar — list of pages
+  const stageOptions = ['<option value="">All stages</option>']
+    .concat(DATA.map(s => `<option value="${s.id}" ${nb.filterStageId === s.id ? 'selected' : ''}>Stage ${s.id} · ${escapeHtml(s.title)}</option>`))
+    .join('');
+  const allTags = notebookAllTags();
+  const tagOptions = ['<option value="">All tags</option>']
+    .concat(allTags.map(t => `<option value="${escapeHtml(t)}" ${nb.filterTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`))
+    .join('');
+
+  const pageRows = pages.length === 0
+    ? '<div class="notebook-empty">No pages match. Click <strong>+ New page</strong> to create one.</div>'
+    : pages.map(p => {
+        const isCurrent = p.id === nb.currentPageId;
+        const stage = p.stageId !== null && p.stageId !== undefined ? `S${p.stageId}` : '';
+        const sourceLabel = p.source === 'teacher' ? '🎓' : p.source === 'topic-note' ? '📝' : '✍️';
+        const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : '';
+        return `<button class="notebook-page-row ${isCurrent ? 'current' : ''} ${p.pinned ? 'pinned' : ''}" onclick="notebookSelectPage('${escapeHtml(p.id)}')" type="button">
+          <div class="notebook-page-row-head">
+            <span class="notebook-page-row-source" title="${p.source}">${sourceLabel}</span>
+            <span class="notebook-page-row-title">${escapeHtml(p.title || 'Untitled')}</span>
+            ${p.pinned ? '<span class="notebook-page-row-pin">📌</span>' : ''}
+          </div>
+          <div class="notebook-page-row-meta">
+            ${stage ? `<span class="notebook-tag-chip">${stage}</span>` : ''}
+            ${(p.tags || []).slice(0, 3).map(t => `<span class="notebook-tag-chip">${escapeHtml(t)}</span>`).join('')}
+            ${date ? `<span class="notebook-page-row-date">${date}</span>` : ''}
+          </div>
+        </button>`;
+      }).join('');
+
+  const sidebarHtml = `
+    <div class="notebook-sidebar">
+      <div class="notebook-sidebar-head">
+        <button class="notebook-new-btn" onclick="notebookNewPage()" type="button">+ New page</button>
+        <button class="notebook-export-btn" onclick="notebookExport()" type="button" title="Download all pages as one Markdown file">⬇ Export</button>
+      </div>
+      <input type="search" class="notebook-search" id="notebookSearchInput" placeholder="🔍 Search title, body, tags..." value="${escapeHtml(nb.searchQuery || '')}" oninput="notebookOnSearchInput(this.value)" />
+      <div class="notebook-filters">
+        <select onchange="notebookSetStageFilter(this.value)">${stageOptions}</select>
+        <select onchange="notebookSetTagFilter(this.value)">${tagOptions}</select>
+      </div>
+      <div class="notebook-page-list" id="notebookPageList">${pageRows}</div>
+    </div>
+  `;
+
+  // Main pane — current page editor
+  let mainHtml;
+  if (!current) {
+    mainHtml = `
+      <div class="notebook-main">
+        <div class="notebook-empty-state">
+          <h3>📓 Your Roadmap Notebook</h3>
+          <p>Pick a page from the left, click <strong>+ New page</strong>, or save a lesson from the AI Teacher.</p>
+          <p class="notebook-stats">${(state.notebook.pages || []).length} user pages · ${(notebookAllPages().length - (state.notebook.pages || []).length)} aggregated topic notes</p>
+        </div>
+      </div>
+    `;
+  } else if (current.readonly) {
+    // Topic-note view: read-only, with a button to edit in the actual topic modal
+    mainHtml = `
+      <div class="notebook-main">
+        <div class="notebook-page-head">
+          <div class="notebook-page-title-readonly">${escapeHtml(current.title)}</div>
+          <div class="notebook-page-actions">
+            <button class="phub-skill-pill" onclick="notebookOpenAsTopic()" type="button" title="Open this topic to edit the note inline">↗ Edit in topic modal</button>
+          </div>
+        </div>
+        <div class="notebook-readonly-note">This is your saved note for a roadmap topic. To edit, open the topic itself.</div>
+        <div class="notebook-page-preview">${renderMarkdown(current.body)}</div>
+      </div>
+    `;
+  } else {
+    const tagsHtml = (current.tags || []).map((t, i) => `<span class="notebook-tag-chip editable" onclick="notebookRemoveTag(${i})">${escapeHtml(t)} ✕</span>`).join('');
+    const stageBadge = (current.stageId !== null && current.stageId !== undefined)
+      ? `<span class="notebook-stage-badge">Stage ${current.stageId}</span>` : '';
+    mainHtml = `
+      <div class="notebook-main">
+        <div class="notebook-page-head">
+          <input class="notebook-page-title" id="notebookPageTitle" value="${escapeHtml(current.title)}" placeholder="Page title" oninput="notebookOnTitleInput(this.value)" />
+          <div class="notebook-page-actions">
+            ${stageBadge}
+            <button class="notebook-icon-btn ${current.pinned ? 'active' : ''}" onclick="notebookTogglePinCurrent()" type="button" title="Pin to top">📌</button>
+            <button class="notebook-mode-btn active" id="notebookEditBtn" onclick="notebookSetMode('edit')" type="button">Edit</button>
+            <button class="notebook-mode-btn" id="notebookPreviewBtn" onclick="notebookSetMode('preview')" type="button">Preview</button>
+            <button class="notebook-icon-btn danger" onclick="notebookDeleteCurrent()" type="button" title="Delete this page">🗑</button>
+          </div>
+        </div>
+        <div class="notebook-tags-row">
+          ${tagsHtml}
+          <input class="notebook-tag-input" placeholder="+ add tag (Enter)" onkeydown="notebookOnTagKey(event)" />
+          <span class="notebook-save-status" id="notebookSaveStatus">${current.updatedAt ? 'Saved · ' + new Date(current.updatedAt).toLocaleString() : ''}</span>
+        </div>
+        <textarea class="notebook-page-body" id="notebookPageBody" placeholder="Markdown supported. Use # headings, **bold**, \`code\`, lists, links..." oninput="notebookOnBodyInput(this.value)">${escapeHtml(current.body)}</textarea>
+        <div class="notebook-page-preview" id="notebookPagePreview" style="display:none;"></div>
+      </div>
+    `;
+  }
+
+  const html = `<div class="notebook-container">${sidebarHtml}${mainHtml}</div>`;
+  showPracticeModal('📓 Notebook', html);
+  setTimeout(() => {
+    const bodyEl = document.getElementById('notebookPageBody');
+    if (bodyEl && !document.activeElement?.id?.startsWith('notebook')) {
+      // Don't yank focus away if user was typing
+    }
+  }, 30);
+}
+
+/* ────────── notebook event handlers ────────── */
+function notebookSelectPage(id) {
+  state.notebook.currentPageId = id;
+  save();
+  notebookRender();
+}
+
+function notebookNewPage() {
+  notebookCreatePage({ title: 'Untitled page', body: '', source: 'user' });
+  notebookRender();
+}
+
+const _notebookSaveDebounced = debounce(() => {
+  const id = state.notebook.currentPageId;
+  if (!id) return;
+  const body = document.getElementById('notebookPageBody')?.value ?? '';
+  const title = document.getElementById('notebookPageTitle')?.value ?? '';
+  notebookUpdatePage(id, { title: title || 'Untitled page', body });
+  const status = document.getElementById('notebookSaveStatus');
+  if (status) status.textContent = 'Saved · ' + new Date().toLocaleString();
+}, 400);
+
+function notebookOnTitleInput(_val) { _notebookSaveDebounced(); }
+function notebookOnBodyInput(_val)  { _notebookSaveDebounced(); }
+
+function notebookOnSearchInput(val) {
+  state.notebook.searchQuery = val;
+  save();
+  // Re-render just the page list, preserve focus
+  const list = document.getElementById('notebookPageList');
+  if (!list) return notebookRender();
+  const pages = notebookFilteredPages();
+  list.innerHTML = pages.length === 0
+    ? '<div class="notebook-empty">No pages match.</div>'
+    : pages.map(p => {
+        const isCurrent = p.id === state.notebook.currentPageId;
+        const stage = p.stageId !== null && p.stageId !== undefined ? `S${p.stageId}` : '';
+        const sourceLabel = p.source === 'teacher' ? '🎓' : p.source === 'topic-note' ? '📝' : '✍️';
+        const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : '';
+        return `<button class="notebook-page-row ${isCurrent ? 'current' : ''} ${p.pinned ? 'pinned' : ''}" onclick="notebookSelectPage('${escapeHtml(p.id)}')" type="button">
+          <div class="notebook-page-row-head">
+            <span class="notebook-page-row-source">${sourceLabel}</span>
+            <span class="notebook-page-row-title">${escapeHtml(p.title || 'Untitled')}</span>
+            ${p.pinned ? '<span class="notebook-page-row-pin">📌</span>' : ''}
+          </div>
+          <div class="notebook-page-row-meta">
+            ${stage ? `<span class="notebook-tag-chip">${stage}</span>` : ''}
+            ${(p.tags || []).slice(0, 3).map(t => `<span class="notebook-tag-chip">${escapeHtml(t)}</span>`).join('')}
+            ${date ? `<span class="notebook-page-row-date">${date}</span>` : ''}
+          </div>
+        </button>`;
+      }).join('');
+}
+
+function notebookSetStageFilter(val) {
+  state.notebook.filterStageId = val === '' ? null : Number(val);
+  save();
+  notebookRender();
+}
+function notebookSetTagFilter(val) {
+  state.notebook.filterTag = val || null;
+  save();
+  notebookRender();
+}
+
+function notebookTogglePinCurrent() {
+  if (!state.notebook.currentPageId) return;
+  notebookTogglePin(state.notebook.currentPageId);
+  notebookRender();
+}
+
+function notebookDeleteCurrent() {
+  if (!state.notebook.currentPageId) return;
+  if (!confirm('Delete this page? This cannot be undone.')) return;
+  notebookDeletePage(state.notebook.currentPageId);
+  notebookRender();
+}
+
+function notebookSetMode(mode) {
+  const body = document.getElementById('notebookPageBody');
+  const preview = document.getElementById('notebookPagePreview');
+  const editBtn = document.getElementById('notebookEditBtn');
+  const previewBtn = document.getElementById('notebookPreviewBtn');
+  if (!body || !preview) return;
+  if (mode === 'preview') {
+    body.style.display = 'none';
+    preview.style.display = '';
+    preview.innerHTML = renderMarkdown(body.value);
+    editBtn?.classList.remove('active');
+    previewBtn?.classList.add('active');
+  } else {
+    body.style.display = '';
+    preview.style.display = 'none';
+    editBtn?.classList.add('active');
+    previewBtn?.classList.remove('active');
+  }
+}
+
+function notebookOnTagKey(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const val = e.target.value.trim();
+  if (!val) return;
+  const id = state.notebook.currentPageId;
+  const page = (state.notebook.pages || []).find(p => p.id === id);
+  if (!page) return;
+  page.tags = page.tags || [];
+  if (!page.tags.includes(val)) page.tags.push(val);
+  page.updatedAt = new Date().toISOString();
+  save();
+  e.target.value = '';
+  notebookRender();
+}
+
+function notebookRemoveTag(idx) {
+  const id = state.notebook.currentPageId;
+  const page = (state.notebook.pages || []).find(p => p.id === id);
+  if (!page || !page.tags) return;
+  page.tags.splice(idx, 1);
+  page.updatedAt = new Date().toISOString();
+  save();
+  notebookRender();
+}
+
+function notebookOpenAsTopic() {
+  const id = state.notebook.currentPageId;
+  const page = notebookGetPage(id);
+  if (!page || !page.topicId) return;
+  closePracticeModal();
+  // Use existing topic opener — it'll render the topic modal with the note pre-loaded.
+  openModal(page.stageId, page.topicId);
+}
+
+/* ────────── export all pages as a single Markdown file ────────── */
+function notebookExport() {
+  const allPages = notebookAllPages();
+  if (allPages.length === 0) {
+    alert('No pages to export yet. Create a page or save a lesson from the AI Teacher first.');
+    return;
+  }
+  // Group by stage; "ungrouped" at the top.
+  const byStage = new Map();
+  byStage.set('Ungrouped', []);
+  DATA.forEach(s => byStage.set(`Stage ${s.id} · ${s.title}`, []));
+  allPages.forEach(p => {
+    const key = (p.stageId !== null && p.stageId !== undefined)
+      ? `Stage ${p.stageId} · ${(DATA.find(s => s.id === p.stageId) || {}).title || ''}`
+      : 'Ungrouped';
+    byStage.get(key)?.push(p);
+  });
+  const lines = ['# 📓 My Roadmap Notebook',
+                 `_Exported ${new Date().toLocaleString()}. ${allPages.length} pages._`,
+                 ''];
+  for (const [stageLabel, pages] of byStage.entries()) {
+    if (!pages.length) continue;
+    lines.push(`## ${stageLabel}`);
+    lines.push('');
+    pages.forEach(p => {
+      const sourceTag = p.source === 'teacher' ? '🎓' : p.source === 'topic-note' ? '📝' : '✍️';
+      const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : 'no date';
+      const tags = (p.tags || []).length ? ` · tags: ${p.tags.join(', ')}` : '';
+      lines.push(`### ${sourceTag} ${p.title}`);
+      lines.push(`_${p.source} · ${date}${tags}_`);
+      lines.push('');
+      lines.push(p.body || '_(empty)_');
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    });
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `roadmap-notebook-${new Date().toISOString().slice(0, 10)}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ────────── AI Teacher integration: save a lesson step to the notebook ────────── */
+function notebookSaveTeacherStep(stepId) {
+  const lesson = state.aiInstructor?.lesson;
+  if (!lesson) return;
+  const stage = DATA.find(s => s.id === lesson.stageId);
+  const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId);
+  const stepCfg = (typeof LESSON_STEPS !== 'undefined') ? LESSON_STEPS.find(s => s.id === stepId) : null;
+  // Source content
+  let body;
+  if (stepId === 'quiz' && lesson.quiz) {
+    const lines = [
+      `**Quiz score: ${lesson.quiz.score ?? '(ungraded)'}%**`,
+      '',
+      ...lesson.quiz.questions.map((q, i) => {
+        const userAns = lesson.quiz.answers?.[i];
+        const correctMark = userAns === q.correct ? '✓' : '✗';
+        return [
+          `**Q${i + 1}.** ${q.q}`,
+          ...q.choices.map((c, ci) => `- ${ci === q.correct ? '**' : ''}${ci === userAns ? '→ ' : ''}${c}${ci === q.correct ? '** (correct)' : ''}`),
+          `_${correctMark} ${q.explain || ''}_`,
+          ''
+        ].join('\n');
+      })
+    ];
+    body = lines.join('\n');
+  } else if (stepId === 'practice') {
+    body = `**Practice prompt:**\n\n${lesson.stepOutputs?.practice || '(not loaded)'}\n\n---\n\n**My answer:**\n\n${lesson.practiceUserAnswer || '_(no answer recorded)_'}\n\n---\n\n**Teacher feedback:**\n\n${lesson.practiceFeedback || '_(no feedback yet)_'}`;
+  } else {
+    body = lesson.stepOutputs?.[stepId] || '_(no content)_';
+  }
+  const title = `${stepCfg ? stepCfg.icon + ' ' : ''}${stepCfg ? stepCfg.label : stepId} — ${topic?.name || lesson.topicId}`;
+  notebookCreatePage({
+    title,
+    body,
+    tags: ['from-teacher', stepId, ...(topic?.name ? [] : [])],
+    stageId: lesson.stageId,
+    topicId: lesson.topicId,
+    source: 'teacher',
+  });
+  // Quick toast-like feedback (we don't have a global toast — use alert sparingly; just briefly note in the runner)
+  // Re-render the lesson runner so the button label can update.
+  if (typeof openLessonRunner === 'function') {
+    try { openLessonRunner(); } catch (e) {}
+  }
+  // Tiny inline confirmation: set a transient flag the runner reads
+  state.aiInstructor._lastNotebookSaveAt = Date.now();
+  state.aiInstructor._lastNotebookSaveStep = stepId;
+  save();
+}
+
 function aiOpenTopicPicker() {
   const reqByStage = DATA.map(s => ({
     stageId: s.id,
@@ -21347,6 +21988,12 @@ function aiRenderLessonStepBody(topic, lesson) {
     if (output) bodyTop = aiFormatMarkdown(output);
     else if (streaming) bodyTop = typingDots;
     else bodyTop = '<p class="practice-empty">Click below to load the practice problem.</p>';
+    // PUSH 35: 📌 Save to Notebook on practice step (saves prompt + user answer + feedback)
+    const practiceSaved = state.aiInstructor?._lastNotebookSaveAt
+      && (Date.now() - state.aiInstructor._lastNotebookSaveAt < 4000)
+      && state.aiInstructor?._lastNotebookSaveStep === 'practice';
+    const practiceSaveBtn = lesson.practiceFeedback
+      ? `<button class="phub-skill-pill notebook-save-btn ${practiceSaved ? 'just-saved' : ''}" onclick="notebookSaveTeacherStep('practice')" type="button" title="Save the prompt, your answer, and the feedback as a notebook page">${practiceSaved ? '✓ Saved to notebook' : '📌 Save to notebook'}</button>` : '';
     const answerArea = output ? `
       <div class="lesson-practice-input">
         <label><strong>Your answer (free-form — explain your thinking):</strong></label>
@@ -21354,6 +22001,7 @@ function aiRenderLessonStepBody(topic, lesson) {
         ${lesson.practiceFeedback ? `<div class="lesson-practice-feedback">${aiFormatMarkdown(lesson.practiceFeedback)}</div>` : ''}
         <div class="lesson-step-actions">
           <button class="phub-skill-pill" onclick="aiGradePractice()" type="button" ${streaming ? 'disabled' : ''}>🧐 Get feedback</button>
+          ${practiceSaveBtn}
           ${lesson.practiceFeedback ? `<button class="teacher-start-btn" onclick="aiAdvanceLessonStep('quiz')" type="button">Next step: Quiz →</button>` : ''}
         </div>
       </div>` : `<div class="lesson-step-actions">${!streaming ? `<button class="phub-skill-pill" onclick="aiFetchLessonStep('practice')" type="button">Load practice problem</button>` : ''}</div>`;
@@ -21392,10 +22040,19 @@ function aiRenderLessonStepBody(topic, lesson) {
         ${explainLine}
       </div>`;
     }).join('');
+    // PUSH 35: Save the graded quiz (questions + answers + score) as a notebook page.
+    const quizSaved = state.aiInstructor?._lastNotebookSaveAt
+      && (Date.now() - state.aiInstructor._lastNotebookSaveAt < 4000)
+      && state.aiInstructor?._lastNotebookSaveStep === 'quiz';
+    const quizSaveBtn = graded
+      ? `<button class="phub-skill-pill notebook-save-btn ${quizSaved ? 'just-saved' : ''}" onclick="notebookSaveTeacherStep('quiz')" type="button" title="Save the quiz with your answers + correct answers + explanations">${quizSaved ? '✓ Saved to notebook' : '📌 Save quiz to notebook'}</button>` : '';
     const footer = graded
       ? `<div class="lesson-quiz-result">
           <div class="lesson-quiz-score">Score: <strong>${quiz.score}%</strong> · Mastery for this topic updated.</div>
-          <button class="teacher-start-btn" onclick="aiFinishLesson()" type="button">✓ Finish lesson</button>
+          <div class="lesson-step-actions">
+            ${quizSaveBtn}
+            <button class="teacher-start-btn" onclick="aiFinishLesson()" type="button">✓ Finish lesson</button>
+          </div>
         </div>`
       : `<button class="teacher-start-btn" onclick="aiGradeQuiz()" type="button" ${!allAnswered ? 'disabled' : ''}>${allAnswered ? 'Grade quiz' : 'Answer all 3 to grade'}</button>`;
     return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
@@ -21406,7 +22063,12 @@ function aiRenderLessonStepBody(topic, lesson) {
   if (output) panel = aiFormatMarkdown(output);
   else if (streaming) panel = typingDots;
   else panel = '<p class="practice-empty">Loading…</p>';
-  const advance = output ? `<div class="lesson-step-actions"><button class="teacher-start-btn" onclick="aiAdvanceLessonStep()" type="button">Next step →</button></div>` : '';
+  // PUSH 35: 📌 Save to Notebook button on completed step content
+  const savedRecently = state.aiInstructor?._lastNotebookSaveAt
+    && (Date.now() - state.aiInstructor._lastNotebookSaveAt < 4000)
+    && state.aiInstructor?._lastNotebookSaveStep === lesson.step;
+  const saveBtn = output ? `<button class="phub-skill-pill notebook-save-btn ${savedRecently ? 'just-saved' : ''}" onclick="notebookSaveTeacherStep('${lesson.step}')" type="button" title="Save this step as a notebook page">${savedRecently ? '✓ Saved to notebook' : '📌 Save to notebook'}</button>` : '';
+  const advance = output ? `<div class="lesson-step-actions">${saveBtn}<button class="teacher-start-btn" onclick="aiAdvanceLessonStep()" type="button">Next step →</button></div>` : '';
   return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
     <div class="lesson-step-content" id="lessonStreamTarget">${panel}</div>${advance}`;
 }
