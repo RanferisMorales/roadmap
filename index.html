@@ -2076,7 +2076,62 @@ abbr.glossary-term:hover::after {
 .auth-actions button:disabled { opacity: 0.55; cursor: wait; }
 .auth-fineprint { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute) !important; margin-top: 8px !important; line-height: 1.45; }
 .auth-indicator { background: color-mix(in srgb, var(--node-stage) 18%, var(--bg-card)); }
-.auth-menu { display: grid; gap: 10px; padding: 8px; }
+.auth-menu { display: grid; gap: 14px; padding: 8px; }
+/* PUSH 45 — usage dashboard inside the account menu */
+.account-section {
+  padding: 14px 16px;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+}
+.account-section h4 {
+  font-family: 'Architects Daughter', cursive; font-size: 16px; color: var(--text);
+  margin: 0 0 10px 0;
+}
+.account-usage-loading { font-family: 'Patrick Hand', cursive; color: var(--text-mute); font-size: 14px; }
+.account-usage-empty { font-family: 'Patrick Hand', cursive; color: var(--text-mute); font-size: 13px; font-style: italic; }
+.acct-today-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
+.acct-today-cell {
+  padding: 10px 12px; text-align: center;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px;
+}
+.acct-today-num {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 18px; color: var(--text);
+  line-height: 1.2;
+}
+.acct-today-sub {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); font-weight: 400;
+}
+.acct-today-label {
+  font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute); margin-top: 2px;
+}
+.acct-quota-row { margin-top: 10px; }
+.acct-quota-bar {
+  height: 8px; width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 999px; overflow: hidden;
+}
+.acct-quota-fill {
+  height: 100%; background: linear-gradient(90deg, #10b981, #fbbf24);
+  transition: width 0.3s;
+}
+.acct-quota-fill.over { background: linear-gradient(90deg, #dc2626, #b91c1c); }
+.acct-quota-label {
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); margin-top: 5px; text-align: center;
+}
+.acct-bars-row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 4px; height: 60px; margin-top: 14px; padding: 0 4px;
+}
+.acct-bar {
+  flex: 1; background: var(--node-stage); border-radius: 4px 4px 0 0;
+  display: flex; flex-direction: column-reverse; align-items: center; padding-bottom: 2px;
+  position: relative; min-width: 12px;
+}
+.acct-bar-label {
+  font-family: 'Patrick Hand', cursive; font-size: 9px; color: #1a1a1a;
+  white-space: nowrap;
+}
+.acct-bars-caption {
+  font-family: 'Patrick Hand', cursive; font-size: 11px; color: var(--text-mute);
+  text-align: center; margin-top: 4px;
+}
 
 /* ---- AI TEACHER — greeting, lesson runner, quiz UI (PUSH 32) ---- */
 .teacher-greeting { display: grid; gap: 16px; padding: 4px; }
@@ -20786,10 +20841,31 @@ async function authSubmit(mode) {
   btn.textContent = mode === 'signup' ? 'Creating…' : 'Signing in…';
   try {
     const user = mode === 'signup' ? await AUTH_API.signup(email, password) : await AUTH_API.login(email, password);
+    // PUSH 45: if a *different* user was previously cached in localStorage (e.g.,
+    // shared device, or previous tester account), wipe the user-scoped slices
+    // BEFORE the server pull so we never leak data between accounts.
+    // Signup case: KEEP the local state so the user's pre-signup progress
+    // migrates into their new account on first push.
+    // Login case: wipe iff different user. ALSO wipe lastLocalEdit on EVERY
+    // login (signup OR login) because that field is a per-device timestamp;
+    // a fresh login on a fresh device should accept the server's state.
+    const prevUserId = state.auth.user?.id;
+    if (mode === 'login' && prevUserId && prevUserId !== user.id) {
+      resetUserScopedState();
+    }
+    if (mode === 'login') {
+      // Force "server wins" on login — clearing lastLocalEdit makes
+      // syncStateFromServer adopt whatever the server has.
+      state.auth.lastLocalEdit = 0;
+    }
     state.auth.user = user;
-    save();
-    // After login, pull server state if any (could be newer than local on a fresh device).
+    // PULL from server FIRST so we have the remote state in memory.
     await syncStateFromServer();
+    // THEN persist (also schedules a push, but with the now-correct merged state).
+    save();
+    // Re-render to reflect the new state
+    if (typeof hydrate === 'function') hydrate();
+    if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
     closePracticeModal();
     // Reopen whatever they were trying to do — for the simple case, open the teacher.
     if (typeof openAiTeacher === 'function') openAiTeacher();
@@ -20816,18 +20892,39 @@ function friendlyAuthError(err) {
 
 async function authSignOut() {
   try { await AUTH_API.logout(); } catch (_) {}
+  // PUSH 45: full wipe of non-auth state to prevent leakage to the next user on
+  // shared devices. localStorage gets reset to DEFAULT_STATE; on next sign-in
+  // the server pull will populate the new user's data.
+  resetUserScopedState();
   state.auth.user = null;
   state.auth.syncedAt = null;
   state.auth.syncError = null;
-  save();
+  state.auth.serverVersion = 0;
+  state.auth.lastLocalEdit = 0;
+  saveNow(); // immediate write — don't leave a coalesce window where the old state could be saved
   // Refresh UI to show signed-out state
   if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
+  // Re-render anything that read from state
+  if (typeof hydrate === 'function') hydrate();
+  if (typeof render === 'function') render();
+}
+
+/* PUSH 45: Reset every user-scoped state slice to its DEFAULT_STATE shape.
+   Keeps ONLY: theme (UI preference, not user-scoped), settings (same), and auth itself.
+   Everything else (completed topics, mastery, notebook pages, AI history, etc.) gets wiped. */
+function resetUserScopedState() {
+  const fresh = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  const keepKeys = new Set(['theme', 'settings', 'auth']);
+  for (const k of Object.keys(state)) {
+    if (!keepKeys.has(k)) state[k] = fresh[k];
+  }
 }
 
 /* PUSH 44: Re-pull state from server. Called after login. */
 async function syncStateFromServer() {
   if (!state.auth.user) return;
   state.auth.syncing = true;
+  if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
   try {
     const remote = await STATE_API.get();
     if (remote && remote.payload) {
@@ -20851,10 +20948,13 @@ async function syncStateFromServer() {
   } finally {
     state.auth.syncing = false;
     save();
+    if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
   }
 }
 
-/* PUSH 44: Push current state to server. Debounced. */
+/* PUSH 44: Push current state to server. Debounced.
+   PUSH 45: also calls renderAuthIndicator() on syncing/synced/error transitions
+   so the pill in the intro shows the live status. */
 let __statePushTimer = null;
 function schedulePushStateToServer() {
   if (!state.auth.user) return;
@@ -20865,6 +20965,7 @@ async function pushStateToServer() {
   if (!state.auth.user) return;
   if (state.auth.syncing) return; // already in flight; will catch up next save
   state.auth.syncing = true;
+  if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
   try {
     const payload = JSON.stringify(serializeStateForSync());
     const result = await STATE_API.put(payload);
@@ -20875,6 +20976,7 @@ async function pushStateToServer() {
     state.auth.syncError = String(e?.message || e);
   } finally {
     state.auth.syncing = false;
+    if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
   }
 }
 
@@ -20920,12 +21022,18 @@ function openAuthMenu() {
   const u = state.auth.user;
   const synced = state.auth.syncedAt ? `Last synced ${new Date(state.auth.syncedAt).toLocaleString()}` : 'Not synced yet';
   const err = state.auth.syncError ? `<p class="auth-error" style="display:block;">Sync error: ${escapeHtml(state.auth.syncError)}</p>` : '';
+  // PUSH 45: render the menu shell immediately, then fetch usage async + fill in.
   const html = `
     <div class="auth-menu">
       <h3>👤 Account</h3>
       <p>Signed in as <strong>${escapeHtml(u.email)}</strong></p>
       <p class="auth-fineprint">${synced} · Server version ${state.auth.serverVersion || 0}</p>
       ${err}
+      <div class="account-section" id="accountUsageSection">
+        <h4>Today's AI Teacher usage</h4>
+        <div class="account-usage-loading" id="accountUsageLoading">Loading…</div>
+        <div id="accountUsageContent" style="display:none;"></div>
+      </div>
       <div class="auth-actions">
         <button class="secondary" onclick="closePracticeModal(); authForceSyncNow()" type="button">⟳ Sync now</button>
         <button class="secondary" onclick="closePracticeModal()" type="button">Close</button>
@@ -20934,6 +21042,64 @@ function openAuthMenu() {
     </div>
   `;
   showPracticeModal('👤 Account', html);
+  // Fetch + render usage data in the background
+  fetchAndRenderAccountUsage();
+}
+
+/* PUSH 45: Fetch usage from the backend and render it into the account menu. */
+async function fetchAndRenderAccountUsage() {
+  const contentEl = document.getElementById('accountUsageContent');
+  const loadingEl = document.getElementById('accountUsageLoading');
+  if (!contentEl || !loadingEl) return;
+  try {
+    const r = await apiFetch('/api/teacher/usage');
+    if (!r.ok) throw new Error(`status_${r.status}`);
+    const data = await r.json();
+    const t = data.today;
+    const usedUsd = (t.cost_usd || 0).toFixed(4);
+    const quotaUsd = (data.daily_quota_usd || 0).toFixed(2);
+    const pctUsed = data.daily_quota_micro_usd > 0
+      ? Math.min(100, Math.round((t.cost_micro_usd / data.daily_quota_micro_usd) * 100))
+      : 0;
+    const overQuota = pctUsed >= 100;
+    // 7-day history (newest first → reverse for chronological chart)
+    const hist = (data.history || []).slice(0, 7).reverse();
+    const maxCost = hist.reduce((m, h) => Math.max(m, h.cost_micro_usd || 0), 1);
+    const bars = hist.length
+      ? hist.map((h) => {
+          const heightPct = Math.max(2, Math.round(((h.cost_micro_usd || 0) / maxCost) * 100));
+          const date = h.day ? h.day.slice(5).replace('-', '/') : '—';
+          const cost = ((h.cost_micro_usd || 0) / 1_000_000).toFixed(3);
+          return `<div class="acct-bar" style="height:${heightPct}%;" title="${date}: $${cost}"><span class="acct-bar-label">${date}</span></div>`;
+        }).join('')
+      : '<div class="account-usage-empty">No history yet — once you finish a lesson, daily usage shows here.</div>';
+
+    contentEl.innerHTML = `
+      <div class="acct-today-row">
+        <div class="acct-today-cell">
+          <div class="acct-today-num">$${usedUsd}</div>
+          <div class="acct-today-label">spent today</div>
+        </div>
+        <div class="acct-today-cell">
+          <div class="acct-today-num">${t.in_tokens || 0}<span class="acct-today-sub"> in</span> / ${t.out_tokens || 0}<span class="acct-today-sub"> out</span></div>
+          <div class="acct-today-label">tokens</div>
+        </div>
+        <div class="acct-today-cell">
+          <div class="acct-today-num">${t.requests || 0}</div>
+          <div class="acct-today-label">requests</div>
+        </div>
+      </div>
+      <div class="acct-quota-row">
+        <div class="acct-quota-bar"><div class="acct-quota-fill ${overQuota ? 'over' : ''}" style="width:${pctUsed}%"></div></div>
+        <div class="acct-quota-label">$${usedUsd} of $${quotaUsd}/day quota · ${pctUsed}%</div>
+      </div>
+      ${hist.length ? `<div class="acct-bars-row">${bars}</div><div class="acct-bars-caption">Last 7 days</div>` : bars}
+    `;
+    loadingEl.style.display = 'none';
+    contentEl.style.display = '';
+  } catch (e) {
+    loadingEl.textContent = `Couldn't load usage (${e?.message || 'error'}). Backend might be offline.`;
+  }
 }
 
 async function authForceSyncNow() {
