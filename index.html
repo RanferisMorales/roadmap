@@ -21895,15 +21895,14 @@ function notebookSaveTeacherStep(stepId) {
     topicId: lesson.topicId,
     source: 'teacher',
   });
-  // Quick toast-like feedback (we don't have a global toast — use alert sparingly; just briefly note in the runner)
-  // Re-render the lesson runner so the button label can update.
-  if (typeof openLessonRunner === 'function') {
-    try { openLessonRunner(); } catch (e) {}
-  }
-  // Tiny inline confirmation: set a transient flag the runner reads
+  // Set the "just saved" flag BEFORE re-rendering so the button reflects it.
   state.aiInstructor._lastNotebookSaveAt = Date.now();
   state.aiInstructor._lastNotebookSaveStep = stepId;
   save();
+  // Re-render the lesson runner so the button label updates to ✓ Saved.
+  if (typeof openLessonRunner === 'function') {
+    try { openLessonRunner(); } catch (e) {}
+  }
 }
 
 function aiOpenTopicPicker() {
