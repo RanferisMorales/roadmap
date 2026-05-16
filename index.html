@@ -2412,12 +2412,13 @@ abbr.glossary-term:hover::after {
 }
 .ai-teacher-demo-badge {
   display: inline-block; vertical-align: middle;
-  padding: 2px 8px; margin-left: 8px;
+  padding: 2px 8px;
   background: #fde68a; color: #78350f;
   border: 1.5px solid #d97706; border-radius: 6px;
   font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px;
   letter-spacing: 0.5px;
 }
+.lesson-topic-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 :root[data-theme="dark"] .ai-teacher-demo-badge { background: #422006; color: #fde68a; }
 
 /* ---- ACCOUNTABILITY — daily commits + check-ins ---- */
@@ -12898,11 +12899,41 @@ try {
   }
 } catch (e) {}
 
+/* PUSH 36: save() coalescing
+   Before: every save() call did a sync JSON.stringify(state) + localStorage.setItem.
+   89 call sites — rapid bursts (input handlers, quiz clicks, lesson advances)
+   caused 10-30 sync writes in <100ms. On slow devices, a single write of a
+   100KB+ state blob takes 5-20ms. That stacks up into the felt-slowness.
+   After: save() schedules a write on the next animation frame; multiple calls
+   in the same frame collapse into ONE write. saveNow() bypasses the queue
+   when callers need a synchronous write (e.g., before navigation).
+   flushPendingSave() force-flushes ONLY if there was a queued save — it does
+   NOT write unconditionally, so manual localStorage edits aren't clobbered. */
+let __savePending = false;
 function save() {
+  if (__savePending) return;
+  __savePending = true;
+  requestAnimationFrame(() => {
+    if (!__savePending) return;
+    __savePending = false;
+    saveNow();
+  });
+}
+function saveNow() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
   const lu = document.getElementById('lastUpdated');
   if (lu) lu.textContent = new Date().toLocaleString();
 }
+function flushPendingSave() {
+  if (!__savePending) return;
+  __savePending = false;
+  saveNow();
+}
+// Flush any pending save on unload — but only if one was queued. Don't overwrite
+// state that was manually set by external code (e.g., test fixtures, dev tools).
+window.addEventListener('beforeunload', flushPendingSave);
+// Same on tab hide (mobile background / tab switch).
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushPendingSave(); });
 
 /* ============================================================
    PUSH 22: Client-side passphrase gate
@@ -13042,19 +13073,27 @@ function initHowto() {
   }
 }
 
-/* PUSH 14: Sticky "Jump to Stage 0" pill — shows after scrolling past intro */
+/* PUSH 14: Sticky "Jump to Stage 0" pill — shows after scrolling past intro
+   PUSH 36: rAF-throttled so we do at most 1 layout-forcing read per frame on slow devices.
+   The raw update reads getBoundingClientRect() and scrollHeight which both trigger
+   layout reflow — unthrottled, this can chain on rapid scroll. */
 function initStickyJump() {
   const pill = document.getElementById('stickyJump');
   const intro = document.getElementById('intro');
   if (!pill || !intro) return;
   const update = () => {
     const introBottom = intro.getBoundingClientRect().bottom;
-    // Show pill once user has scrolled past the intro AND they're not already at the bottom
     const nearBottom = (window.innerHeight + window.scrollY) >= document.body.scrollHeight - 100;
     pill.classList.toggle('show', introBottom < 0 && !nearBottom);
   };
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
+  let scheduled = false;
+  const throttled = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => { scheduled = false; update(); });
+  };
+  window.addEventListener('scroll', throttled, { passive: true });
+  window.addEventListener('resize', throttled);
   update();
 }
 
@@ -13101,6 +13140,8 @@ function showPracticeModal(title, bodyHtml) {
 function closePracticeModal() {
   const m = document.getElementById('practiceModal');
   if (!m) return;
+  // PUSH 36: flush any notebook in-flight edit before the modal is torn down.
+  if (typeof _notebookFlush === 'function') _notebookFlush();
   const wasOpen = m.classList.contains('open');
   m.classList.remove('open');
   m.setAttribute('aria-hidden', 'true');
@@ -21286,11 +21327,17 @@ function aiDemoRenderRunner() {
     </button>`;
   }).join('<span class="lesson-step-arrow">›</span>');
   const bodyHtml = aiDemoRenderStepBody(lesson);
-  const demoBadge = '<span class="ai-teacher-demo-badge" title="This is a demo with hardcoded content — no API calls">DEMO</span>';
+  // PUSH 36: lift the DEMO badge OUT of the topic-name div so screen readers
+  // don't read "Variables, Types and Control Flow (Demo) DEMO" as one string.
+  // Also makes it possible to style/position the badge independently.
+  const demoBadge = '<span class="ai-teacher-demo-badge" title="This is a demo with hardcoded content — no API calls" aria-label="Demo content">DEMO</span>';
   const runnerHtml = `
     <div class="lesson-runner">
       <div class="lesson-header">
-        <div class="lesson-topic-name">${escapeHtml(DEMO_LESSON_CONTENT.topicName)} ${demoBadge}</div>
+        <div class="lesson-topic-name-row">
+          <div class="lesson-topic-name">${escapeHtml(DEMO_LESSON_CONTENT.topicName)}</div>
+          ${demoBadge}
+        </div>
         <div class="lesson-topic-stage">${escapeHtml(DEMO_LESSON_CONTENT.stageTitle)}</div>
         <button class="lesson-abandon-btn" onclick="aiDemoEnd()" type="button" title="Exit the demo">← Exit demo</button>
       </div>
@@ -21677,28 +21724,54 @@ function notebookRender() {
 
 /* ────────── notebook event handlers ────────── */
 function notebookSelectPage(id) {
+  // PUSH 36: flush any in-flight edit to the CURRENT page BEFORE we change
+  // currentPageId and re-render. Otherwise typing → click-another-page within
+  // 400ms loses the typed text.
+  _notebookFlush();
   state.notebook.currentPageId = id;
   save();
   notebookRender();
 }
 
 function notebookNewPage() {
+  // PUSH 36: also flush before creating a new page (which switches focus to it).
+  _notebookFlush();
   notebookCreatePage({ title: 'Untitled page', body: '', source: 'user' });
   notebookRender();
 }
 
-const _notebookSaveDebounced = debounce(() => {
-  const id = state.notebook.currentPageId;
+/* PUSH 36: notebook save coalescing WITH explicit flush.
+   The old debounce captured `state.notebook.currentPageId` at FIRE time.
+   If the user typed into page A then switched to page B within 400ms,
+   the textarea got replaced with B's content and the timer flushed B's
+   content back to B — page A's keystrokes vanished.
+   Fix: bind the page ID at TYPING time, and explicitly flush any pending
+   save before re-rendering / switching pages. */
+let __notebookSaveTimer = null;
+let __notebookSavePendingId = null;
+function _notebookSchedule() {
+  __notebookSavePendingId = state.notebook.currentPageId;
+  if (__notebookSaveTimer) clearTimeout(__notebookSaveTimer);
+  __notebookSaveTimer = setTimeout(_notebookFlush, 400);
+}
+function _notebookFlush() {
+  if (__notebookSaveTimer) { clearTimeout(__notebookSaveTimer); __notebookSaveTimer = null; }
+  const id = __notebookSavePendingId;
+  __notebookSavePendingId = null;
   if (!id) return;
-  const body = document.getElementById('notebookPageBody')?.value ?? '';
-  const title = document.getElementById('notebookPageTitle')?.value ?? '';
+  // Capture textarea content NOW (before any re-render destroys the DOM).
+  const bodyEl = document.getElementById('notebookPageBody');
+  const titleEl = document.getElementById('notebookPageTitle');
+  if (!bodyEl && !titleEl) return; // editor isn't visible — nothing to save
+  const body = bodyEl?.value ?? '';
+  const title = titleEl?.value ?? '';
   notebookUpdatePage(id, { title: title || 'Untitled page', body });
   const status = document.getElementById('notebookSaveStatus');
   if (status) status.textContent = 'Saved · ' + new Date().toLocaleString();
-}, 400);
+}
 
-function notebookOnTitleInput(_val) { _notebookSaveDebounced(); }
-function notebookOnBodyInput(_val)  { _notebookSaveDebounced(); }
+function notebookOnTitleInput(_val) { _notebookSchedule(); }
+function notebookOnBodyInput(_val)  { _notebookSchedule(); }
 
 function notebookOnSearchInput(val) {
   state.notebook.searchQuery = val;
