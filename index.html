@@ -3573,7 +3573,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
           </div>
           <div class="ai-tutor-callout-cell">
             <strong>What you get</strong>
-            <p>📊 Mastery tracking per topic · 🎯 3-question quizzes per lesson · 🧐 Practice feedback · 💬 Freeform chat fallback. All in your browser.</p>
+            <p>📊 Mastery tracking per topic · 🎯 3-question quizzes per lesson · 🧐 Practice feedback · 📌 Save lessons to your 📓 Notebook · 💬 Freeform chat fallback. All in your browser.</p>
           </div>
         </div>
       </div>
@@ -3779,7 +3779,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
             <li><strong>Read the docs</strong> — official docs are almost always better than Stack Overflow</li>
             <li><strong>Search smart</strong> — paste the exact error message, not paraphrased</li>
             <li><strong>Rubber duck</strong> — explain the problem out loud to nobody. Often the answer appears</li>
-            <li><strong>Ask Claude.ai</strong> — paste error + your code + what you tried</li>
+            <li><strong>Ask the 🎓 AI Teacher (chat mode)</strong> — already knows your stage + current topic + progress. Paste error + your code + what you tried. <em>You can use external claude.ai too, but the in-app one preserves context.</em></li>
             <li><strong>Post for help</strong> — only after exhausting the above. Include: what you want, what's happening, what you tried, minimal reproduction</li>
           </ul>
         </div>
@@ -25166,16 +25166,29 @@ function personalizeFromProfile() {
   const p = state.profile;
   const personalized = p && !p.skipped && p.time;
 
-  // Stats line always uses live counts (fixing the stale 162/358)
+  // PUSH 40: Stats are ALWAYS recomputed from live DATA + TERMS + GLOSSARY so
+  // the page can never go stale on counts. Runs whether or not the user has a profile.
   const branchCount = DATA.reduce((s, st) => s + st.branches.length, 0);
   const topicCount = DATA.reduce((s, st) => s + st.branches.reduce((a, b) => a + b.topics.length, 0), 0);
   const linkCount = DATA.reduce((s, st) => s + st.branches.reduce((a, b) => a + b.topics.reduce((aa, t) => aa + (t.links?.length || 0), 0), 0), 0);
+  // Glossary = per-topic key terms + acronyms map
+  const glossaryCount = (typeof TERMS !== 'undefined' ? Object.values(TERMS).reduce((s, arr) => s + arr.length, 0) : 0)
+                      + (typeof GLOSSARY !== 'undefined' ? Object.keys(GLOSSARY).length : 0);
+  // Electives = stages flagged elective:true (or by id ≥ 9, fallback for older data shapes)
+  const coreStages = DATA.filter(s => !s.elective && s.id < 9).length;
+  const electiveStages = DATA.filter(s => s.elective || s.id >= 9).length;
+  const glossaryFmt = glossaryCount.toLocaleString();
+  // Stats line — keeps the "core + electives" detail so users see what they're getting
   document.querySelectorAll('[data-personal="stats"]').forEach(el => {
-    el.innerHTML = `<strong>${DATA.length} stages</strong>, ${branchCount} branches, ${topicCount} topics, ${linkCount} curated links`;
+    el.innerHTML = `<strong>${DATA.length} stages</strong> (${coreStages} core + ${electiveStages} electives), ${branchCount} branches, ${topicCount} topics, ${linkCount} curated links`;
+  });
+  // Footer — recomputed unconditionally (was previously skipped when no profile)
+  document.querySelectorAll('[data-personal="footer"]').forEach(el => {
+    el.textContent = `${topicCount} topics · ${linkCount} links · ${glossaryFmt} glossary entries · ${DATA.length} stages · 16-25 months ideal, 24-36 realistic`;
   });
 
   if (!personalized) {
-    // No profile yet → leave the spec-default text alone
+    // No profile yet → leave the rest of the personalized text (timelines, etc.) alone
     return;
   }
 
@@ -25212,9 +25225,9 @@ function personalizeFromProfile() {
     el.innerHTML = `<strong>This is a marathon</strong> — ${lowEnd}–${highEnd} months ideal, ${realLow}–${realHigh} realistic. Pace yourself`;
   });
 
-  // 6. Footer
+  // 6. Footer (personalized pace + glossary count from the always-runs branch above)
   document.querySelectorAll('[data-personal="footer"]').forEach(el => {
-    el.textContent = `${linkCount} curated links · ${DATA.length} stages · ~${lowEnd}–${highEnd} months ideal (~${proj.totalHours.toLocaleString()} hrs content) · ${realLow}–${realHigh} realistic`;
+    el.textContent = `${topicCount} topics · ${linkCount} links · ${glossaryFmt} glossary entries · ${DATA.length} stages · ~${lowEnd}–${highEnd} months ideal (~${proj.totalHours.toLocaleString()} hrs content) · ${realLow}–${realHigh} realistic at your pace`;
   });
 
   // 7. Goal-driven More menu reorder
