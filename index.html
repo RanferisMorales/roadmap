@@ -2170,6 +2170,45 @@ abbr.glossary-term:hover::after {
 }
 .lesson-quiz-score { font-family: 'Architects Daughter', cursive; font-size: 18px; color: var(--text); }
 
+/* PUSH 33 — Resume banner + Celebration banner on the Teacher greeting screen */
+.teacher-resume-banner {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+  padding: 12px 16px; background: #fef3c7; color: #78350f;
+  border: 2.5px solid #d97706; border-radius: 12px;
+}
+:root[data-theme="dark"] .teacher-resume-banner { background: #422006; color: #fef3c7; border-color: #fbbf24; }
+.teacher-resume-icon { font-size: 28px; }
+.teacher-resume-body { display: grid; gap: 2px; }
+.teacher-resume-title { font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; }
+.teacher-resume-sub { font-family: 'Patrick Hand', cursive; font-size: 13px; opacity: 0.85; }
+.teacher-resume-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.teacher-celebration {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
+  padding: 14px 16px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #064e3b;
+  border: 3px solid #10b981; border-radius: 14px;
+  animation: teacher-celebration-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+:root[data-theme="dark"] .teacher-celebration { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); color: #d1fae5; }
+.teacher-celebration-burst { font-size: 36px; animation: teacher-burst-rotate 0.6s ease-out both; }
+.teacher-celebration-body { display: grid; gap: 2px; }
+.teacher-celebration-title { font-family: 'Architects Daughter', cursive; font-size: 18px; }
+.teacher-celebration-sub { font-family: 'Patrick Hand', cursive; font-size: 14px; opacity: 0.9; }
+.teacher-celebration-dismiss { padding: 4px 10px !important; font-size: 14px !important; }
+@keyframes teacher-celebration-pop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes teacher-burst-rotate {
+  0%   { transform: rotate(-25deg) scale(0.4); }
+  50%  { transform: rotate(15deg)  scale(1.15); }
+  100% { transform: rotate(0)      scale(1);   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .teacher-celebration, .teacher-celebration-burst { animation: none; }
+}
+
 /* ---- ACCOUNTABILITY — daily commits + check-ins ---- */
 .accountability-grid { display: grid; gap: 14px; }
 .accountability-card {
@@ -12550,6 +12589,8 @@ const DEFAULT_STATE = {
     lesson: null,                // active lesson: { stageId, topicId, step: 'objectives'|'lecture'|'example'|'practice'|'quiz', stepOutputs: { objectives: '...', lecture: '...', ... }, quiz: { questions: [...], answers: [], score: 0 }, startedAt }
     lastLessonTopicId: null,     // for "last time we covered X" greeting
     lastLessonStageId: null,
+    // ── PUSH 33: celebration banner shown once after a perfect-score finish ──
+    lastCelebration: null,       // { topicId, stageId, name, score, ts } — cleared after the banner renders once
   },
   // ── PUSH 32: per-topic mastery (drives adaptive next-topic picker) ──
   mastery: {},                   // { "stageId::topicId": { lessons: int, quizScores: [int 0-100], lastQuizScore: int, masteryPct: int 0-100, lastSeen: ISO } }
@@ -20808,7 +20849,9 @@ function aiReasonFor(entry) {
 function openAiTeacher() {
   const ai = state.aiInstructor;
   if (!ai.apiKey) { openAiInstructorSetup(); return; }
-  if (ai.lesson && ai.lesson.topicId) { openLessonRunner(); return; }
+  // PUSH 33: don't auto-resume — show the greeting with a Resume banner so the
+  // user can explicitly choose to continue or abandon. This makes the in-progress
+  // state visible instead of silently popping the lesson runner.
   aiRenderGreeting();
 }
 
@@ -20825,6 +20868,49 @@ function aiRenderGreeting() {
     const lastTopic = lastStage?.branches.flatMap(b => b.topics).find(t => t.id === ai.lastLessonTopicId);
     if (lastTopic) lastLine = `Last time we covered <strong>${escapeHtml(lastTopic.name)}</strong>.`;
   }
+
+  // PUSH 33: Resume banner — render if a lesson is in progress.
+  let resumeBannerHtml = '';
+  if (ai.lesson && ai.lesson.topicId) {
+    const inStage = DATA.find(s => s.id === ai.lesson.stageId);
+    const inTopic = inStage?.branches.flatMap(b => b.topics).find(t => t.id === ai.lesson.topicId);
+    if (inTopic) {
+      const stepIdx = LESSON_STEPS.findIndex(s => s.id === ai.lesson.step);
+      const stepNum = stepIdx >= 0 ? stepIdx + 1 : 1;
+      const stepLabel = LESSON_STEPS[stepIdx]?.label || ai.lesson.step;
+      resumeBannerHtml = `
+        <div class="teacher-resume-banner" role="status">
+          <div class="teacher-resume-icon">📖</div>
+          <div class="teacher-resume-body">
+            <div class="teacher-resume-title">Lesson in progress: <strong>${escapeHtml(inTopic.name)}</strong></div>
+            <div class="teacher-resume-sub">Step ${stepNum} of ${LESSON_STEPS.length} · ${escapeHtml(stepLabel)}</div>
+          </div>
+          <div class="teacher-resume-actions">
+            <button class="teacher-start-btn" onclick="openLessonRunner()" type="button">▶ Resume</button>
+            <button class="phub-skill-pill" onclick="aiAbandonLessonExplicit()" type="button">Abandon</button>
+          </div>
+        </div>`;
+    }
+  }
+
+  // PUSH 33: Celebration banner — render once after a perfect-score lesson finish, then clear.
+  let celebrationHtml = '';
+  if (ai.lastCelebration) {
+    const c = ai.lastCelebration;
+    celebrationHtml = `
+      <div class="teacher-celebration" role="status">
+        <div class="teacher-celebration-burst">🎉</div>
+        <div class="teacher-celebration-body">
+          <div class="teacher-celebration-title">Perfect score on <strong>${escapeHtml(c.name)}</strong>!</div>
+          <div class="teacher-celebration-sub">You answered ${c.score}% on the quiz — mastery locked in. 🔒</div>
+        </div>
+        <button class="phub-skill-pill teacher-celebration-dismiss" onclick="aiDismissCelebration()" type="button" aria-label="Dismiss">✕</button>
+      </div>`;
+    // Clear on next render — we showed it once.
+    state.aiInstructor.lastCelebration = null;
+    save();
+  }
+
   const altsList = picks.alternates.map(a =>
     `<button class="teacher-alt-btn" onclick="aiStartLesson(${a.stageId}, '${escapeHtml(a.topicId)}')" type="button">
        <span class="teacher-alt-name">${escapeHtml(a.name)}</span>
@@ -20834,6 +20920,8 @@ function aiRenderGreeting() {
     ? `<div class="teacher-alts"><div class="teacher-alts-label">Or pick a different topic:</div>${altsList}</div>` : '';
   const greetingHtml = [
     '<div class="teacher-greeting">',
+      resumeBannerHtml,
+      celebrationHtml,
       `<div class="teacher-greet-hello">${lastLine}</div>`,
       '<div class="teacher-today-card">',
         '<div class="teacher-today-label">Today\'s lesson</div>',
@@ -20851,6 +20939,26 @@ function aiRenderGreeting() {
     '</div>'
   ].join('');
   showPracticeModal('🎓 Your AI Teacher', greetingHtml);
+}
+
+/* PUSH 33: explicit "Abandon" from the resume banner.
+   Mirrors aiAbandonLesson but skipping the redirect — we're already on the greeting. */
+function aiAbandonLessonExplicit() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson) { aiRenderGreeting(); return; }
+  if (!confirm(`Abandon your lesson on "${(DATA.find(s => s.id === lesson.stageId)?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId)?.name) || 'this topic'}"? Progress on this lesson will be lost (your mastery from earlier lessons is kept).`)) return;
+  state.aiInstructor.lastLessonTopicId = lesson.topicId;
+  state.aiInstructor.lastLessonStageId = lesson.stageId;
+  state.aiInstructor.lesson = null;
+  save();
+  aiRenderGreeting();
+}
+
+function aiDismissCelebration() {
+  // The render already cleared lastCelebration; this just re-renders without it.
+  state.aiInstructor.lastCelebration = null;
+  save();
+  aiRenderGreeting();
 }
 
 function aiOpenTopicPicker() {
@@ -21042,6 +21150,20 @@ function aiFinishLesson() {
   state.mastery[key].lastSeen = new Date().toISOString();
   state.aiInstructor.lastLessonTopicId = lesson.topicId;
   state.aiInstructor.lastLessonStageId = lesson.stageId;
+  // PUSH 33: queue a celebration banner if the user nailed the quiz (≥90% — effectively
+  // a perfect 3/3 since quizzes are 3 questions, so scores are 0/33/67/100).
+  const finalScore = lesson.quiz?.score;
+  if (typeof finalScore === 'number' && finalScore >= 90) {
+    const stage = DATA.find(s => s.id === lesson.stageId);
+    const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId);
+    state.aiInstructor.lastCelebration = {
+      topicId: lesson.topicId,
+      stageId: lesson.stageId,
+      name: topic?.name || 'this topic',
+      score: finalScore,
+      ts: new Date().toISOString(),
+    };
+  }
   state.aiInstructor.lesson = null;
   save();
   aiRenderGreeting();
