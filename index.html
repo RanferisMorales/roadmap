@@ -2087,6 +2087,31 @@ abbr.glossary-term:hover::after {
 :root[data-theme="dark"] .auth-success { background: #064e3b; color: #d1fae5; }
 .auth-success-inline { background: #d1fae5 !important; color: #064e3b !important; border-left-color: #10b981 !important; }
 :root[data-theme="dark"] .auth-success-inline { background: #064e3b !important; color: #d1fae5 !important; }
+/* PUSH 48 — account-deletion (danger-zone) styling */
+.auth-danger-zone {
+  margin-top: 12px; padding: 14px 16px;
+  background: color-mix(in srgb, #dc2626 8%, var(--bg-card));
+  border: 2px dashed #dc2626; border-radius: 10px;
+}
+.auth-danger-label {
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
+  color: #7f1d1d; margin: 0 0 6px 0 !important; text-transform: uppercase; letter-spacing: 0.5px;
+}
+:root[data-theme="dark"] .auth-danger-label { color: #fca5a5; }
+.auth-danger-btn {
+  padding: 8px 16px; background: #fee2e2; color: #7f1d1d;
+  border: 2px solid #dc2626; border-radius: 8px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 14px;
+  cursor: pointer;
+}
+.auth-danger-btn:hover { background: #dc2626; color: #fff; }
+.auth-danger-btn:disabled { opacity: 0.55; cursor: wait; }
+:root[data-theme="dark"] .auth-danger-btn { background: #7f1d1d; color: #fee2e2; border-color: #ef4444; }
+.auth-danger-gate { border-color: #dc2626 !important; }
+.auth-danger-list {
+  margin: 8px 0 12px 22px; padding: 0;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5; color: var(--text);
+}
 .auth-menu { display: grid; gap: 14px; padding: 8px; }
 /* PUSH 45 — usage dashboard inside the account menu */
 .account-section {
@@ -12966,6 +12991,16 @@ const AUTH_API = {
     if (!r.ok) throw new Error(d.error || `change_failed_${r.status}`);
     return d;
   },
+  /* PUSH 48 */
+  async deleteAccount(email, password) {
+    const r = await apiFetch('/api/account', {
+      method: 'DELETE',
+      body: JSON.stringify({ email, password }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || `delete_failed_${r.status}`);
+    return d;
+  },
 };
 
 const STATE_API = {
@@ -20930,6 +20965,8 @@ function friendlyAuthError(err) {
     invalid_or_expired_token: 'This reset link is invalid or expired. Request a new one.',
     wrong_current_password: 'Current password is incorrect.',
     same_password: 'New password must be different from your current one.',
+    wrong_password: 'That password is incorrect.',
+    email_mismatch: 'The email you typed doesn\'t match your signed-in account.',
   };
   return map[err] || ('Error: ' + err);
 }
@@ -21224,11 +21261,95 @@ function openAuthMenu() {
         <button class="secondary" onclick="closePracticeModal()" type="button">Close</button>
         <button class="primary" onclick="closePracticeModal(); authSignOut()" type="button">Sign out</button>
       </div>
+      <div class="auth-danger-zone">
+        <p class="auth-danger-label">Danger zone</p>
+        <button class="auth-danger-btn" onclick="closePracticeModal(); openDeleteAccount()" type="button">⚠ Delete account</button>
+        <p class="auth-fineprint">Permanently removes your account + all synced data (notes, lessons, mastery scores, usage history). Local-only data on other unsigned-in devices is unaffected. <strong>This cannot be undone.</strong></p>
+      </div>
     </div>
   `;
   showPracticeModal('👤 Account', html);
   // Fetch + render usage data in the background
   fetchAndRenderAccountUsage();
+}
+
+/* PUSH 48: Account deletion — double-confirm via typing email + password. */
+function openDeleteAccount() {
+  if (!state.auth.user) { openAuthGate('login'); return; }
+  const u = state.auth.user;
+  const html = `
+    <div class="ai-setup auth-gate auth-danger-gate">
+      <h3>⚠ Delete your account</h3>
+      <p>This will <strong>permanently delete</strong> everything tied to <strong>${escapeHtml(u.email)}</strong>:</p>
+      <ul class="auth-danger-list">
+        <li>Your sign-in account</li>
+        <li>All synced state (notes, completed topics, mastery scores)</li>
+        <li>Notebook pages stored server-side</li>
+        <li>AI Teacher lesson + usage history</li>
+        <li>All sessions on all devices</li>
+      </ul>
+      <p>To confirm, type your email and password below.</p>
+      <form onsubmit="event.preventDefault(); deleteAccountSubmit()">
+        <label class="auth-label" for="delEmail">Your email</label>
+        <input class="auth-input" type="email" id="delEmail" autocomplete="email" required spellcheck="false" placeholder="${escapeHtml(u.email)}" />
+        <label class="auth-label" for="delPassword">Your password</label>
+        <input class="auth-input" type="password" id="delPassword" autocomplete="current-password" required minlength="10" />
+        <div class="auth-error" id="delError" role="alert" aria-live="polite" style="display:none;"></div>
+        <div class="auth-actions">
+          <button class="secondary" type="button" onclick="closePracticeModal(); openAuthMenu()">← Back to account</button>
+          <button class="auth-danger-btn" type="submit" id="delSubmitBtn">⚠ Delete account permanently</button>
+        </div>
+      </form>
+      <p class="auth-fineprint">This action is irreversible. After deletion, you'll be signed out and your data is gone from our servers.</p>
+    </div>
+  `;
+  showPracticeModal('⚠ Delete account', html);
+  setTimeout(() => document.getElementById('delEmail')?.focus(), 30);
+}
+
+async function deleteAccountSubmit() {
+  const emailEl = document.getElementById('delEmail');
+  const pwEl = document.getElementById('delPassword');
+  const errEl = document.getElementById('delError');
+  const btn = document.getElementById('delSubmitBtn');
+  if (!emailEl || !pwEl || !btn) return;
+  const email = emailEl.value.trim();
+  const password = pwEl.value;
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Deleting…';
+  try {
+    await AUTH_API.deleteAccount(email, password);
+    // Server cleared the cookie + deleted user data. Wipe local mirrors.
+    resetUserScopedState();
+    state.auth.user = null;
+    state.auth.syncedAt = null;
+    state.auth.serverVersion = 0;
+    state.auth.lastLocalEdit = 0;
+    saveNow();
+    renderAuthIndicator();
+    // Show a final confirmation
+    closePracticeModal();
+    showPracticeModal('Account deleted', `
+      <div class="auth-menu">
+        <h3>✓ Account deleted</h3>
+        <p>Your account and all associated data have been permanently removed from our servers.</p>
+        <p class="auth-fineprint">Local data on this device has also been cleared. You can create a new account anytime.</p>
+        <div class="auth-actions">
+          <button class="primary" onclick="closePracticeModal()" type="button">Close</button>
+        </div>
+      </div>
+    `);
+    // Re-render anything that read user state
+    if (typeof hydrate === 'function') hydrate();
+  } catch (e) {
+    const msg = e?.message || 'delete_failed';
+    errEl.textContent = friendlyAuthError(msg);
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚠ Delete account permanently';
+  }
 }
 
 /* PUSH 47: Change password form (signed-in users who know their current pw). */
