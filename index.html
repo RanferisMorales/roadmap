@@ -12956,6 +12956,16 @@ const AUTH_API = {
   async logout() {
     await apiFetch('/api/auth/logout', { method: 'POST' });
   },
+  /* PUSH 47 */
+  async changePassword(currentPassword, newPassword) {
+    const r = await apiFetch('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || `change_failed_${r.status}`);
+    return d;
+  },
 };
 
 const STATE_API = {
@@ -20918,6 +20928,8 @@ function friendlyAuthError(err) {
     signup_failed: 'Couldn\'t create that account. The email may already be in use — try Sign in instead.',
     invalid_body: 'Something went wrong sending the request. Try again.',
     invalid_or_expired_token: 'This reset link is invalid or expired. Request a new one.',
+    wrong_current_password: 'Current password is incorrect.',
+    same_password: 'New password must be different from your current one.',
   };
   return map[err] || ('Error: ' + err);
 }
@@ -21207,6 +21219,7 @@ function openAuthMenu() {
         <div id="accountUsageContent" style="display:none;"></div>
       </div>
       <div class="auth-actions">
+        <button class="secondary" onclick="closePracticeModal(); openChangePassword()" type="button">🔑 Change password</button>
         <button class="secondary" onclick="closePracticeModal(); authForceSyncNow()" type="button">⟳ Sync now</button>
         <button class="secondary" onclick="closePracticeModal()" type="button">Close</button>
         <button class="primary" onclick="closePracticeModal(); authSignOut()" type="button">Sign out</button>
@@ -21216,6 +21229,80 @@ function openAuthMenu() {
   showPracticeModal('👤 Account', html);
   // Fetch + render usage data in the background
   fetchAndRenderAccountUsage();
+}
+
+/* PUSH 47: Change password form (signed-in users who know their current pw). */
+function openChangePassword() {
+  if (!state.auth.user) { openAuthGate('login'); return; }
+  const html = `
+    <div class="ai-setup auth-gate">
+      <h3>🔑 Change your password</h3>
+      <p>Enter your current password, then choose a new one (minimum 10 characters). All your other signed-in devices will be signed out.</p>
+      <form onsubmit="event.preventDefault(); changePasswordSubmit()">
+        <label class="auth-label" for="cpCurrent">Current password</label>
+        <input class="auth-input" type="password" id="cpCurrent" autocomplete="current-password" required minlength="10" />
+        <label class="auth-label" for="cpNew">New password</label>
+        <input class="auth-input" type="password" id="cpNew" autocomplete="new-password" required minlength="10" />
+        <label class="auth-label" for="cpConfirm">Confirm new password</label>
+        <input class="auth-input" type="password" id="cpConfirm" autocomplete="new-password" required minlength="10" />
+        <div class="auth-error" id="cpError" role="alert" aria-live="polite" style="display:none;"></div>
+        <div class="auth-actions">
+          <button class="secondary" type="button" onclick="closePracticeModal(); openAuthMenu()">← Back</button>
+          <button class="primary" type="submit" id="cpSubmitBtn">Update password</button>
+        </div>
+      </form>
+      <p class="auth-fineprint">For security, changing your password signs out all OTHER devices. Your current session here stays.</p>
+    </div>
+  `;
+  showPracticeModal('🔑 Change password', html);
+  setTimeout(() => document.getElementById('cpCurrent')?.focus(), 30);
+}
+
+async function changePasswordSubmit() {
+  const curEl = document.getElementById('cpCurrent');
+  const newEl = document.getElementById('cpNew');
+  const confEl = document.getElementById('cpConfirm');
+  const errEl = document.getElementById('cpError');
+  const btn = document.getElementById('cpSubmitBtn');
+  if (!curEl || !newEl || !confEl || !btn) return;
+  const current = curEl.value;
+  const newPw = newEl.value;
+  const conf = confEl.value;
+  errEl.style.display = 'none';
+  if (newPw !== conf) {
+    errEl.textContent = 'New passwords don\'t match.';
+    errEl.style.display = '';
+    return;
+  }
+  if (newPw === current) {
+    errEl.textContent = 'New password must be different from your current one.';
+    errEl.style.display = '';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Updating…';
+  try {
+    await AUTH_API.changePassword(current, newPw);
+    closePracticeModal();
+    // Reopen account menu with a brief success message.
+    openAuthMenu();
+    setTimeout(() => {
+      const section = document.querySelector('.auth-menu');
+      if (section) {
+        const ok = document.createElement('div');
+        ok.className = 'auth-success';
+        ok.textContent = '✓ Password updated. Other devices have been signed out.';
+        section.insertBefore(ok, section.firstChild?.nextSibling || null);
+      }
+    }, 50);
+  } catch (e) {
+    const msg = e?.message || 'change_failed';
+    errEl.textContent = friendlyAuthError(msg);
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Update password';
+  }
 }
 
 /* PUSH 45: Fetch usage from the backend and render it into the account menu. */
