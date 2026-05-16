@@ -2211,26 +2211,36 @@ abbr.glossary-term:hover::after {
 
 /* PUSH 35 — Notebook: two-pane layout, sidebar w/ search + filters + page list,
    main pane w/ title input + Markdown editor + tag chips + preview toggle.
-   The 📌 Save-to-notebook button in lesson runner has a "just saved" pulse. */
+   The 📌 Save-to-notebook button in lesson runner has a "just saved" pulse.
+   PUSH 38: page-side gets min-width: 0 + min-height: 0 to actually shrink in grid.
+   Action buttons rendered as icons-only at narrow widths. */
+/* When the notebook is open, let the modal go wider than the default 760px so
+   the two-pane layout actually has room. The notebook modal targets ~1000px. */
+.practice-overlay.notebook-open .practice-box { max-width: 1000px; }
 .notebook-container {
-  display: grid; grid-template-columns: 280px 1fr; gap: 14px;
-  height: 70vh; min-height: 480px;
+  display: grid; grid-template-columns: minmax(220px, 280px) 1fr; gap: 14px;
+  height: 72vh; min-height: 480px;
+  min-width: 0;   /* fix: allow inner panes to shrink below their content */
 }
 @media (max-width: 720px) {
-  .notebook-container { grid-template-columns: 1fr; height: 75vh; }
+  .notebook-container { grid-template-columns: 1fr; height: 80vh; }
 }
 .notebook-sidebar {
   display: grid; grid-template-rows: auto auto auto 1fr; gap: 8px;
   padding: 10px 10px 4px;
   background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
   overflow: hidden;
+  min-width: 0;
 }
-.notebook-sidebar-head { display: flex; gap: 6px; }
+/* PUSH 38: use flex-wrap so the Export button drops to its own line on
+   narrow screens instead of disappearing. New page button always takes priority. */
+.notebook-sidebar-head { display: flex; gap: 6px; flex-wrap: wrap; }
 .notebook-new-btn, .notebook-export-btn {
   padding: 8px 10px; background: var(--node-stage); color: #1a1a1a;
   border: 2px solid var(--border); border-radius: 8px;
   font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px;
-  cursor: pointer; flex: 1;
+  cursor: pointer; flex: 1 1 auto; min-width: 0;
+  white-space: nowrap;
 }
 .notebook-export-btn { background: var(--bg); color: var(--text); flex: 0 0 auto; }
 .notebook-new-btn:hover, .notebook-export-btn:hover { filter: brightness(1.05); }
@@ -2287,24 +2297,36 @@ abbr.glossary-term:hover::after {
   padding: 10px 12px;
   background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
   overflow: hidden;
+  min-width: 0;
+  min-height: 0;   /* PUSH 38: critical — otherwise 1fr row doesn't actually shrink */
 }
+/* PUSH 38: title on its own line, actions on the next line. Stops the title
+   from getting squeezed down to 4-character width when 4-5 buttons are next
+   to it. Wraps cleanly on every viewport size. */
 .notebook-page-head {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  display: grid; gap: 8px;
+  grid-template-rows: auto auto;
+}
+.notebook-page-title-row {
+  display: flex; gap: 8px; align-items: center;
+  min-width: 0;
 }
 .notebook-page-title, .notebook-page-title-readonly {
-  flex: 1; min-width: 0;
-  font-family: 'Architects Daughter', cursive; font-size: 22px;
-  padding: 6px 8px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  flex: 1; min-width: 0; width: 100%;
+  font-family: 'Architects Daughter', cursive; font-size: 20px;
+  padding: 6px 10px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
   color: var(--text);
 }
 .notebook-page-title-readonly {
   background: transparent; border: none; padding: 6px 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .notebook-page-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
 .notebook-icon-btn, .notebook-mode-btn {
   padding: 5px 10px; background: var(--bg); border: 2px solid var(--border); border-radius: 7px;
   font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px; color: var(--text);
   cursor: pointer;
+  white-space: nowrap;
 }
 .notebook-icon-btn.active, .notebook-mode-btn.active { background: var(--node-stage); color: #1a1a1a; border-color: var(--node-stage); }
 .notebook-icon-btn.danger:hover { background: #fee2e2; color: #7f1d1d; border-color: #dc2626; }
@@ -3500,8 +3522,8 @@ body.locked > .container, body.locked > footer { display: none !important; }
           <li>Want <strong>Vue, Angular, Svelte, Ruby, Java, or .NET</strong> as your primary stack</li>
           <li>Want <strong>game dev, embedded, or hardware</strong></li>
           <li>Want <strong>OpenAI</strong> or non-Anthropic LLMs — this roadmap is Claude-only by design</li>
-          <li>Want to skip the <strong>fundamentals</strong> (programming, web, backend) and start at AI</li>
-          <li>Need <strong>external accountability</strong> — a boss or teacher checking on you weekly</li>
+          <li>Already have <strong>web + backend + DSA</strong> mastered and only want LLM-app material — Stages 0-4 will feel slow to you</li>
+          <li>Need a <strong>human boss/cohort breathing down your neck</strong> daily — the built-in AI Teacher + Accountability tracker help, but they don't replace a job with real coworkers</li>
         </ul>
       </div>
       <div class="intro-card meta">
@@ -3509,7 +3531,9 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <ul>
           <li data-personal="stats"><strong>11 stages</strong> (9 core + 2 electives: 📱 Mobile, 🧪 Data Science/ML), 58 branches, 266 topics, 687 curated links</li>
           <li><strong>853 glossary entries</strong> with global A-Z search</li>
-          <li><strong>Built for self-teaching</strong> — ships with a 🎓 <strong>AI Tutor</strong> (Claude) + 📊 <strong>Accountability</strong> tracker</li>
+          <li><strong>🎓 AI Teacher</strong> (Claude) — proactive 5-step lessons (Objectives → Lecture → Worked example → Practice → Quiz) with adaptive next-topic picker + mastery tracking</li>
+          <li><strong>📓 Notebook</strong> — unified pages where you (or the AI Teacher) save lesson content, plus Markdown export</li>
+          <li><strong>📊 Accountability</strong> tracker — daily hours, weekly check-ins, streak</li>
           <li>Covers <strong>production patterns</strong> — System Design, DevOps, Security, Observability. (Example builds are MVPs, not production-grade systems.)</li>
           <li><strong>Up to date for 2026</strong> — Claude Sonnet 4.6, Voyage AI embeddings, MCP, agents, RAG</li>
           <li><strong>15 step-by-step Build guides</strong> with copy-paste code</li>
@@ -3631,7 +3655,8 @@ body.locked > .container, body.locked > footer { display: none !important; }
           <h3>🛠 Built-in Tools (click the ⋯ More button in the header)</h3>
           <ul style="columns: 2; column-gap: 24px;">
             <li><strong>📋 How to Study</strong> — per-phase loop + Fundamentals Compass + universal study patterns</li>
-            <li><strong>🎓 AI Tutor</strong> — chat with Claude as tutor. Knows your topic + progress. 6 quick actions</li>
+            <li><strong>🎓 AI Teacher</strong> — proactive 5-step lessons (Objectives → Lecture → Example → Practice → Quiz), adaptive picker, mastery tracking. Demo runs without an API key</li>
+            <li><strong>📓 Notebook</strong> — unified pages: yours + per-topic notes + lesson saves. Search + Markdown export</li>
             <li><strong>🏫 Bootcamp</strong> — compresses to 12/16/24/52/84-week schedules; weekly topics + projects</li>
             <li><strong>📊 Accountability</strong> — daily hours + weekly check-ins + streak</li>
             <li><strong>📝 Definitions Quiz</strong> — 10-Q MCQ over the glossary. By stage / tier / acronyms</li>
@@ -9413,7 +9438,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
       <button class="copy-link-btn" id="mCopyLink" onclick="copyTopicLink()" title="Copy a shareable link to this topic" aria-label="Copy a shareable link to this topic">🔗 Copy link</button>
       <button class="copy-link-btn" id="mFlashcardsBtn" onclick="openFlashcardsForTopic()" title="Study this topic with spaced-repetition flashcards" aria-label="Open flashcards for this topic" style="display:none;">🧠 Flashcards</button>
       <button class="copy-link-btn" id="mTryCodeBtn" onclick="openTryCode()" title="Open a code playground for this topic" aria-label="Open code playground for this topic" style="display:none;">💻 Try Code</button>
-      <button class="copy-link-btn" id="mAskAiBtn" onclick="aiAskAboutCurrentTopic()" title="Ask the AI Tutor about this topic" aria-label="Ask AI about this topic">🎓 Ask AI</button>
+      <button class="copy-link-btn" id="mAskAiBtn" onclick="aiAskAboutCurrentTopic()" title="Ask the AI Teacher about this topic" aria-label="Ask AI Teacher about this topic">🎓 Ask AI</button>
       <button class="modal-close" onclick="closeModal()" aria-label="Close topic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -13144,6 +13169,8 @@ function closePracticeModal() {
   if (typeof _notebookFlush === 'function') _notebookFlush();
   const wasOpen = m.classList.contains('open');
   m.classList.remove('open');
+  // PUSH 38: clear the wider-modal opt-in flag so the next modal isn't oversized.
+  m.classList.remove('notebook-open');
   m.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   if (wasOpen) restoreFocus();
@@ -18512,7 +18539,7 @@ const STUDY_GENERAL = [
   { title: 'What the 4 tiers actually mean', body: '<code>req</code> = must learn, no shortcuts. <code>rec</code> = strong upgrade, learn unless specific reason not to. <code>alt</code> = pick one from a group (the "(recommended)" suffix is the default). <code>opt</code> = skip without consequence, revisit only if curious.' },
   { title: 'Daily structure that actually works', body: '~2h focused theory (1 topic max) + ~3h building (apply that topic to your project) + 1–2 LeetCode-style problems. Total hours matter less than completing the full loop every day you study.' },
   { title: 'Weekly structure that actually works', body: 'Mon–Thu: theory + build. Fri: review what you forgot from the past 2 weeks using <strong>🎯 Hard Topics</strong> in More menu. Sat: ship something publicly (PR, blog post, tweet, demo). Sun: rest or read for fun — no exceptions on Sunday.' },
-  { title: 'When stuck, in order', body: '(1) Re-read the error message slowly. (2) Read the official docs for the failing function. (3) Search the exact error string. (4) Minimal reproduction in a fresh file. (5) Ask the 🎓 AI Instructor with the repro. (6) Post in Discord/Reddit with the repro + what you tried. Skip steps and you\'ll waste hours.' },
+  { title: 'When stuck, in order', body: '(1) Re-read the error message slowly. (2) Read the official docs for the failing function. (3) Search the exact error string. (4) Minimal reproduction in a fresh file. (5) Ask the 🎓 AI Teacher with the repro (chat mode handles freeform debugging best). (6) Post in Discord/Reddit with the repro + what you tried. Skip steps and you\'ll waste hours.' },
   { title: 'How to use the Bootcamp vs this guide', body: 'This guide tells you HOW to study each phase (the loop). 🏫 Bootcamp tells you WHEN — a calendar of which topics to cover which week. Use both: this for method, Bootcamp for schedule.' }
 ];
 
@@ -19297,10 +19324,13 @@ let __aiAbort = null;
    ============================================================ */
 const WHATS_NEW = [
   { date: '2026-05', items: [
-    '🏫 New <strong>Bootcamp</strong> mode — compress the roadmap into 12 / 16 / 24 / 52 / 84-week schedules with week-by-week curriculum, calendar view, and completion tracking.',
-    '🎓 New <strong>AI Instructor</strong> — chat with Claude as your personal tutor (uses your own Anthropic API key, stored only in your browser).',
-    '📊 New <strong>Accountability</strong> tracker — daily commitment, hour tracker, weekly check-ins with mood, streak counter.',
-    '📝 New <strong>Definitions Quiz</strong> — 4-choice multiple-choice drill over 853 glossary entries. By stage, by tier, or acronyms-only.',
+    '🎓 <strong>AI Teacher</strong> — upgrade of the old AI Instructor chat. Now runs proactive 5-step lessons (Objectives → Lecture → Worked example → Practice → Quiz) with an adaptive next-topic picker and per-topic mastery tracking. The old freeform chat is still there behind a "💬 Just chat" button.',
+    '▶ <strong>Demo lesson</strong> — walks all 5 steps with hardcoded content. Lets you try the AI Teacher without paying for an API key first.',
+    '📓 <strong>Notebook</strong> — unified pages where you (or the AI Teacher) save lesson content. Aggregates your existing per-topic notes too. Search, stage/tag filter, pin, Markdown export.',
+    '⚡ <strong>Perf pass</strong> — coalesced 89 sync localStorage writes into rAF-batched 1-per-frame. Throttled scroll handler. Pre-built omnisearch topic index (6× faster). Deferred URL hash updates so modals paint sooner.',
+    '🏫 <strong>Bootcamp</strong> mode — compress the roadmap into 12 / 16 / 24 / 52 / 84-week schedules with week-by-week curriculum, calendar view, and completion tracking.',
+    '📊 <strong>Accountability</strong> tracker — daily commitment, hour tracker, weekly check-ins with mood, streak counter.',
+    '📝 <strong>Definitions Quiz</strong> — 4-choice multiple-choice drill over 853 glossary entries. By stage, by tier, or acronyms-only.',
   ]},
   { date: '2026-04', items: [
     '📱 New <strong>Stage 9: Mobile Development</strong> elective — React Native + Expo, push notifications, App Store / Play Store distribution.',
@@ -20324,9 +20354,10 @@ const TOUR_STEPS = [
 <p>Click any topic node to open its modal — you'll see what it is, why it matters, key terms, resources, and practice challenges.</p>`
   },
   {
-    title: '🎓 The 5 most-used tools (in the ⋯ More menu)',
+    title: '🎓 The 6 most-used tools (in the ⋯ More menu)',
     body: `<ul>
-<li><strong>🎓 AI Instructor</strong> — chat with Claude as your tutor (BYO Anthropic API key, stored only in your browser)</li>
+<li><strong>🎓 AI Teacher</strong> — proactive 5-step lessons or freeform chat with Claude (BYO Anthropic API key, stored only in your browser). Demo runs without a key.</li>
+<li><strong>📓 Notebook</strong> — unified pages, AI Teacher save integration, Markdown export</li>
 <li><strong>🏫 Bootcamp</strong> — get a 12-84 week structured curriculum with weekly topics + practice + project</li>
 <li><strong>📊 Accountability</strong> — daily hour commitment, weekly check-ins, streak counter</li>
 <li><strong>📝 Definitions Quiz</strong> — multiple-choice drill over the 853-entry glossary by category</li>
@@ -21637,6 +21668,8 @@ function openNotebook() {
   state.notebook = state.notebook || { pages: [], currentPageId: null, searchQuery: '', filterStageId: null, filterTag: null };
   if (!Array.isArray(state.notebook.pages)) state.notebook.pages = [];
   notebookRender();
+  // PUSH 38: opt-in to the wider 1000px modal so the two-pane layout has room.
+  document.getElementById('practiceModal')?.classList.add('notebook-open');
 }
 
 function notebookRender() {
@@ -21722,13 +21755,15 @@ function notebookRender() {
     mainHtml = `
       <div class="notebook-main">
         <div class="notebook-page-head">
-          <input class="notebook-page-title" id="notebookPageTitle" value="${escapeHtml(current.title)}" placeholder="Page title" oninput="notebookOnTitleInput(this.value)" />
-          <div class="notebook-page-actions">
+          <div class="notebook-page-title-row">
+            <input class="notebook-page-title" id="notebookPageTitle" value="${escapeHtml(current.title)}" placeholder="Page title" oninput="notebookOnTitleInput(this.value)" />
             ${stageBadge}
-            <button class="notebook-icon-btn ${current.pinned ? 'active' : ''}" onclick="notebookTogglePinCurrent()" type="button" title="Pin to top">📌</button>
+          </div>
+          <div class="notebook-page-actions">
+            <button class="notebook-icon-btn ${current.pinned ? 'active' : ''}" onclick="notebookTogglePinCurrent()" type="button" title="Pin to top" aria-label="Pin">📌</button>
             <button class="notebook-mode-btn active" id="notebookEditBtn" onclick="notebookSetMode('edit')" type="button">Edit</button>
             <button class="notebook-mode-btn" id="notebookPreviewBtn" onclick="notebookSetMode('preview')" type="button">Preview</button>
-            <button class="notebook-icon-btn danger" onclick="notebookDeleteCurrent()" type="button" title="Delete this page">🗑</button>
+            <button class="notebook-icon-btn danger" onclick="notebookDeleteCurrent()" type="button" title="Delete this page" aria-label="Delete">🗑</button>
           </div>
         </div>
         <div class="notebook-tags-row">
