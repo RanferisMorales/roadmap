@@ -2076,6 +2076,17 @@ abbr.glossary-term:hover::after {
 .auth-actions button:disabled { opacity: 0.55; cursor: wait; }
 .auth-fineprint { font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute) !important; margin-top: 8px !important; line-height: 1.45; }
 .auth-indicator { background: color-mix(in srgb, var(--node-stage) 18%, var(--bg-card)); }
+.auth-forgot { margin: 8px 0 0 0 !important; text-align: right; font-family: 'Patrick Hand', cursive; font-size: 13.5px; }
+.auth-forgot a { color: var(--accent); text-decoration: underline; }
+.auth-success {
+  padding: 10px 12px; background: #d1fae5; color: #064e3b;
+  border-left: 4px solid #10b981; border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.4;
+  margin-top: 8px;
+}
+:root[data-theme="dark"] .auth-success { background: #064e3b; color: #d1fae5; }
+.auth-success-inline { background: #d1fae5 !important; color: #064e3b !important; border-left-color: #10b981 !important; }
+:root[data-theme="dark"] .auth-success-inline { background: #064e3b !important; color: #d1fae5 !important; }
 .auth-menu { display: grid; gap: 14px; padding: 8px; }
 /* PUSH 45 — usage dashboard inside the account menu */
 .account-section {
@@ -12965,6 +12976,22 @@ const STATE_API = {
     return r.json();
   },
 };
+
+/* PUSH 46: password reset API */
+const RESET_API = {
+  async request(email) {
+    const r = await apiFetch('/api/auth/request-reset', { method: 'POST', body: JSON.stringify({ email }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'request_failed');
+    return d;
+  },
+  async confirm(token, password) {
+    const r = await apiFetch('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'reset_failed');
+    return d;
+  },
+};
 const DEFAULT_SETTINGS = {
   fontSize: 'medium',       // small | medium | large
   density: 'comfortable',   // comfortable | compact
@@ -20819,6 +20846,10 @@ function openAuthGate(mode) {
           <button class="secondary" type="button" onclick="closePracticeModal()">Cancel</button>
           <button class="primary" type="submit" id="authSubmitBtn">${initialMode === 'signup' ? 'Create account' : 'Sign in'}</button>
         </div>
+        ${initialMode === 'login' ? `
+        <p class="auth-forgot">
+          <a href="#" onclick="event.preventDefault(); openForgotPassword();">Forgot your password?</a>
+        </p>` : ''}
       </form>
       <p class="auth-fineprint">Cookies are HttpOnly + SameSite=Strict. We don't share your email with anyone. Backend on Cloudflare Workers; data in Cloudflare D1 (SQLite).</p>
     </div>
@@ -20886,9 +20917,150 @@ function friendlyAuthError(err) {
     invalid_credentials: 'Email or password is incorrect.',
     signup_failed: 'Couldn\'t create that account. The email may already be in use — try Sign in instead.',
     invalid_body: 'Something went wrong sending the request. Try again.',
+    invalid_or_expired_token: 'This reset link is invalid or expired. Request a new one.',
   };
   return map[err] || ('Error: ' + err);
 }
+
+/* PUSH 46: "Forgot password?" — collect the email, request a reset link. */
+function openForgotPassword() {
+  const html = `
+    <div class="ai-setup auth-gate">
+      <h3>Forgot your password?</h3>
+      <p>Enter your email. If an account exists with that address, we'll send you a reset link. The link expires in 1 hour.</p>
+      <form onsubmit="event.preventDefault(); forgotSubmit()">
+        <label class="auth-label" for="forgotEmail">Email</label>
+        <input class="auth-input" type="email" id="forgotEmail" autocomplete="email" required spellcheck="false" />
+        <div class="auth-error" id="forgotError" role="alert" aria-live="polite" style="display:none;"></div>
+        <div class="auth-success" id="forgotSuccess" role="status" aria-live="polite" style="display:none;"></div>
+        <div class="auth-actions">
+          <button class="secondary" type="button" onclick="openAuthGate('login')">← Back to sign in</button>
+          <button class="primary" type="submit" id="forgotSubmitBtn">Send reset link</button>
+        </div>
+      </form>
+      <p class="auth-fineprint">For privacy, we always show "if an account exists" — we won't tell you whether the email is registered.</p>
+    </div>
+  `;
+  showPracticeModal('🔑 Reset password', html);
+  setTimeout(() => document.getElementById('forgotEmail')?.focus(), 30);
+}
+
+async function forgotSubmit() {
+  const emailEl = document.getElementById('forgotEmail');
+  const errEl = document.getElementById('forgotError');
+  const okEl = document.getElementById('forgotSuccess');
+  const btn = document.getElementById('forgotSubmitBtn');
+  if (!emailEl || !btn) return;
+  const email = emailEl.value.trim();
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const result = await RESET_API.request(email);
+    okEl.textContent = result.message || 'If an account exists with that email, a reset link has been sent.';
+    okEl.style.display = '';
+    emailEl.value = '';
+  } catch (e) {
+    errEl.textContent = friendlyAuthError(e?.message || 'request_failed');
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send reset link';
+  }
+}
+
+/* PUSH 46: When the URL has ?reset=<token>, open the reset-password form. */
+function openPasswordResetForm(token) {
+  const html = `
+    <div class="ai-setup auth-gate">
+      <h3>Set a new password</h3>
+      <p>Enter a new password for your account. Minimum 10 characters.</p>
+      <form onsubmit="event.preventDefault(); resetPasswordSubmit('${escapeHtml(token)}')">
+        <label class="auth-label" for="resetPwd">New password</label>
+        <input class="auth-input" type="password" id="resetPwd" autocomplete="new-password" required minlength="10" />
+        <label class="auth-label" for="resetPwd2">Confirm new password</label>
+        <input class="auth-input" type="password" id="resetPwd2" autocomplete="new-password" required minlength="10" />
+        <div class="auth-error" id="resetError" role="alert" aria-live="polite" style="display:none;"></div>
+        <div class="auth-actions">
+          <button class="secondary" type="button" onclick="closePracticeModal()">Cancel</button>
+          <button class="primary" type="submit" id="resetSubmitBtn">Set new password</button>
+        </div>
+      </form>
+      <p class="auth-fineprint">After resetting, all your existing sessions will be signed out (security best practice). You'll then sign in with the new password.</p>
+    </div>
+  `;
+  showPracticeModal('🔑 Set a new password', html);
+  setTimeout(() => document.getElementById('resetPwd')?.focus(), 30);
+}
+
+async function resetPasswordSubmit(token) {
+  const p1 = document.getElementById('resetPwd');
+  const p2 = document.getElementById('resetPwd2');
+  const errEl = document.getElementById('resetError');
+  const btn = document.getElementById('resetSubmitBtn');
+  if (!p1 || !p2 || !btn) return;
+  const pw1 = p1.value;
+  const pw2 = p2.value;
+  errEl.style.display = 'none';
+  if (pw1 !== pw2) {
+    errEl.textContent = 'Passwords don\'t match.';
+    errEl.style.display = '';
+    return;
+  }
+  if (pw1.length < 10) {
+    errEl.textContent = 'Password must be at least 10 characters.';
+    errEl.style.display = '';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Setting password…';
+  try {
+    await RESET_API.confirm(token, pw1);
+    // Clear the ?reset=... from the URL so a refresh doesn't reopen the form.
+    try {
+      const u = new URL(location.href);
+      u.searchParams.delete('reset');
+      history.replaceState(null, '', u.pathname + (u.searchParams.toString() ? '?' + u.searchParams.toString() : '') + u.hash);
+    } catch (_) {}
+    // Reset wipes server sessions → also wipe local auth state.
+    state.auth.user = null;
+    state.auth.syncedAt = null;
+    state.auth.serverVersion = 0;
+    state.auth.lastLocalEdit = 0;
+    saveNow();
+    if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
+    // Open sign-in with a success message
+    openAuthGate('login');
+    setTimeout(() => {
+      const err = document.getElementById('authError');
+      if (err) {
+        err.textContent = '✓ Password reset. Sign in with your new password.';
+        err.style.display = '';
+        err.classList.add('auth-success-inline');
+      }
+    }, 100);
+  } catch (e) {
+    errEl.textContent = friendlyAuthError(e?.message || 'reset_failed');
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Set new password';
+  }
+}
+
+/* PUSH 46: detect ?reset=<token> on page load — opens the reset form. */
+function checkResetTokenInUrl() {
+  try {
+    const u = new URL(location.href);
+    const token = u.searchParams.get('reset');
+    if (token && token.length >= 16 && token.length <= 128) {
+      openPasswordResetForm(token);
+    }
+  } catch (_) {}
+}
+// Run after the page mounts.
+window.addEventListener('load', () => { checkResetTokenInUrl(); });
 
 async function authSignOut() {
   try { await AUTH_API.logout(); } catch (_) {}
