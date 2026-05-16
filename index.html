@@ -2112,6 +2112,24 @@ abbr.glossary-term:hover::after {
   margin: 8px 0 12px 22px; padding: 0;
   font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.5; color: var(--text);
 }
+/* PUSH 49 — offline banner pinned to the top of the page */
+.offline-banner {
+  position: sticky; top: 0; left: 0; right: 0; z-index: 900;
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 14px;
+  background: #fef3c7; color: #78350f;
+  border-bottom: 2px solid #d97706;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; line-height: 1.3;
+}
+:root[data-theme="dark"] .offline-banner { background: #422006; color: #fde68a; border-bottom-color: #fbbf24; }
+.offline-banner .offline-icon { font-size: 18px; }
+.offline-banner .offline-text { flex: 1; }
+.offline-banner .offline-retry {
+  padding: 4px 12px; cursor: pointer;
+  background: #d97706; color: #fff; border: none; border-radius: 6px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+}
+.offline-banner .offline-retry:hover { filter: brightness(1.1); }
 .auth-menu { display: grid; gap: 14px; padding: 8px; }
 /* PUSH 45 — usage dashboard inside the account menu */
 .account-section {
@@ -21175,13 +21193,31 @@ async function syncStateFromServer() {
 
 /* PUSH 44: Push current state to server. Debounced.
    PUSH 45: also calls renderAuthIndicator() on syncing/synced/error transitions
-   so the pill in the intro shows the live status. */
+   so the pill in the intro shows the live status.
+   PUSH 49: classifies failures into "offline" vs "real error" and auto-retries
+   on reconnect. */
 let __statePushTimer = null;
+let __pendingUnsyncedChanges = false;     // true when at least one save() has happened since last successful push
+let __offlineState = false;                // are we currently in offline mode?
+let __offlineRetryTimer = null;
+
 function schedulePushStateToServer() {
   if (!state.auth.user) return;
+  __pendingUnsyncedChanges = true;
   if (__statePushTimer) clearTimeout(__statePushTimer);
   __statePushTimer = setTimeout(pushStateToServer, 1500);
 }
+
+function isLikelyNetworkError(err) {
+  const msg = String(err?.message || err || '').toLowerCase();
+  return msg.includes('failed to fetch')
+      || msg.includes('networkerror')
+      || msg.includes('load failed')
+      || msg.includes('net::')
+      || msg.includes('econnrefused')
+      || msg.includes('aborted');
+}
+
 async function pushStateToServer() {
   if (!state.auth.user) return;
   if (state.auth.syncing) return; // already in flight; will catch up next save
@@ -21193,11 +21229,84 @@ async function pushStateToServer() {
     state.auth.syncedAt = result.updated_at;
     state.auth.serverVersion = result.version;
     state.auth.syncError = null;
+    __pendingUnsyncedChanges = false;
+    // We just successfully reached the backend — clear offline state if it was set.
+    if (__offlineState) setOnline();
   } catch (e) {
     state.auth.syncError = String(e?.message || e);
+    if (isLikelyNetworkError(e)) {
+      setOffline();
+    }
   } finally {
     state.auth.syncing = false;
     if (typeof renderAuthIndicator === 'function') renderAuthIndicator();
+    if (typeof renderOfflineBanner === 'function') renderOfflineBanner();
+  }
+}
+
+/* PUSH 49: offline / reconnect handlers */
+function setOffline() {
+  if (__offlineState) return;
+  __offlineState = true;
+  scheduleOfflineRetry();
+}
+
+function setOnline() {
+  if (!__offlineState && !__pendingUnsyncedChanges) return;
+  __offlineState = false;
+  if (__offlineRetryTimer) { clearTimeout(__offlineRetryTimer); __offlineRetryTimer = null; }
+  if (typeof renderOfflineBanner === 'function') renderOfflineBanner();
+}
+
+/* Retries on a backoff curve: 5s, 10s, 20s, 40s, 60s capped. */
+let __offlineRetryDelay = 5000;
+function scheduleOfflineRetry() {
+  if (__offlineRetryTimer) return;
+  __offlineRetryTimer = setTimeout(async () => {
+    __offlineRetryTimer = null;
+    // Only try if we're still signed in + have pending changes
+    if (!state.auth.user || !__pendingUnsyncedChanges) {
+      __offlineState = false;
+      __offlineRetryDelay = 5000;
+      if (typeof renderOfflineBanner === 'function') renderOfflineBanner();
+      return;
+    }
+    try {
+      await pushStateToServer();
+      if (!state.auth.syncError) {
+        __offlineRetryDelay = 5000; // reset on success
+      } else if (isLikelyNetworkError(state.auth.syncError)) {
+        __offlineRetryDelay = Math.min(60000, __offlineRetryDelay * 2);
+        scheduleOfflineRetry();
+      }
+    } catch (_) {
+      __offlineRetryDelay = Math.min(60000, __offlineRetryDelay * 2);
+      scheduleOfflineRetry();
+    }
+  }, __offlineRetryDelay);
+}
+
+/* Browser-level online/offline events as supplementary signals. The actual
+   reachability check is the fetch result above — these events just nudge us
+   to retry sooner when the OS network state flips. */
+window.addEventListener('online',  () => { if (state.auth?.user && __pendingUnsyncedChanges) pushStateToServer(); });
+window.addEventListener('offline', () => { setOffline(); });
+
+/* PUSH 49: render the offline/queued banner near the top of the page. */
+function renderOfflineBanner() {
+  let bar = document.getElementById('offlineBanner');
+  if (__offlineState && state.auth?.user) {
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'offlineBanner';
+      bar.className = 'offline-banner';
+      bar.setAttribute('role', 'status');
+      bar.setAttribute('aria-live', 'polite');
+      document.body.insertBefore(bar, document.body.firstChild);
+    }
+    bar.innerHTML = `<span class="offline-icon">⚠</span><span class="offline-text">Offline — changes saved locally, will sync when reconnected.</span><button class="offline-retry" onclick="pushStateToServer()" type="button">Retry now</button>`;
+  } else if (bar) {
+    bar.remove();
   }
 }
 
