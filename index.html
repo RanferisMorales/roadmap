@@ -2037,6 +2037,139 @@ abbr.glossary-term:hover::after {
   40% { transform: scale(1); opacity: 1; }
 }
 
+/* ---- AI TEACHER — greeting, lesson runner, quiz UI (PUSH 32) ---- */
+.teacher-greeting { display: grid; gap: 16px; padding: 4px; }
+.teacher-greet-hello { font-family: 'Architects Daughter', cursive; font-size: 18px; color: var(--text); }
+.teacher-today-card {
+  padding: 18px 20px; border: 3px solid var(--node-stage); border-radius: 14px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--node-stage) 20%, var(--bg-card)) 0%, var(--bg-card) 100%);
+  display: grid; gap: 8px;
+}
+.teacher-today-label { font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; }
+.teacher-today-topic { font-family: 'Architects Daughter', cursive; font-size: 26px; color: var(--text); line-height: 1.2; }
+.teacher-today-reason { font-family: 'Patrick Hand', cursive; font-size: 15px; color: var(--text); line-height: 1.4; }
+.teacher-today-steps { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); }
+.teacher-start-btn {
+  margin-top: 6px; padding: 10px 18px; background: var(--node-stage); color: #1a1a1a;
+  border: 2.5px solid var(--border); border-radius: 10px;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 16px; cursor: pointer;
+  justify-self: start;
+}
+.teacher-start-btn:hover { filter: brightness(1.08); }
+.teacher-start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.teacher-alts { display: grid; gap: 8px; }
+.teacher-alts-label { font-family: 'Kalam', cursive; font-weight: 700; font-size: 13px; color: var(--text-mute); }
+.teacher-alt-btn {
+  display: grid; gap: 2px; padding: 10px 14px; text-align: left;
+  background: var(--bg-card); border: 2px dashed var(--border); border-radius: 10px;
+  cursor: pointer; color: var(--text);
+}
+.teacher-alt-btn:hover { border-style: solid; border-color: var(--node-stage); }
+.teacher-alt-name { font-family: 'Kalam', cursive; font-weight: 700; font-size: 15px; }
+.teacher-alt-reason { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); }
+.teacher-greet-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 4px; border-top: 1px dashed var(--border); }
+
+.teacher-topic-picker { display: grid; gap: 8px; }
+.teacher-topic-picker details {
+  border: 2px solid var(--border); border-radius: 10px; padding: 10px 14px; background: var(--bg-card);
+}
+.teacher-topic-picker summary {
+  cursor: pointer; font-family: 'Patrick Hand', cursive; font-size: 15px; color: var(--text); padding: 4px 0;
+}
+.teacher-topic-list { display: grid; gap: 4px; padding-top: 8px; }
+.teacher-topic-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px;
+  cursor: pointer; font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+  text-align: left;
+}
+.teacher-topic-row:hover { border-color: var(--node-stage); background: color-mix(in srgb, var(--node-stage) 10%, var(--bg)); }
+.teacher-topic-name { flex: 1; }
+.teacher-mastery-badge { padding: 2px 8px; border-radius: 999px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; }
+.teacher-mastery-badge.good { background: #d1fae5; color: #064e3b; }
+.teacher-mastery-badge.low { background: #fef3c7; color: #78350f; }
+:root[data-theme="dark"] .teacher-mastery-badge.good { background: #064e3b; color: #d1fae5; }
+:root[data-theme="dark"] .teacher-mastery-badge.low { background: #422006; color: #fef3c7; }
+
+.teacher-progress-summary {
+  padding: 10px 14px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+  margin-bottom: 12px; font-family: 'Patrick Hand', cursive; font-size: 15px; color: var(--text);
+}
+.teacher-progress-table { width: 100%; border-collapse: collapse; font-family: 'Patrick Hand', cursive; font-size: 14px; }
+.teacher-progress-table th, .teacher-progress-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+.teacher-progress-table th { font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-mute); font-size: 12px; text-transform: uppercase; }
+.teacher-mastery-bar { position: relative; width: 100%; height: 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.teacher-mastery-bar .teacher-mastery-fill { height: 100%; transition: width 0.3s; }
+.teacher-mastery-bar span { position: absolute; inset: 0; text-align: center; font-family: 'Kalam', cursive; font-weight: 700; font-size: 11px; color: var(--text); line-height: 18px; mix-blend-mode: difference; filter: invert(1); }
+
+.lesson-runner { display: grid; gap: 14px; padding: 4px; }
+.lesson-header { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 2px dashed var(--border); position: relative; }
+.lesson-topic-name { font-family: 'Architects Daughter', cursive; font-size: 22px; color: var(--text); }
+.lesson-topic-stage { font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); }
+.lesson-abandon-btn {
+  position: absolute; top: 0; right: 0;
+  padding: 4px 10px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'Patrick Hand', cursive; font-size: 12px; color: var(--text-mute); cursor: pointer;
+}
+.lesson-abandon-btn:hover { color: var(--text); border-color: var(--node-stage); }
+.lesson-stepper { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.lesson-step-pip {
+  display: inline-flex; gap: 4px; align-items: center;
+  padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  font-family: 'Kalam', cursive; font-weight: 700; font-size: 12px;
+  border: 2px solid var(--border); background: var(--bg-card); color: var(--text-mute);
+}
+.lesson-step-pip.current { background: var(--node-stage); color: #1a1a1a; border-color: var(--node-stage); transform: scale(1.04); }
+.lesson-step-pip.done { background: #d1fae5; color: #064e3b; border-color: #10b981; }
+:root[data-theme="dark"] .lesson-step-pip.done { background: #064e3b; color: #d1fae5; }
+.lesson-step-pip.pending { opacity: 0.6; cursor: not-allowed; }
+.lesson-step-arrow { color: var(--text-mute); font-size: 16px; padding: 0 2px; }
+.lesson-step-header { font-family: 'Architects Daughter', cursive; font-size: 20px; color: var(--text); margin-bottom: 8px; }
+.lesson-step-content {
+  padding: 14px 16px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+  font-family: 'Patrick Hand', cursive; font-size: 15px; line-height: 1.55; color: var(--text);
+  max-height: 50vh; overflow-y: auto;
+}
+.lesson-step-content pre { background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); overflow-x: auto; font-family: 'Consolas', monospace; font-size: 13px; }
+.lesson-step-content code { font-family: 'Consolas', monospace; font-size: 13px; background: var(--bg); padding: 1px 5px; border-radius: 3px; }
+.lesson-step-content pre code { background: none; padding: 0; }
+.lesson-step-actions { display: flex; gap: 8px; padding-top: 8px; }
+.lesson-practice-input { display: grid; gap: 8px; padding: 12px 0; }
+.lesson-practice-input label { font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); }
+.lesson-practice-input textarea {
+  min-height: 120px; padding: 10px 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); resize: vertical;
+}
+.lesson-practice-feedback {
+  padding: 12px 14px; background: color-mix(in srgb, var(--node-stage) 15%, var(--bg-card));
+  border-left: 4px solid var(--node-stage); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text); line-height: 1.5;
+}
+.lesson-quiz { display: grid; gap: 16px; }
+.lesson-quiz-q {
+  padding: 14px 16px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px;
+}
+.lesson-quiz-prompt { font-family: 'Patrick Hand', cursive; font-size: 15px; color: var(--text); margin-bottom: 10px; line-height: 1.45; }
+.lesson-quiz-choices { display: grid; gap: 6px; }
+.lesson-quiz-choice {
+  padding: 8px 12px; text-align: left; cursor: pointer;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+  font-family: 'Patrick Hand', cursive; font-size: 14px; color: var(--text);
+}
+.lesson-quiz-choice:hover:not(:disabled) { border-color: var(--node-stage); }
+.lesson-quiz-choice.picked { background: color-mix(in srgb, var(--node-stage) 25%, var(--bg)); border-color: var(--node-stage); }
+.lesson-quiz-choice.correct { background: #d1fae5; border-color: #10b981; color: #064e3b; }
+.lesson-quiz-choice.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+:root[data-theme="dark"] .lesson-quiz-choice.correct { background: #064e3b; color: #d1fae5; }
+:root[data-theme="dark"] .lesson-quiz-choice.wrong { background: #7f1d1d; color: #fee2e2; }
+.lesson-quiz-choice:disabled { cursor: default; }
+.lesson-quiz-explain { margin-top: 8px; padding: 8px 10px; background: var(--bg); border-radius: 6px; font-family: 'Patrick Hand', cursive; font-size: 13px; color: var(--text-mute); line-height: 1.45; }
+.lesson-quiz-result {
+  padding: 14px 16px; background: linear-gradient(135deg, color-mix(in srgb, var(--node-stage) 20%, var(--bg-card)), var(--bg-card));
+  border: 3px solid var(--node-stage); border-radius: 12px; display: grid; gap: 10px;
+}
+.lesson-quiz-score { font-family: 'Architects Daughter', cursive; font-size: 18px; color: var(--text); }
+
 /* ---- ACCOUNTABILITY — daily commits + check-ins ---- */
 .accountability-grid { display: grid; gap: 14px; }
 .accountability-card {
@@ -3020,7 +3153,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
         <div class="more-menu" id="moreMenu" role="menu">
           <div class="more-menu-group" role="presentation"><span>Learn</span></div>
           <button onclick="closeMoreMenu(); openStudyGuide()">📋 How to Study (per phase)</button>
-          <button onclick="closeMoreMenu(); openAiInstructor()">🎓 AI Instructor</button>
+          <button onclick="closeMoreMenu(); openAiTeacher()">🎓 AI Teacher</button>
           <button onclick="closeMoreMenu(); openGlossary()">📚 Glossary</button>
           <button onclick="closeMoreMenu(); openFlashcards()">🧠 Flashcards</button>
           <button onclick="closeMoreMenu(); openQuizLauncher()">🎯 Quiz Me (Definitions / Stage / Interview)</button>
@@ -3091,7 +3224,7 @@ body.locked > .container, body.locked > footer { display: none !important; }
     <div class="intro-jump-row">
       <a href="#stages" class="intro-jump-link">↓ Skip to roadmap</a>
       <span class="intro-jump-link" onclick="openStudyGuide()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStudyGuide()}" style="cursor:pointer;">📋 How to study each phase</span>
-      <span class="intro-jump-link" onclick="openAiInstructor()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAiInstructor()}" style="cursor:pointer;">🎓 AI Tutor</span>
+      <span class="intro-jump-link" onclick="openAiTeacher()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAiTeacher()}" style="cursor:pointer;">🎓 AI Teacher</span>
       <span class="intro-whats-new" onclick="openWhatsNew()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWhatsNew()}">✨ What's new</span>
     </div>
     <h2>🎯 Is This Roadmap For You?</h2>
@@ -3141,26 +3274,26 @@ body.locked > .container, body.locked > footer { display: none !important; }
       </div>
     </div>
 
-    <!-- AI TUTOR CALLOUT — explains the AI Instructor so people understand what it is before clicking -->
+    <!-- AI TEACHER CALLOUT (PUSH 32) — built-in Claude teacher that drives structured lessons -->
     <div class="ai-tutor-callout">
       <div class="ai-tutor-callout-head">
-        <h3>🎓 You get a built-in AI Tutor (Claude)</h3>
-        <button type="button" class="ai-tutor-callout-cta" onclick="openAiInstructor()">Open AI Tutor →</button>
+        <h3>🎓 Your own AI Teacher (Claude)</h3>
+        <button type="button" class="ai-tutor-callout-cta" onclick="openAiTeacher()">Open AI Teacher →</button>
       </div>
       <div class="ai-tutor-callout-body">
-        <p>Chat with Claude about any topic — knows your <strong>current stage + topic + progress</strong> so answers are contextual.</p>
+        <p>A proactive teacher, not a passive chatbot. Picks today's lesson based on your progress, then runs a structured <strong>5-step lesson</strong>: Objectives → Lecture → Worked example → Practice (with feedback) → Quiz.</p>
         <div class="ai-tutor-callout-grid">
           <div class="ai-tutor-callout-cell">
-            <strong>How it works</strong>
-            <p>Bring your own Anthropic API key. Stored only in your browser; only sent to <code>api.anthropic.com</code>. Paste once, chat forever.</p>
+            <strong>How it teaches</strong>
+            <p>Adaptive curriculum — looks at what you've completed + quiz scores, picks the next topic that fills a gap. You can override or just chat.</p>
           </div>
           <div class="ai-tutor-callout-cell">
             <strong>What it costs</strong>
-            <p>≈ <strong>$0.50–$2.00/hr</strong> on Claude Sonnet. <strong>$5 ≈ 6–12 hrs</strong>. Anthropic's $5 signup credit usually covers your first few weeks.</p>
+            <p>≈ <strong>$0.50–$2.00/hr</strong> on Claude Sonnet. <strong>$5 ≈ 6–12 hrs</strong>. Anthropic's $5 signup credit covers your first weeks. Your key stays in <code>localStorage</code>.</p>
           </div>
           <div class="ai-tutor-callout-cell">
-            <strong>What it can do</strong>
-            <p>Six quick-actions: <strong>📚 Explain · 🎯 Quiz · 🤔 I'm stuck · 📋 Plan my week · 🐛 Debug · 💪 Motivation</strong>. Plus free-form chat.</p>
+            <strong>What you get</strong>
+            <p>📊 Mastery tracking per topic · 🎯 3-question quizzes per lesson · 🧐 Practice feedback · 💬 Freeform chat fallback. All in your browser.</p>
           </div>
         </div>
       </div>
@@ -12413,7 +12546,13 @@ const DEFAULT_STATE = {
     totalCost: 0,                // running cost in USD across all sessions
     totalTokensIn: 0,
     totalTokensOut: 0,
+    // ── PUSH 32: AI Teacher mode — proactive 5-step structured lessons ──
+    lesson: null,                // active lesson: { stageId, topicId, step: 'objectives'|'lecture'|'example'|'practice'|'quiz', stepOutputs: { objectives: '...', lecture: '...', ... }, quiz: { questions: [...], answers: [], score: 0 }, startedAt }
+    lastLessonTopicId: null,     // for "last time we covered X" greeting
+    lastLessonStageId: null,
   },
+  // ── PUSH 32: per-topic mastery (drives adaptive next-topic picker) ──
+  mastery: {},                   // { "stageId::topicId": { lessons: int, quizScores: [int 0-100], lastQuizScore: int, masteryPct: int 0-100, lastSeen: ISO } }
   // ── Accountability (daily commits + weekly check-ins) ──
   accountability: {
     dailyGoalHours: 0,           // user's daily hour commitment (set by user)
@@ -19996,7 +20135,8 @@ function openAiInstructor() {
   const html = `
     <div class="ai-instructor-modal" id="aiInstructorModal">
       <div class="ai-header">
-        <strong>🎓 AI Instructor</strong>
+        <strong>💬 AI Chat</strong>
+        <button class="phub-skill-pill" onclick="openAiTeacher()" type="button" title="Switch to structured 5-step lesson mode">🎓 Teacher mode</button>
         <select class="ai-model-select" id="aiModel" onchange="aiSetModel(this.value)" title="Pick a Claude model — cost vs. intelligence trade-off">${modelOptions}</select>
         <select class="ai-model-select" id="aiPersona" onchange="aiSetPersona(this.value)" title="Switch the AI's role/style">${Object.entries(AI_PERSONAS).map(([k, p]) => `<option value="${k}" ${k === (ai.persona || 'tutor') ? 'selected' : ''}>${p.label}</option>`).join('')}</select>
         <button class="phub-skill-pill" onclick="aiNewSession()" type="button" title="Archive the current chat and start a new one">+ New chat</button>
@@ -20581,6 +20721,589 @@ async function aiSend() {
 
 function aiCancel() {
   if (__aiAbort) __aiAbort.abort();
+}
+
+/* ============================================================
+   AI TEACHER — proactive 5-step structured lessons (PUSH 32)
+   ============================================================
+   The existing AI Instructor (chat-first) is preserved. Teacher mode
+   is a NEW entry point that drives the lesson: it picks the topic
+   based on gaps, runs a fixed 5-step lesson (Objectives → Lecture
+   → Worked Example → Practice → Quiz), and grades the quiz to
+   update mastery. From the teacher screen, users can drop into
+   freeform chat at any time. */
+
+const LESSON_STEPS = [
+  { id: 'objectives', label: 'Objectives',    icon: '🎯', desc: 'What you will know by the end' },
+  { id: 'lecture',    label: 'Lecture',       icon: '📚', desc: 'The core explanation' },
+  { id: 'example',    label: 'Worked example',icon: '🔧', desc: 'A concrete walk-through' },
+  { id: 'practice',   label: 'Practice',      icon: '✍️',  desc: 'Your turn — answer freely' },
+  { id: 'quiz',       label: 'Quiz',          icon: '🎓', desc: '3 MCQs to lock it in' },
+];
+
+function masteryKey(stageId, topicId) { return `${stageId}::${topicId}`; }
+
+function masteryFor(stageId, topicId) {
+  const k = masteryKey(stageId, topicId);
+  return state.mastery[k] || { lessons: 0, quizScores: [], lastQuizScore: null, masteryPct: 0, lastSeen: null };
+}
+
+/* Adaptive curriculum picker. Returns:
+   { primary: {stageId, topicId, reason}, alternates: [...same shape] }
+   Strategy:
+     1. Find the user's "current stage" = highest stage that has any completion (or 0 if none).
+     2. Within that stage, primary = first req topic that's either not completed OR mastery < 70%.
+     3. Alternate 1 = next req topic after the primary.
+     4. Alternate 2 = a spaced-rep review pull: any previously completed topic with mastery < 60%. */
+function aiPickTodaysLesson() {
+  const completed = state.completed || {};
+  let currentStage = 0;
+  DATA.forEach(s => {
+    const hasAny = s.branches.some(b => b.topics.some(t => completed[`${s.id}::${t.id}`]));
+    if (hasAny) currentStage = Math.max(currentStage, s.id);
+  });
+  const flatReq = [];
+  DATA.forEach(s => {
+    s.branches.forEach(b => {
+      b.topics.forEach(t => {
+        if (t.t === 'req') flatReq.push({ stageId: s.id, topicId: t.id, name: t.name, desc: t.desc });
+      });
+    });
+  });
+  const isEligible = (entry) => {
+    const done = !!completed[`${entry.stageId}::${entry.topicId}`];
+    const m = masteryFor(entry.stageId, entry.topicId);
+    return !done || m.masteryPct < 70;
+  };
+  const startIdx = flatReq.findIndex(e => e.stageId >= currentStage && isEligible(e));
+  if (startIdx === -1) {
+    return { primary: flatReq[0] ? { ...flatReq[0], reason: 'You have covered all required topics — let us start a refresher.' } : null, alternates: [] };
+  }
+  const primary = { ...flatReq[startIdx], reason: aiReasonFor(flatReq[startIdx]) };
+  const altNext = flatReq[startIdx + 1] ? { ...flatReq[startIdx + 1], reason: 'Next in the syllabus after today\'s lesson.' } : null;
+  const reviewCandidates = flatReq
+    .slice(0, startIdx)
+    .filter(e => {
+      const m = masteryFor(e.stageId, e.topicId);
+      return completed[`${e.stageId}::${e.topicId}`] && m.lessons > 0 && m.masteryPct < 60;
+    })
+    .sort((a, b) => masteryFor(a.stageId, a.topicId).masteryPct - masteryFor(b.stageId, b.topicId).masteryPct);
+  const altReview = reviewCandidates[0]
+    ? { ...reviewCandidates[0], reason: `Mastery is only ${masteryFor(reviewCandidates[0].stageId, reviewCandidates[0].topicId).masteryPct}% — worth a refresher.` }
+    : null;
+  return { primary, alternates: [altNext, altReview].filter(Boolean) };
+}
+
+function aiReasonFor(entry) {
+  const completed = state.completed || {};
+  const done = !!completed[`${entry.stageId}::${entry.topicId}`];
+  const m = masteryFor(entry.stageId, entry.topicId);
+  if (!done) return 'Next required topic in your syllabus.';
+  if (m.lessons === 0) return 'Marked complete, but you have not taken a lesson on it yet.';
+  if (m.masteryPct < 70) return `Last quiz scored ${m.lastQuizScore}% — let us lock it in.`;
+  return 'Worth revisiting.';
+}
+
+/* ────────── TEACHER GREETING SCREEN ────────── */
+function openAiTeacher() {
+  const ai = state.aiInstructor;
+  if (!ai.apiKey) { openAiInstructorSetup(); return; }
+  if (ai.lesson && ai.lesson.topicId) { openLessonRunner(); return; }
+  aiRenderGreeting();
+}
+
+function aiRenderGreeting() {
+  const ai = state.aiInstructor;
+  const picks = aiPickTodaysLesson();
+  if (!picks.primary) {
+    showPracticeModal('🎓 Your AI Teacher', '<p class="practice-empty">No topics found in the syllabus yet — try loading the roadmap data first.</p>');
+    return;
+  }
+  let lastLine = 'Welcome to your first lesson.';
+  if (ai.lastLessonTopicId) {
+    const lastStage = DATA.find(s => s.id === ai.lastLessonStageId);
+    const lastTopic = lastStage?.branches.flatMap(b => b.topics).find(t => t.id === ai.lastLessonTopicId);
+    if (lastTopic) lastLine = `Last time we covered <strong>${escapeHtml(lastTopic.name)}</strong>.`;
+  }
+  const altsList = picks.alternates.map(a =>
+    `<button class="teacher-alt-btn" onclick="aiStartLesson(${a.stageId}, '${escapeHtml(a.topicId)}')" type="button">
+       <span class="teacher-alt-name">${escapeHtml(a.name)}</span>
+       <span class="teacher-alt-reason">${escapeHtml(a.reason)}</span>
+     </button>`).join('');
+  const altsHtml = picks.alternates.length
+    ? `<div class="teacher-alts"><div class="teacher-alts-label">Or pick a different topic:</div>${altsList}</div>` : '';
+  const greetingHtml = [
+    '<div class="teacher-greeting">',
+      `<div class="teacher-greet-hello">${lastLine}</div>`,
+      '<div class="teacher-today-card">',
+        '<div class="teacher-today-label">Today\'s lesson</div>',
+        `<div class="teacher-today-topic">${escapeHtml(picks.primary.name)}</div>`,
+        `<div class="teacher-today-reason">${escapeHtml(picks.primary.reason)}</div>`,
+        '<div class="teacher-today-steps">5 steps · ~15-25 min · structured lesson with a quiz at the end</div>',
+        `<button class="teacher-start-btn" onclick="aiStartLesson(${picks.primary.stageId}, '${escapeHtml(picks.primary.topicId)}')" type="button">▶ Start lesson</button>`,
+      '</div>',
+      altsHtml,
+      '<div class="teacher-greet-actions">',
+        '<button class="phub-skill-pill" onclick="aiOpenTopicPicker()" type="button" title="Browse the full syllabus">📚 Pick any topic</button>',
+        '<button class="phub-skill-pill" onclick="openAiInstructor()" type="button" title="Drop into freeform chat with Claude">💬 Just chat</button>',
+        '<button class="phub-skill-pill" onclick="aiOpenProgressView()" type="button" title="See your mastery scores">📊 My progress</button>',
+      '</div>',
+    '</div>'
+  ].join('');
+  showPracticeModal('🎓 Your AI Teacher', greetingHtml);
+}
+
+function aiOpenTopicPicker() {
+  const reqByStage = DATA.map(s => ({
+    stageId: s.id,
+    title: s.title,
+    topics: s.branches.flatMap(b => b.topics).filter(t => t.t === 'req')
+  })).filter(x => x.topics.length);
+  const stageBlocks = reqByStage.map(s => {
+    const rows = s.topics.map(t => {
+      const m = masteryFor(s.stageId, t.id);
+      const badgeCls = m.masteryPct >= 70 ? 'good' : 'low';
+      const badge = m.lessons > 0 ? `<span class="teacher-mastery-badge ${badgeCls}">${m.masteryPct}%</span>` : '';
+      return `<button class="teacher-topic-row" onclick="aiStartLesson(${s.stageId}, '${escapeHtml(t.id)}')" type="button">
+        <span class="teacher-topic-name">${escapeHtml(t.name)}</span>${badge}
+      </button>`;
+    }).join('');
+    return `<details ${s.stageId <= 1 ? 'open' : ''}>
+      <summary><strong>Stage ${s.stageId}</strong> · ${escapeHtml(s.title)} <span class="practice-tip">(${s.topics.length})</span></summary>
+      <div class="teacher-topic-list">${rows}</div>
+    </details>`;
+  }).join('');
+  const pickerHtml = `<p class="practice-intro">Pick any required topic to start a structured 5-step lesson on it.</p><div class="teacher-topic-picker">${stageBlocks}</div>`;
+  showPracticeModal('📚 Pick a topic for your next lesson', pickerHtml);
+}
+
+/* ────────── LESSON RUNNER + STEP FETCHER + QUIZ GRADER ────────── */
+async function aiStartLesson(stageId, topicId) {
+  const ai = state.aiInstructor;
+  if (!ai.apiKey) { openAiInstructorSetup(); return; }
+  ai.lesson = {
+    stageId, topicId,
+    step: 'objectives',
+    stepOutputs: {},
+    quiz: null,
+    practiceUserAnswer: null,
+    practiceFeedback: null,
+    startedAt: new Date().toISOString(),
+  };
+  save();
+  openLessonRunner();
+  await aiFetchLessonStep('objectives');
+}
+
+function openLessonRunner() {
+  const ai = state.aiInstructor;
+  const lesson = ai.lesson;
+  if (!lesson) { aiRenderGreeting(); return; }
+  const stage = DATA.find(s => s.id === lesson.stageId);
+  const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId);
+  if (!topic) { aiAbandonLesson(); return; }
+  const currentIdx = LESSON_STEPS.findIndex(s => s.id === lesson.step);
+  const stepperPips = LESSON_STEPS.map((s, i) => {
+    const done = !!lesson.stepOutputs[s.id] || (s.id === 'quiz' && lesson.quiz?.score !== null && lesson.quiz?.score !== undefined);
+    const cls = i === currentIdx ? 'current' : (done ? 'done' : 'pending');
+    return `<button class="lesson-step-pip ${cls}" onclick="aiJumpToStep('${s.id}')" type="button" title="${escapeHtml(s.desc)}">
+      <span class="lesson-step-icon">${s.icon}</span><span class="lesson-step-label">${s.label}</span>
+    </button>`;
+  }).join('<span class="lesson-step-arrow">›</span>');
+  const bodyHtml = aiRenderLessonStepBody(topic, lesson);
+  const runnerHtml = `
+    <div class="lesson-runner">
+      <div class="lesson-header">
+        <div class="lesson-topic-name">${escapeHtml(topic.name)}</div>
+        <div class="lesson-topic-stage">Stage ${stage.id} · ${escapeHtml(stage.title)}</div>
+        <button class="lesson-abandon-btn" onclick="aiAbandonLesson()" type="button" title="Quit this lesson — progress so far is kept">← Back to teacher</button>
+      </div>
+      <div class="lesson-stepper">${stepperPips}</div>
+      <div class="lesson-body" id="lessonBody">${bodyHtml}</div>
+    </div>
+  `;
+  showPracticeModal('🎓 Lesson in progress', runnerHtml);
+}
+
+function aiRenderLessonStepBody(topic, lesson) {
+  const stepCfg = LESSON_STEPS.find(s => s.id === lesson.step);
+  const output = lesson.stepOutputs[lesson.step];
+  const streaming = __aiStreaming;
+  const typingDots = '<span class="ai-typing"><span></span><span></span><span></span></span>';
+  if (lesson.step === 'practice') {
+    let bodyTop;
+    if (output) bodyTop = aiFormatMarkdown(output);
+    else if (streaming) bodyTop = typingDots;
+    else bodyTop = '<p class="practice-empty">Click below to load the practice problem.</p>';
+    const answerArea = output ? `
+      <div class="lesson-practice-input">
+        <label><strong>Your answer (free-form — explain your thinking):</strong></label>
+        <textarea id="lessonPracticeAnswer" placeholder="Write your solution + reasoning here...">${escapeHtml(lesson.practiceUserAnswer || '')}</textarea>
+        ${lesson.practiceFeedback ? `<div class="lesson-practice-feedback">${aiFormatMarkdown(lesson.practiceFeedback)}</div>` : ''}
+        <div class="lesson-step-actions">
+          <button class="phub-skill-pill" onclick="aiGradePractice()" type="button" ${streaming ? 'disabled' : ''}>🧐 Get feedback</button>
+          ${lesson.practiceFeedback ? `<button class="teacher-start-btn" onclick="aiAdvanceLessonStep('quiz')" type="button">Next step: Quiz →</button>` : ''}
+        </div>
+      </div>` : `<div class="lesson-step-actions">${!streaming ? `<button class="phub-skill-pill" onclick="aiFetchLessonStep('practice')" type="button">Load practice problem</button>` : ''}</div>`;
+    return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+      <div class="lesson-step-content" id="lessonStreamTarget">${bodyTop}</div>${answerArea}`;
+  }
+  if (lesson.step === 'quiz') {
+    const quiz = lesson.quiz;
+    if (!quiz && !streaming) {
+      return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+        <p>3 multiple-choice questions to verify understanding. Score updates your mastery for this topic.</p>
+        <button class="teacher-start-btn" onclick="aiFetchLessonStep('quiz')" type="button">Generate quiz</button>`;
+    }
+    if (streaming && !quiz) {
+      return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div><div id="lessonStreamTarget">${typingDots}</div>`;
+    }
+    if (quiz.error) {
+      return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+        <p class="practice-empty">${escapeHtml(quiz.error)}</p>
+        <button class="teacher-start-btn" onclick="aiFetchLessonStep('quiz')" type="button">Try again</button>`;
+    }
+    const allAnswered = quiz.questions.every((_, i) => quiz.answers[i] !== undefined && quiz.answers[i] !== null);
+    const graded = quiz.score !== null && quiz.score !== undefined;
+    const questionBlocks = quiz.questions.map((q, qi) => {
+      const choiceBtns = q.choices.map((c, ci) => {
+        const picked = quiz.answers[qi] === ci;
+        const isCorrect = graded && ci === q.correct;
+        const isPickedWrong = graded && picked && ci !== q.correct;
+        const cls = isCorrect ? 'correct' : (isPickedWrong ? 'wrong' : (picked ? 'picked' : ''));
+        return `<button class="lesson-quiz-choice ${cls}" ${graded ? 'disabled' : ''} onclick="aiQuizAnswer(${qi}, ${ci})" type="button">${escapeHtml(c)}</button>`;
+      }).join('');
+      const explainLine = graded ? `<div class="lesson-quiz-explain"><strong>Why:</strong> ${escapeHtml(q.explain || '')}</div>` : '';
+      return `<div class="lesson-quiz-q">
+        <div class="lesson-quiz-prompt"><strong>Q${qi + 1}.</strong> ${escapeHtml(q.q)}</div>
+        <div class="lesson-quiz-choices">${choiceBtns}</div>
+        ${explainLine}
+      </div>`;
+    }).join('');
+    const footer = graded
+      ? `<div class="lesson-quiz-result">
+          <div class="lesson-quiz-score">Score: <strong>${quiz.score}%</strong> · Mastery for this topic updated.</div>
+          <button class="teacher-start-btn" onclick="aiFinishLesson()" type="button">✓ Finish lesson</button>
+        </div>`
+      : `<button class="teacher-start-btn" onclick="aiGradeQuiz()" type="button" ${!allAnswered ? 'disabled' : ''}>${allAnswered ? 'Grade quiz' : 'Answer all 3 to grade'}</button>`;
+    return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+      <div class="lesson-quiz">${questionBlocks}${footer}</div>`;
+  }
+  // objectives / lecture / example — read-only Markdown panel.
+  let panel;
+  if (output) panel = aiFormatMarkdown(output);
+  else if (streaming) panel = typingDots;
+  else panel = '<p class="practice-empty">Loading…</p>';
+  const advance = output ? `<div class="lesson-step-actions"><button class="teacher-start-btn" onclick="aiAdvanceLessonStep()" type="button">Next step →</button></div>` : '';
+  return `<div class="lesson-step-header">${stepCfg.icon} ${stepCfg.label}</div>
+    <div class="lesson-step-content" id="lessonStreamTarget">${panel}</div>${advance}`;
+}
+
+function aiAdvanceLessonStep(forceStepId) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson) return;
+  const currentIdx = LESSON_STEPS.findIndex(s => s.id === lesson.step);
+  const nextStep = forceStepId || LESSON_STEPS[currentIdx + 1]?.id;
+  if (!nextStep) { aiFinishLesson(); return; }
+  lesson.step = nextStep;
+  save();
+  openLessonRunner();
+  if (nextStep === 'lecture' || nextStep === 'example') {
+    aiFetchLessonStep(nextStep);
+  }
+}
+
+function aiJumpToStep(stepId) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson) return;
+  if (!lesson.stepOutputs[stepId] && stepId !== lesson.step) return;
+  lesson.step = stepId;
+  save();
+  openLessonRunner();
+}
+
+function aiAbandonLesson() {
+  const lesson = state.aiInstructor.lesson;
+  if (lesson) {
+    state.aiInstructor.lastLessonTopicId = lesson.topicId;
+    state.aiInstructor.lastLessonStageId = lesson.stageId;
+  }
+  state.aiInstructor.lesson = null;
+  save();
+  aiRenderGreeting();
+}
+
+function aiFinishLesson() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson) return;
+  const key = masteryKey(lesson.stageId, lesson.topicId);
+  state.mastery[key] = state.mastery[key] || { lessons: 0, quizScores: [], lastQuizScore: null, masteryPct: 0, lastSeen: null };
+  state.mastery[key].lessons += 1;
+  state.mastery[key].lastSeen = new Date().toISOString();
+  state.aiInstructor.lastLessonTopicId = lesson.topicId;
+  state.aiInstructor.lastLessonStageId = lesson.stageId;
+  state.aiInstructor.lesson = null;
+  save();
+  aiRenderGreeting();
+}
+
+function aiLessonSystemPrompt(stepId, topic, stage) {
+  const p = state.profile || {};
+  const base = [
+    `You are an experienced senior engineer teaching a structured lesson to a self-taught Full Stack + AI Engineering learner.`,
+    `Learner profile: goal=${p.goal || 'unknown'}, skill=${p.skill || 'unknown'}, time=${p.time || 'unknown'}.`,
+    `Topic: "${topic.name}" (Stage ${stage.id} — ${stage.title}).`,
+    `Topic description: ${topic.desc || '(no description)'}`,
+    `This is step "${stepId}" of a 5-step lesson. Do NOT cover the other steps' content — stay focused on this step only.`,
+    `Match the learner's level — avoid jargon from later stages. Use Anthropic Claude for any AI references — do not recommend competing closed-model providers.`,
+    `Output plain Markdown. No HTML. Keep it tight — every sentence should earn its place.`,
+  ];
+  const stepSpecific = {
+    objectives: `Write 3 specific, measurable learning objectives for this lesson. Format as a numbered list. Each starts with an action verb ("Explain", "Implement", "Distinguish"). Each is ONE sentence. No preamble, no closing.`,
+    lecture: `Deliver a focused 5-7 minute lecture on this topic. Structure: (1) one-paragraph intuition / mental model with an analogy, (2) the core mechanics with at least one runnable code example in a fenced code block, (3) the 1-2 gotchas that trip people up. Keep code minimal — show the idea, not a full app. End cleanly — no "let me know if you have questions".`,
+    example: `Walk through ONE concrete worked example. Frame it as a small task ("Suppose we want to..."), then show your thinking step-by-step before showing code. Use fenced code blocks. End by stating what the example proves about the topic.`,
+    practice: `Pose ONE practice problem the learner can solve in 5-15 minutes. It should require applying this topic. Specify: the task, what they should produce (code? answer in words?), and a hint they can use if stuck. Do NOT provide the answer — they'll write their solution and you'll grade it next.`,
+    quiz: `Generate exactly 3 multiple-choice questions to verify understanding. Output STRICT JSON only — no preamble, no Markdown, no trailing text. Schema: {"questions":[{"q":"question text","choices":["A","B","C","D"],"correct":0,"explain":"1-2 sentence explanation"},...]}. Exactly 4 choices per question. "correct" is the 0-indexed correct choice. Difficulty: mix one easy / one applied / one conceptual.`,
+  };
+  return base.join('\n') + '\n\n' + stepSpecific[stepId];
+}
+
+async function aiFetchLessonStep(stepId) {
+  const ai = state.aiInstructor;
+  if (__aiStreaming) return;
+  const lesson = ai.lesson;
+  if (!lesson) return;
+  const stage = DATA.find(s => s.id === lesson.stageId);
+  const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId);
+  if (!topic || !stage) return;
+  lesson.step = stepId;
+  save();
+  openLessonRunner();
+  __aiStreaming = true;
+  __aiAbort = new AbortController();
+  let fullText = '';
+  let usage = null;
+  const userTurnText = stepId === 'practice' ? 'Pose the practice problem now.'
+    : stepId === 'quiz' ? 'Generate the 3-question quiz JSON now.'
+    : `Deliver the "${stepId}" step now.`;
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ai.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: ai.model,
+        max_tokens: stepId === 'lecture' ? 2200 : 1400,
+        system: aiLessonSystemPrompt(stepId, topic, stage),
+        messages: [{ role: 'user', content: userTurnText }],
+        stream: true,
+      }),
+      signal: __aiAbort.signal,
+    });
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      throw new Error(`API ${resp.status}: ${errBody.slice(0, 300)}`);
+    }
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (!data) continue;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText += evt.delta.text;
+            if (stepId !== 'quiz') {
+              const target = document.getElementById('lessonStreamTarget');
+              if (target) target.innerHTML = aiFormatMarkdown(fullText);
+            }
+          } else if (evt.type === 'message_delta' && evt.usage) {
+            usage = { ...usage, ...evt.usage };
+          } else if (evt.type === 'message_start' && evt.message?.usage) {
+            usage = { ...usage, ...evt.message.usage };
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (err) {
+    fullText = err.name === 'AbortError' ? (fullText || '[stopped]') : `⚠ Error: ${err.message}\n\nCheck your API key in ⚙ Settings.`;
+  } finally {
+    __aiStreaming = false;
+    __aiAbort = null;
+    if (stepId === 'quiz') {
+      const cleaned = fullText.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+      try {
+        const parsed = JSON.parse(cleaned);
+        if (parsed && Array.isArray(parsed.questions) && parsed.questions.length >= 1) {
+          lesson.quiz = { questions: parsed.questions.slice(0, 3), answers: new Array(Math.min(3, parsed.questions.length)).fill(null), score: null };
+        } else {
+          lesson.quiz = { questions: [], answers: [], score: null, error: 'Bad JSON from model. Click Try again.' };
+        }
+      } catch (e) {
+        lesson.quiz = { questions: [], answers: [], score: null, error: 'Model did not return valid JSON. Click Try again.' };
+      }
+    } else {
+      lesson.stepOutputs[stepId] = fullText;
+    }
+    if (usage) {
+      const m = AI_INSTRUCTOR_MODELS.find(x => x.id === ai.model);
+      if (m) {
+        const cost = (usage.input_tokens || 0) / 1_000_000 * m.pricing.in + (usage.output_tokens || 0) / 1_000_000 * m.pricing.out;
+        ai.totalCost += cost;
+        ai.totalTokensIn += usage.input_tokens || 0;
+        ai.totalTokensOut += usage.output_tokens || 0;
+      }
+    }
+    save();
+    openLessonRunner();
+  }
+}
+
+function aiQuizAnswer(qi, ci) {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.quiz) return;
+  if (lesson.quiz.score !== null && lesson.quiz.score !== undefined) return;
+  lesson.quiz.answers[qi] = ci;
+  save();
+  openLessonRunner();
+}
+
+function aiGradeQuiz() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson?.quiz?.questions.length) return;
+  const correct = lesson.quiz.questions.reduce((n, q, i) => n + (lesson.quiz.answers[i] === q.correct ? 1 : 0), 0);
+  const score = Math.round((correct / lesson.quiz.questions.length) * 100);
+  lesson.quiz.score = score;
+  const key = masteryKey(lesson.stageId, lesson.topicId);
+  const m = state.mastery[key] || { lessons: 0, quizScores: [], lastQuizScore: null, masteryPct: 0, lastSeen: null };
+  m.quizScores.push(score);
+  if (m.quizScores.length > 10) m.quizScores = m.quizScores.slice(-10);
+  m.lastQuizScore = score;
+  const weighted = m.quizScores.reduce((s, q, i) => s + q * (i + 1), 0);
+  const weightSum = m.quizScores.reduce((s, _, i) => s + (i + 1), 0);
+  m.masteryPct = Math.round(weighted / weightSum);
+  m.lastSeen = new Date().toISOString();
+  state.mastery[key] = m;
+  save();
+  openLessonRunner();
+}
+
+async function aiGradePractice() {
+  const lesson = state.aiInstructor.lesson;
+  if (!lesson) return;
+  if (__aiStreaming) return;
+  const answerEl = document.getElementById('lessonPracticeAnswer');
+  const userAnswer = answerEl?.value.trim();
+  if (!userAnswer) { alert('Write your answer first, then click Get feedback.'); return; }
+  lesson.practiceUserAnswer = userAnswer;
+  save();
+  const ai = state.aiInstructor;
+  const stage = DATA.find(s => s.id === lesson.stageId);
+  const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === lesson.topicId);
+  __aiStreaming = true;
+  __aiAbort = new AbortController();
+  let fullText = '';
+  openLessonRunner();
+  try {
+    const sys = [
+      `You are grading a learner's practice problem answer for the topic "${topic.name}" (Stage ${stage.id}).`,
+      `The practice problem you posed earlier was:\n${lesson.stepOutputs.practice || '(not recorded)'}`,
+      `Give the learner direct, specific feedback: what they got right, what's wrong or missing, and ONE concrete improvement. End with a 1-line verdict ("Strong", "Solid", "Needs work").`,
+      `Be honest but encouraging. Do NOT just rewrite their answer.`,
+      `Output Markdown only. 4-8 short sentences.`,
+    ].join('\n');
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': ai.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: ai.model,
+        max_tokens: 900,
+        system: sys,
+        messages: [{ role: 'user', content: `My answer:\n\n${userAnswer}` }],
+        stream: true,
+      }),
+      signal: __aiAbort.signal,
+    });
+    if (!resp.ok) throw new Error(`API ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (!data) continue;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText += evt.delta.text;
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (err) {
+    fullText = `⚠ Error: ${err.message}`;
+  } finally {
+    __aiStreaming = false;
+    __aiAbort = null;
+    lesson.practiceFeedback = fullText || '[no feedback]';
+    save();
+    openLessonRunner();
+  }
+}
+
+function aiOpenProgressView() {
+  const entries = Object.entries(state.mastery || {}).map(([key, m]) => {
+    const [stageIdStr, topicId] = key.split('::');
+    const stageId = Number(stageIdStr);
+    const stage = DATA.find(s => s.id === stageId);
+    const topic = stage?.branches.flatMap(b => b.topics).find(t => t.id === topicId);
+    return topic ? { stageId, topicId, name: topic.name, ...m } : null;
+  }).filter(Boolean).sort((a, b) => a.stageId - b.stageId || (b.masteryPct - a.masteryPct));
+  if (!entries.length) {
+    showPracticeModal('📊 Your lesson progress', '<p class="practice-empty">No lessons completed yet. Start one from the teacher screen and your mastery scores will appear here.</p>');
+    return;
+  }
+  const totalLessons = entries.reduce((s, e) => s + e.lessons, 0);
+  const avgMastery = Math.round(entries.reduce((s, e) => s + e.masteryPct, 0) / entries.length);
+  const rows = entries.map(e => {
+    const color = e.masteryPct >= 70 ? '#0a8a3f' : (e.masteryPct >= 40 ? '#d97706' : '#dc2626');
+    return `<tr>
+      <td><button class="teacher-topic-row" onclick="aiStartLesson(${e.stageId}, '${escapeHtml(e.topicId)}')" type="button" style="padding:4px 8px;">${escapeHtml(e.name)}</button></td>
+      <td>${e.stageId}</td>
+      <td>${e.lessons}</td>
+      <td>${e.lastQuizScore !== null ? e.lastQuizScore + '%' : '—'}</td>
+      <td><div class="teacher-mastery-bar"><div class="teacher-mastery-fill" style="width:${e.masteryPct}%;background:${color};"></div><span>${e.masteryPct}%</span></div></td>
+    </tr>`;
+  }).join('');
+  const progressHtml = `<div class="teacher-progress-summary"><div><strong>${entries.length}</strong> topics taught · <strong>${totalLessons}</strong> lessons · avg mastery <strong>${avgMastery}%</strong></div></div>
+    <table class="teacher-progress-table">
+      <thead><tr><th>Topic</th><th>Stage</th><th>Lessons</th><th>Last quiz</th><th>Mastery</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  showPracticeModal('📊 Your lesson progress', progressHtml);
 }
 
 /* ============================================================
